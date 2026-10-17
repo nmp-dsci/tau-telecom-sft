@@ -1,6 +1,6 @@
 # Dataset v1: tau-telecom-sft
 
-Built 2026-10-17T11:33:10Z at code `0667fed` from 912 conversations in 2 source(s): **518 kept**, 394 dropped. 74 of the 74 training tasks have at least one row.
+Built 2026-10-17T12:01:23Z at code `937eb98` from 912 conversations in 2 source(s): **518 kept**, 394 dropped. 74 of the 74 training tasks have at least one row.
 
 |  |  |
 |---|---|
