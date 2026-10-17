@@ -25,3 +25,14 @@ adapters/
 opensrc/*/
 
 .DS_Store
+
+# The viewer: its raw-conversation cache, and the frontend build
+.cache/
+frontend/node_modules/
+frontend/dist/
+
+# Run folders are committed; their weights are not (each run.json records the adapter's sha256)
+runs/*/adapter/
+runs/*/checkpoints/
+runs/*/merged/
+runs/*/mlx/

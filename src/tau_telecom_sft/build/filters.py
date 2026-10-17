@@ -19,6 +19,7 @@ import statistics
 from collections import Counter
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass, field
+from typing import Any
 
 from tau_telecom_sft import split as split_mod
 from tau_telecom_sft.build.agent_view import agent_tool_calls, agent_turns, agent_view
@@ -170,6 +171,35 @@ def tool_path(c: Conversation) -> tuple[tuple[str, str], ...]:
     return tuple(
         (tc.name, json.dumps(tc.arguments, sort_keys=True)) for tc in agent_tool_calls(c.messages)
     )
+
+
+def flat_messages(c: Conversation) -> list[Any]:
+    """Every message in order, each MultiToolMessage split into its results: the raw lens's rows."""
+    from tau_telecom_sft.build.agent_view import flatten
+
+    return flatten(c.messages)
+
+
+def offending(c: Conversation, rule: str, agent_tools: frozenset[str]) -> list[int]:
+    """The messages (indexes into `flat_messages`) that broke a per-turn rule, for the viewer
+    to mark: F4's unknown tool calls, F5's tool errors, F7's written-out calls. Whole-
+    conversation rules (F1–F3, F6, F8–F10) mark nothing."""
+    from tau2.agent.base_agent import is_valid_agent_history_message
+
+    def broke(m: Any) -> bool:
+        if rule == "F4" and m.role == "assistant":
+            return any(tc.name not in agent_tools for tc in (m.tool_calls or []))
+        if rule == "F5" and m.role == "tool":
+            return bool(m.error)
+        if rule == "F7" and m.role == "assistant" and m.content:
+            return TEXT_TOOL_CALL.search(m.content) is not None
+        return False
+
+    out: list[int] = []
+    for i, m in enumerate(flat_messages(c)):
+        if is_valid_agent_history_message(m) and broke(m):
+            out.append(i)
+    return out
 
 
 PER_CONVERSATION: dict[str, Callable[[Conversation, Context], str | None]] = {

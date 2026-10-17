@@ -4,7 +4,8 @@ A build writes four files into its folder, normally `data/sft/<version>/`:
   train.jsonl   one row per kept conversation (git-ignored; S3 under its sha256 from M1)
   card.md       the dataset card (committed): sources, the filter table, counts, lengths
   stats.json    the same numbers for MLflow and M7's trigger
-  drops.jsonl   every dropped conversation with its rule and reason
+  drops.jsonl   every dropped conversation with its rule and reason, and its simulation id so
+                the viewer can open it from raw/ (none for a test task or twin)
 
 Every file lands under the trainer's inputs, so none may name a test task: a dropped test
 task or twin is written as WITHHELD, and the leak check scans the folder.
@@ -24,10 +25,13 @@ from typing import Any
 
 from tau_telecom_sft import config, split
 from tau_telecom_sft.build import card, filters
+from tau_telecom_sft.build.agent_view import agent_turns
 from tau_telecom_sft.build.convert import (
     agent_tool_names,
+    agent_tools,
     estimate_tokens,
     prompt_fingerprint,
+    system_prompt,
     to_row,
 )
 from tau_telecom_sft.sources.results import Conversation, conversations
@@ -60,6 +64,18 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+HIST_BIN = 1024  # tokens per bar in the card's and the viewer's length histogram
+
+
+def _hist(xs: Sequence[int]) -> list[dict[str, int]]:
+    counts = Counter(x // HIST_BIN for x in xs)
+    return (
+        [{"from": b * HIST_BIN, "n": counts[b]} for b in range(min(counts), max(counts) + 1)]
+        if counts
+        else []
+    )
+
+
 def _pctl(xs: Sequence[int], q: float) -> int:
     if not xs:
         return 0
@@ -77,6 +93,7 @@ def build(
     max_tokens: int = config.MAX_TOKENS,
     allow_pool: bool = False,
     the_split: split.Split | None = None,
+    source_checks: Sequence[dict[str, Any]] = (),
 ) -> Built:
     s = the_split or split.current()
     convs: list[Conversation] = []
@@ -130,16 +147,27 @@ def build(
 
     with (out_dir / "drops.jsonl").open("w") as f:
         for d in outcome.drops:
+            withheld = safe_id(d.conv.task_id) == WITHHELD
             rec = {
                 "rule": d.rule,
                 "reason": d.reason,
                 "task_id": safe_id(d.conv.task_id),
                 "source": d.conv.source,
                 "trial": d.conv.trial,
+                "sim_id": None if withheld else d.conv.sim.id,
+                "agent_turns": agent_turns(d.conv.messages),
             }
             f.write(json.dumps(rec) + "\n")
 
     kept_lengths = [tokens_of(c) for c in outcome.kept]
+    kept_turns = [agent_turns(c.messages) for c in outcome.kept]
+    # every conversation that reached F10, so the card shows what the limit cut and what it spared
+    f10 = {d.conv.sim.id for d in outcome.drops if d.rule == "F10"}
+    at_f10 = kept_lengths + [lengths[i] for i in f10 if i in lengths]
+    prompt_only = {
+        "messages": [{"role": "system", "content": system_prompt()}],
+        "tools": list(agent_tools()),
+    }
     kept_ids = [split.parse_task_id(c.task_id) for c in outcome.kept]
     stats: dict[str, Any] = {
         "dataset": version,
@@ -174,8 +202,21 @@ def build(
             "min": min(kept_lengths, default=0),
             "median": int(statistics.median(kept_lengths)) if kept_lengths else 0,
             "p90": _pctl(kept_lengths, 0.9),
+            "p99": _pctl(kept_lengths, 0.99),
             "max": max(kept_lengths, default=0),
+            "prompt_and_tools": count_tokens(prompt_only),
         },
+        "tokens_hist": _hist(kept_lengths),
+        "reached_f10": len(at_f10),
+        "over_limit": {
+            str(lim): sum(1 for n in at_f10 if n > lim)
+            for lim in (8192, 12288, 16384, 20480, 24576)
+        },
+        "agent_turns": {
+            "median": int(statistics.median(kept_turns)) if kept_turns else 0,
+            "max": max(kept_turns, default=0),
+        },
+        "source_checks": list(source_checks),
         "train_sha256": _sha256(train),
     }
     (out_dir / "stats.json").write_text(json.dumps(stats, indent=2) + "\n")

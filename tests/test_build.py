@@ -101,6 +101,7 @@ def test_a_row_is_the_agents_view_in_chat_format(fixture_convs: list[Conversatio
     assert row["tools"] == list(agent_tools())
     assert set(row["meta"]) == {
         "task_id",
+        "sim_id",
         "symptom",
         "source",
         "trial",

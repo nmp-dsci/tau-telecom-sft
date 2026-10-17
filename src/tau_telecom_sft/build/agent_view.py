@@ -14,7 +14,7 @@ from typing import Any
 from tau_telecom_sft import config
 
 
-def _flatten(messages: Iterable[Any]) -> list[Any]:
+def flatten(messages: Iterable[Any]) -> list[Any]:
     """A MultiToolMessage holds several tool results; the agent sees each one."""
     config.quiet_tau2()
     from tau2.data_model.message import MultiToolMessage
@@ -31,7 +31,7 @@ def _flatten(messages: Iterable[Any]) -> list[Any]:
 def agent_view(messages: Iterable[Any]) -> list[Any]:
     from tau2.agent.base_agent import is_valid_agent_history_message
 
-    return [m for m in _flatten(messages) if is_valid_agent_history_message(m)]
+    return [m for m in flatten(messages) if is_valid_agent_history_message(m)]
 
 
 def agent_tool_calls(messages: Iterable[Any]) -> list[Any]:

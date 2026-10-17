@@ -104,6 +104,7 @@ def to_row(conv: Conversation, dataset: str) -> dict[str, Any]:
         "tools": list(agent_tools()),
         "meta": {
             "task_id": conv.task_id,
+            "sim_id": conv.sim.id,
             "symptom": parse_task_id(conv.task_id).symptom,
             "source": conv.source,
             "trial": conv.trial,
