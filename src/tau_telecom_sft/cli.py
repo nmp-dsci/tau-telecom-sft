@@ -239,5 +239,146 @@ def mask(
         raise typer.Exit(1)
 
 
+SERVED_LOGS = config.ROOT / "outputs" / "served"
+# where tau2-loop reaches the student (its STUDENT_URL). Not :8000, the plan's first choice: on
+# this Mac another app holds it.
+STUDENT_PORT = 8020
+
+
+@app.command("serve-prepare")
+def serve_prepare(
+    model: str = typer.Option("base", help="`base`, or a train run id whose adapter to merge"),
+    force: bool = typer.Option(False, help="rebuild the MLX folder"),
+) -> None:
+    """Merge (for a train run) and convert to MLX in bf16, with the student's chat template."""
+    from tau_telecom_sft.serve import mlx
+
+    out = mlx.prepare(model, force=force)
+    console.print(f"[green]ok[/green] {out.relative_to(config.ROOT)}")
+    console.print((out / "serve.json").read_text())
+
+
+@app.command()
+def serve(
+    model: str = typer.Option("base", help="`base`, or a train run id"),
+    port: int = typer.Option(STUDENT_PORT, help="where tau2-loop calls (its STUDENT_URL)"),
+) -> None:
+    """mlx_lm.server on :8120 behind the recording proxy on :8020, until Ctrl-C."""
+    import signal
+    import subprocess
+    import time
+    import urllib.request
+
+    import uvicorn
+
+    from tau_telecom_sft.serve import mlx, proxy
+
+    mlx.prepare(model)
+    log = SERVED_LOGS / f"{model}.jsonl"
+    server = subprocess.Popen(mlx.server_command(model))
+
+    def stop(signum: int, frame: object) -> None:
+        raise KeyboardInterrupt  # so `finally` stops the server on a kill, not only on Ctrl-C
+
+    signal.signal(signal.SIGTERM, stop)
+    try:
+        for _ in range(120):
+            try:
+                urllib.request.urlopen(f"http://127.0.0.1:{mlx.UPSTREAM_PORT}/v1/models", timeout=2)  # noqa: S310
+                break
+            except OSError:
+                time.sleep(1)
+        console.print(
+            f"serving {model} on 127.0.0.1:{port} (recording to {log.relative_to(config.ROOT)})"
+        )
+        app_ = proxy.make_app(
+            f"http://127.0.0.1:{mlx.UPSTREAM_PORT}", log, rewrite_model="default_model"
+        )
+        uvicorn.run(app_, host="127.0.0.1", port=port, log_level="warning")
+    finally:
+        server.terminate()
+        server.wait(timeout=30)
+
+
+@app.command("serve-check")
+def serve_check(port: int = typer.Option(STUDENT_PORT)) -> None:
+    """One request through the proxy: a v1 row cut before its first tool call, with the 13 tools.
+    The reply's calls must come back structured, as `tool_calls`."""
+    import httpx
+
+    rows = [json.loads(x) for x in (config.SFT_DIR / "v1" / "train.jsonl").read_text().splitlines()]
+    row = rows[0]
+    cut = next(
+        i for i, m in enumerate(row["messages"]) if m["role"] == "assistant" and m.get("tool_calls")
+    )
+    body = {
+        "model": "serve-check",
+        "messages": row["messages"][:cut],
+        "tools": row["tools"],
+        "temperature": 0.0,
+    }
+    r = httpx.post(f"http://127.0.0.1:{port}/v1/chat/completions", json=body, timeout=600).json()
+    msg = r["choices"][0]["message"]
+    calls = msg.get("tool_calls") or []
+    want = row["messages"][cut]["tool_calls"][0]["function"]["name"]
+    console.print(
+        f"teacher called {want}; served reply: {len(calls)} tool call(s) {[c['function']['name'] for c in calls]}"
+    )
+    console.print(f"text: {(msg.get('content') or '')[:300]!r}")
+    if not calls:
+        console.print("[yellow]no structured tool call in this reply[/yellow]")
+        raise typer.Exit(1)
+    console.print("[green]ok[/green] the served tool call came back as tool_calls")
+
+
+@app.command("score-pull")
+def score_pull(
+    loop_run: Path = typer.Option(..., help="the tau2-loop run folder"),  # noqa: B008
+    model: str = typer.Option(..., help="`base` or the train run id that was served"),
+    label: str = typer.Option(..., help="e.g. smoke-0.6b-base"),
+    vs: str = typer.Option(None, help="the eval run of its untrained base"),
+    no_mlflow: bool = typer.Option(False),
+) -> None:
+    """Copy a tau2-loop run into runs/<id>/ with pass^k, the prompt-bytes and tool-call checks."""
+    from tau_telecom_sft.score.pull import pull
+    from tau_telecom_sft.serve import mlx
+
+    served = json.loads((mlx.served_dir(model) / "serve.json").read_text())
+    loop_meta = json.loads((loop_run / "run.json").read_text())
+    sampling = dict(
+        kv.split("=", 1) for kv in str(loop_meta.get("sampling", "")).split() if "=" in kv
+    )
+    out = pull(
+        loop_run,
+        label=label,
+        served_log=SERVED_LOGS / f"{model}.jsonl",
+        model={
+            "name": loop_meta["model"],
+            "base_model": served["base_model"],
+            "train_run": served["train_run"],
+            "adapter_sha256": served["adapter_sha256"],
+        },
+        serving={
+            "server": served["server"],
+            "precision": served["dtype"],
+            "endpoint": loop_meta.get("agent_route"),
+            "sampling": {k: float(v) for k, v in sampling.items()},
+            "chat_template_sha256": served["chat_template_sha256"],
+            "max_tokens": 2048,
+        },
+        vs=vs,
+        use_mlflow=not no_mlflow,
+    )
+    rec = json.loads((out / "run.json").read_text())
+    sc = rec["scores"]
+    console.print(
+        f"{out.relative_to(config.ROOT)}: passed {sc['passed']}/{sc['n_tasks']} · "
+        f"prompt bytes {'ok' if rec['prompt_bytes']['ok'] else 'MISMATCH'} over "
+        f"{rec['prompt_bytes']['requests']} requests · tool_calls in "
+        f"{rec['tool_calls']['requests_with_tool_calls']} replies, "
+        f"{rec['tool_calls']['text_tool_calls']} written as text"
+    )
+
+
 if __name__ == "__main__":
     app()

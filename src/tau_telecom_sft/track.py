@@ -9,6 +9,7 @@ to a local store (PLATFORM.md rule 1).
 
 from __future__ import annotations
 
+import json
 import urllib.error
 import urllib.request
 from typing import Any
@@ -170,3 +171,50 @@ def end_train(
         mlflow.end_run(status=status)
     except Exception as e:  # noqa: BLE001 - the folder is the record
         print(f"MLflow logging at the end failed ({e}); the run folder is complete")
+
+
+def log_eval(record: dict[str, Any]) -> str | None:
+    """One run in tau-telecom-sft/eval per scored model: pass^k, the checks, the links."""
+    try:
+        mlflow = _mlflow(config.EXPERIMENT_EVAL)
+    except Exception as e:  # noqa: BLE001 - the run folder is the record
+        print(f"MLflow not reachable ({e}); the run folder is the record")
+        return None
+    sc = record["scores"]
+    with mlflow.start_run(run_name=record["run_id"]) as run:
+        mlflow.set_tags(
+            {
+                **required_tags(billing="subscription"),  # the customer runs on the subscription
+                "kind": record["purpose"],
+                "run_folder": record["run_id"],
+                "tau2_loop_run": record["tau2_loop_run"],
+                "tau2_loop_version": record["tau2_loop_version"],
+                "model": record["model"]["name"],
+                "train_run": record["model"].get("train_run") or "none",
+                "adapter_sha256": record["model"].get("adapter_sha256") or "none",
+                "split": record["split"],
+            }
+        )
+        mlflow.log_params(
+            {
+                "server": record["serving"].get("server"),
+                "precision": record["serving"].get("precision"),
+                "sampling": json.dumps(record["serving"].get("sampling")),
+                "customer": record["customer"]["model"],
+                "trials": record["trials"],
+                "n_tasks": sc["n_tasks"],
+            }
+        )
+        metrics = {f"pass_hat_{k}": v for k, v in sc["pass_hat"].items()}
+        metrics |= {
+            "passed": sc["passed"],
+            "prompt_bytes_ok": float(record["prompt_bytes"]["ok"]),
+            "served_requests": record["prompt_bytes"]["requests"],
+            "requests_with_tool_calls": record["tool_calls"]["requests_with_tool_calls"],
+            "text_tool_calls": record["tool_calls"]["text_tool_calls"],
+        }
+        if record.get("vs"):
+            metrics |= {f"vs_{k}": float(record["vs"][k]) for k in ("fixed", "broke", "same", "p")}
+        mlflow.log_metrics(metrics)
+        rid: str = run.info.run_id
+    return rid
