@@ -33,11 +33,10 @@ def _environment() -> Any:
 
 @functools.cache
 def system_prompt() -> str:
+    policy = _environment().get_policy()  # first, so tau2 is quietened before it is imported
     from tau2.agent.llm_agent import AGENT_INSTRUCTION, SYSTEM_PROMPT
 
-    prompt: str = SYSTEM_PROMPT.format(
-        agent_instruction=AGENT_INSTRUCTION, domain_policy=_environment().get_policy()
-    )
+    prompt: str = SYSTEM_PROMPT.format(agent_instruction=AGENT_INSTRUCTION, domain_policy=policy)
     return prompt
 
 
@@ -62,7 +61,7 @@ def _sha256(text: str) -> str:
 
 
 def prompt_fingerprint() -> dict[str, str]:
-    """The bytes the student trains on, and must be served with (M2's prompt-bytes test)."""
+    """The bytes the student trains on, and must be served with (the prompt-bytes tests, M2, M3)."""
     return {
         "system_prompt_sha256": _sha256(system_prompt()),
         "tools_sha256": _sha256(json.dumps(agent_tools(), sort_keys=True)),

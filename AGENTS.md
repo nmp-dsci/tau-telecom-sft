@@ -59,7 +59,7 @@ Choices made while building M0:
 |---|---|---|
 | Agent view | tau2's own `is_valid_agent_history_message`, with each `MultiToolMessage` split into its results | the agent never sees the customer's 30 phone tools; one rule, tau2's, not a copy |
 | Row format | `messages` + `tools` + `meta`. Tool-call arguments are JSON strings (OpenAI's shape), and `content` is `""` on a tool-call turn | the shape tau2 sends at serving time; Qwen's template takes either a string or a dict |
-| System prompt | tau2's stock `SYSTEM_PROMPT` with `get_policy()` at the pin. The card records its sha256 and the tools' sha256 | M2's prompt-bytes test compares the served bytes with these |
+| System prompt | tau2's stock `SYSTEM_PROMPT` with `get_policy()` at the pin. The card records its sha256 and the tools' sha256 | the prompt-bytes tests in M2 (Mac) and M3 (vLLM) compare the served bytes with these |
 | F6 median | over the task's F1 passes, across all sources, computed before any rule runs | stable whatever order the rules run in |
 | F9 order | keeps the first three in (source, task, trial, simulation id) order | deterministic, so a rebuild gives the same rows |
 | F10 counter | characters ÷ 4 in the smoke build only. M1 counts with the student's tokenizer and chat template | the smoke must not download a tokenizer |
@@ -67,7 +67,7 @@ Choices made while building M0:
 | Smoke | 17 handwritten fixture conversations, built with tau2's own models (`tests/fixtures/make_fixtures.py`). Each is a clean pass or breaks exactly one rule. | zero cost, and every rule is exercised. F8 can't fire while D6 is off, so a unit test covers it. |
 | `websockets` dependency | declared here | tau2's data model imports it at the pin, though tau2 lists it only in its `voice` extra |
 | House UI hue | none yet: registered without a `ui` block | with P9 at 15, no hue is left 30° from the ten others (D28). The only artifact is the plan, which keeps its inline CSS (D30). |
-| The greeting | `Hi! How can I help you today?` stays in each row as a trained assistant turn | tau2's orchestrator writes it, so the student never has to. It's harmless, and M3 can mask it if the loss table shows it matters. |
+| The greeting | `Hi! How can I help you today?` stays in each row as a trained assistant turn | tau2's orchestrator writes it, so the student never has to. It's harmless, and M2 can mask it if the loss table shows it matters. |
 
 ## 4 · Layout
 
@@ -98,7 +98,8 @@ tests/fixtures/                      board_mini.json and the script that writes 
 ```
 
 Still to come, from the plan's §9 tree: `sources/board.py` (M1), `train/sft.py`, `configs/` and
-the `Dockerfile` (M3, M4), `serve/` and `score/` (M2), `infra/terraform/` (M4), `runs/` (M2 on),
+`serve/mlx.py` (M2, the Mac proof of concept), `serve/vllm.py` (M3), `score/` (M2, M3), the
+`Dockerfile` and `infra/terraform/` (M4), `runs/` (M2 on),
 and `sources/teacher.py` (M7, only if needed).
 
 ## 5 · Commands
@@ -120,7 +121,7 @@ the run reached `tau-telecom-sft/data`.
 | Experiment | One run per | Kinds |
 |---|---|---|
 | `tau-telecom-sft/data` | dataset build | `smoke`, `build` |
-| `tau-telecom-sft/train` | training job (M3 on) | |
+| `tau-telecom-sft/train` | training job (M2 on) | |
 | `tau-telecom-sft/eval` | scored model (M2 on) | |
 
 The registered model is `tau-telecom-sft-student` (M4 on). Every run carries `project`,

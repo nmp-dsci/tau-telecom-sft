@@ -15,8 +15,8 @@ tasks. The student faces the same 40 test tasks as the Claude telecom v2 agent (
 |---|---|---|---|
 | M0 · Create the repo and connect it | done | 2026-10-17 | split v3 sha256 `45d48101…` matches tau2-loop's; leak test runs; `make -C ../nmp-central-ai check ARGS="--only P10"` PASS |
 | M1 · Build dataset v1 | next | | |
-| M2 · Serve the untrained 4B (R0) | | | |
-| M3 · Smoke-train on the Mac | | | |
+| M2 · Prove the pipeline on the Mac, end to end (0.6B) | | | |
+| M3 · Serve the untrained 4B on EC2 (R0) | | | |
 | M4 · SFT the 4B on v1 | | | |
 | M5 · Score it on test (R1) | | | |
 | M6 · The 30B shadow (R2, R3) | | | |
@@ -31,7 +31,7 @@ test against its own untrained base. Counts sit beside percentages: one task is 
 
 | Row | Model | pass^1 | pass^3 | vs base (p) | Cost / conv |
 |---|---|---|---|---|---|
-| R0 | Qwen3-4B-Instruct-2507, untrained | M2 | M2 | n/a | M2 |
+| R0 | Qwen3-4B-Instruct-2507, untrained | M3 | M3 | n/a | M3 |
 | R1 | Qwen3-4B + SFT on v1 | M5 | M5 | M5 | M5 |
 | R2 | Qwen3-30B-A3B, untrained | M6 | M6 | n/a | M6 |
 | R3 | Qwen3-30B-A3B + SFT on v1 | M6 | M6 | M6 | M6 |

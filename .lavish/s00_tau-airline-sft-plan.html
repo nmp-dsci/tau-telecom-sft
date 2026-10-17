@@ -1422,7 +1422,7 @@ Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
     <div><dt>Student, step 1</dt><dd><code>Qwen/Qwen3-4B-Instruct-2507</code> (Apache-2.0), a non-thinking model. It's cheap on one L4 and proves the pipeline end to end.</dd></div>
     <div><dt>Student, step 2</dt><dd><code>Qwen/Qwen3-30B-A3B</code> (Apr 2025, Apache-2.0): 30B in total with 3B active per token. It's the talk's model, released before tau2, and the true shadow.</dd></div>
     <div><dt>Method</dt><dd>LoRA r 16, alpha 32, on all linear layers (on the 30B, the attention layers and experts). Learning rate 1e-4 with cosine decay, 3 epochs, bf16. All of these are starting points.</dd></div>
-    <div><dt>Loss</dt><dd>Assistant turns only. TRL patches Qwen3's template to mark them, and M3 checks the mask.</dd></div>
+    <div><dt>Loss</dt><dd>Assistant turns only. TRL patches Qwen3's template to mark them, and M2 checks the mask on the Mac.</dd></div>
     <div><dt>Length</dt><dd>24,576 tokens, with no packing. Gradient checkpointing and Liger kernels on.</dd></div>
     <div><dt>Checkpoint</dt><dd>3 epochs, fixed before training, and the final checkpoint is the model. With all 74 tasks trained on, none are left to pick one. Each epoch is still saved, for the record.</dd></div>
     <div style="grid-column:1/-1"><dt>Where</dt><dd>
@@ -1449,7 +1449,7 @@ Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
       <ul>
         <li><b>Supported models:</b> W&amp;B's serverless training, now in CoreWeave's docs, lists three models for both RL and SFT: Gemma 4 26B-A4B, Llama 3.1 8B and Nemotron 3.5 Lightning 30B-A3B. Qwen3 30B isn't listed, so the talk's exact setup isn't available.</li>
         <li><b>Avoid Nemotron 3.5 Lightning here:</b> its model card lists tau2 telecom trajectories in its training data, so its telecom score says little about fine-tuning.</li>
-        <li><b>Your Mac</b> (M1 Pro, 32 GB) runs <code>make train-smoke</code> only: 5 steps on Qwen3-0.6B at 2K tokens, printing which tokens carry loss.</li>
+        <li><b>Your Mac</b> (M1 Pro, 32 GB) runs M2's proof of concept. <code>make train-smoke</code> runs a few steps of the same TRL code on Qwen3-0.6B at 12K tokens and prints which tokens carry loss. The Mac then serves that adapter and plays 3 training tasks through tau2-loop. A 2K limit wouldn't work, because the system prompt and tools take about 7.6K tokens.</li>
       </ul>
     </div>
   </div>
@@ -1525,7 +1525,7 @@ Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
         <tr><td><code>gradient_accumulation_steps</code></td><td>Rows added up before one update. Batch × this = the effective batch.</td><td class="d">1</td><td class="p">16</td><td>About 475 rows ÷ 16 is about 30 updates an epoch. Try 8 for twice as many updates if the loss curve is too coarse.</td></tr>
         <tr><td><code>gradient_checkpointing</code></td><td>Recomputes activations instead of storing them: less memory, roughly 20 to 30% slower</td><td class="d">True</td><td class="p">True</td><td>Only off if memory is plentiful</td></tr>
         <tr><td><code>bf16</code></td><td>Trains in bfloat16</td><td class="d">True</td><td class="p">True</td><td>Never on an L4 or A100</td></tr>
-        <tr><td><code>use_liger_kernel</code></td><td>Fused kernels, including a loss that never builds the full 24K × 151,936 logits table</td><td class="d">False</td><td class="p">True</td><td>TRL's own loss is now computed in chunks too. M3 compares memory with and without it.</td></tr>
+        <tr><td><code>use_liger_kernel</code></td><td>Fused kernels, including a loss that never builds the full 24K × 151,936 logits table</td><td class="d">False</td><td class="p">True</td><td>TRL's own loss is now computed in chunks too. Liger needs CUDA, so the Mac smoke runs without it, and M4's first steps compare memory with and without it.</td></tr>
         <tr><td><code>model_init_kwargs</code></td><td>How the base model loads: dtype, attention kernel, 4-bit (QLoRA)</td><td class="d">none</td><td class="p">bf16</td><td>4-bit loading for the 30B only if 80 GB isn't enough. It's a different model to serve, so note it.</td></tr>
         <tr class="grp"><td colspan="5">The adapter (PEFT <code>LoraConfig</code>)</td></tr>
         <tr><td><code>r</code></td><td>The adapter's rank: how much it can change</td><td class="d">8</td><td class="p">16</td><td>32 if the 4B underfits. The adapter is small either way.</td></tr>
@@ -1596,7 +1596,7 @@ Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
       <thead><tr><th>Option</th><th>How</th><th>160 test conversations (estimate)</th><th>Same model as trained?</th><th>Verdict</th></tr></thead>
       <tbody>
         <tr><td><b>A · vLLM on the training GPU</b></td><td>The same instance as training. vLLM's own image serves the base model plus the adapter in bf16, bound to localhost.</td><td>About 3 to 4 hours with 3 conversations at a time, so about $4 to $5 on the L4.<span class="sm">tau2-loop's telecom conversations take a median 289 s, because the customer makes its own phone tool calls.</span></td><td>Yes</td><td><span class="verdict go">recommended</span></td></tr>
-        <tr><td><b>B · mlx_lm.server on your Mac</b></td><td>Merge the adapter, convert to MLX at 4 bits, serve locally</td><td>Probably 10 hours or more for the 4B, one conversation at a time. Not practical for the 30B.</td><td>No: 4-bit is a different model</td><td><span class="verdict alt">smoke tests only</span></td></tr>
+        <tr><td><b>B · mlx_lm.server on your Mac</b></td><td>Merge the adapter, convert to MLX at 4 bits, serve locally</td><td>Probably 10 hours or more for the 4B, one conversation at a time. Not practical for the 30B.</td><td>No: 4-bit is a different model</td><td><span class="verdict alt">smoke tests only</span><span class="sm">M2's proof of concept uses it for the 0.6B, in bf16.</span></td></tr>
         <tr><td><b>C · SageMaker real-time endpoint</b></td><td>The enterprise pattern, behind IAM</td><td>Similar to A once it's up</td><td>Yes</td><td><span class="verdict no">later</span><span class="sm">It needs a GPU endpoint quota.</span></td></tr>
       </tbody>
     </table>
@@ -1642,7 +1642,7 @@ Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
     </div>
   </div>
   <div class="codeblock">
-    <div class="codehead"><span class="path">serve/serve.sh</span><span class="why">A sketch of M2 and M5 on the L4: one process serves the base model (R0) and each adapter by name</span></div>
+    <div class="codehead"><span class="path">serve/serve.sh</span><span class="why">A sketch of M3 and M5 on the L4: one process serves the base model (R0) and each adapter by name</span></div>
     <div class="codemount" id="m-serve"></div>
   </div>
 
@@ -1652,7 +1652,7 @@ Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
     <table class="res">
       <thead><tr><th>Row</th><th>Model</th><th>pass^1</th><th>pass^3</th><th>vs base (p)</th><th>Cost / conv</th></tr></thead>
       <tbody>
-        <tr><td class="n">R0</td><td><b>Qwen3-4B, untrained</b><span class="sm">M2: the control for whatever the model already knew</span></td><td class="tbd">M2</td><td class="tbd">M2</td><td class="tbd">n/a</td><td class="tbd">M2</td></tr>
+        <tr><td class="n">R0</td><td><b>Qwen3-4B, untrained</b><span class="sm">M3: the control for whatever the model already knew</span></td><td class="tbd">M3</td><td class="tbd">M3</td><td class="tbd">n/a</td><td class="tbd">M3</td></tr>
         <tr><td class="n">R1</td><td><b>Qwen3-4B + SFT on v1</b><span class="sm">board conversations</span></td><td class="tbd">M5</td><td class="tbd">M5</td><td class="tbd">M5</td><td class="tbd">M5</td></tr>
                 <tr><td class="n">R2</td><td><b>Qwen3-30B-A3B, untrained</b><span class="sm">the talk's base; the talk reports 0% pass^3</span></td><td class="tbd">M6</td><td class="tbd">M6</td><td class="tbd">n/a</td><td class="tbd">M6</td></tr>
         <tr><td class="n">R3</td><td><b>Qwen3-30B-A3B + SFT on v1</b><span class="sm">the shadow, on board data; the talk reports 75% pass^3</span></td><td class="tbd">M6</td><td class="tbd">M6</td><td class="tbd">M6</td><td class="tbd">M6</td></tr>
@@ -1715,8 +1715,8 @@ Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
 <!-- 10 MILESTONES -->
 <section id="s-ms">
   <div class="kicker">10 · Milestones and tracking</div>
-  <h2>Prove serving and scoring on the 4B first, then spend on the 30B shadow</h2>
-  <p class="lede">The order puts the riskiest link first. M2 scores the untrained 4B end to end through the serving path before any training, so a format or prompt mismatch shows up cheaply. The 30B step only starts once the 4B has a clean before and after. Each row has a check you can verify and a place where its evidence lives.</p>
+  <h2>Prove the whole pipeline on the Mac, then the 4B on EC2, then spend on the 30B shadow</h2>
+  <p class="lede">The order puts the riskiest link first, where it's cheapest to find. M2 runs the whole pipeline on your Mac with a 0.6B model: the loss mask, a trained adapter, serving with tool calls, and a scored run in tau2-loop. A format or prompt mismatch shows up there for free. M3 then scores the untrained 4B on EC2 through vLLM before any paid training. The 30B step only starts once the 4B has a clean before and after. Each row has a check you can verify and a place where its evidence lives.</p>
   <div class="tw">
     <table class="ms2" id="ms-table">
       <thead><tr><th>ID</th><th>Work</th><th>Runs on</th><th>Done when</th><th>Evidence in</th></tr></thead>
@@ -1736,13 +1736,18 @@ Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
             <li>Load S1, S2 and one tau2-loop telecom run with the same loader, and test that they match (<a href="#formats">§4</a>).</li>
             <li>Read 10 kept and 10 dropped conversations.</li>
           </ul></td><td>Mac</td><td>The card's counts add up, the leak test passes, and you've signed off on the sample you read.</td><td><code>data/sft/v1/card.md</code> · MLflow data</td></tr>
-        <tr><td class="n">M2</td><td><b>Serve the untrained 4B and record the before row.</b>
+        <tr><td class="n">M2</td><td><b>Prove the pipeline on the Mac, end to end.</b> A proof of concept with Qwen3-0.6B, before anything runs on EC2. The scores aren't results.
+          <ul>
+            <li><b>Train:</b> <code>make train-smoke</code> runs the same TRL code the EC2 job will (<code>train/sft.py</code>, LoRA, assistant-only loss) for a few steps on v1's rows. It uses 12K tokens, because the system prompt and tools alone take about 7.6K, so 2K would hold no agent turn. It prints the loss mask for one row.</li>
+            <li><b>Serve:</b> merge the adapter, convert it to MLX in bf16 and serve it with <code>mlx_lm.server</code> on <code>localhost:8000</code>, with tool calls parsed. This is option B in <a href="#s-score">§8</a>, used only to prove the plumbing. If its tool parsing falls short, llama.cpp's server with <code>--jinja</code> is the fallback.</li>
+            <li><b>Score:</b> make the three tau2-loop changes, then play 3 training tasks × 1 trial against the untrained 0.6B and against the tuned one, with the usual Haiku 5.5 customer. Only training tasks: no test task is played until a real model is.</li>
+          </ul></td><td>Mac · tau2-loop</td><td>The tokens with loss are exactly the agent's turns. A served tool call comes back as <code>tool_calls</code>, the prompt-bytes test passes, and tau2-loop records both runs.</td><td>tests assert the mask and the prompt bytes · MLflow train and eval (kind=smoke) · tau2-loop run IDs</td></tr>
+        <tr><td class="n">M3</td><td><b>Serve the untrained 4B on EC2 and record the before row.</b>
           <ul>
             <li>Start vLLM on the L4, using vLLM's own image.</li>
-            <li>Make the three tau2-loop changes.</li>
+            <li>Point M2's tau2-loop student version at it through the port forward. The three tau2-loop changes are already made.</li>
             <li>Play the 40 test tasks, 4 trials each.</li>
-          </ul></td><td>EC2 L4 · tau2-loop</td><td>R0 is filled in. Tool calls come back as <code>tool_calls</code> and the prompt-bytes test passes.</td><td>MLflow eval · tau2-loop run IDs</td></tr>
-        <tr><td class="n">M3</td><td><b>Smoke-train on the Mac.</b> Run 5 steps on Qwen3-0.6B at 2K tokens and print the loss mask for one example.</td><td>Mac</td><td>The tokens with loss are exactly the agent's turns, nothing from the customer or the tools.</td><td>a test asserts the mask</td></tr>
+          </ul></td><td>EC2 L4 · tau2-loop</td><td>R0 is filled in. Tool calls come back as <code>tool_calls</code> from vLLM too, and the prompt-bytes test passes on the served bytes.</td><td>MLflow eval · tau2-loop run IDs</td></tr>
         <tr><td class="n">M4</td><td><b>SFT the 4B on v1.</b>
           <ul>
             <li>Use <code>configs/sft_a.yaml</code> on all 74 training tasks, for a fixed 3 epochs.</li>
@@ -1797,7 +1802,7 @@ Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
         <tr><td><b>The test reuses training root issues</b>, so the result could be read as more than it is</td><td>Say what it shows: known faults in new combinations. If you want a harder claim, a later split could hold out whole root issues.</td></tr>
         <tr><td><b>Generated-pool leakage</b> if D6 adds pool tasks</td><td>F8 drops any pool task with a test task's exact set of root issues, under any persona, and the leak test checks it.</td></tr>
         <tr><td><b>Long conversations:</b> a median of 15K tokens and a maximum of 26K in tau2-loop's runs</td><td>A 24K limit, Liger's fused loss and checkpointing; F10 counts what's cut. The 30B on A100s has more room.</td></tr>
-        <tr><td><b>Train and serve differ</b> in prompt bytes, the clock note, the tool-call format or sampling</td><td>M2 runs the untrained 4B through the exact serving path before any training. A test compares the trained system prompt with the served one.</td></tr>
+        <tr><td><b>Train and serve differ</b> in prompt bytes, the clock note, the tool-call format or sampling</td><td>M2 runs a 0.6B through the whole path on the Mac, and M3 runs the untrained 4B through the exact serving path on EC2, both before any paid training. A test compares the trained system prompt with the served one.</td></tr>
         <tr><td><b>Terms on the board files:</b> their customer turns are GPT-5.2 output</td><td>They are context only, with no loss on them. If S3 is ever run, it uses an open customer. Claude's output is never used.</td></tr>
         <tr><td><b>The 30B is harder to run</b>: about 61 GB of weights, MoE LoRA, and a rented machine outside AWS</td><td>It comes last, after the 4B has proved everything. Checkpoint every epoch to the bucket, keep the same image, and stop the machine the moment a run ends.</td></tr>
         <tr><td><b>Noise:</b> a single trial flipped 5 of 25 tasks between two runs of one airline agent</td><td>Use 4 trials, paired tests by task, and counts beside percentages.</td></tr>
@@ -2039,6 +2044,7 @@ tau-telecom-sft/                     # its own repo, registered in nmp-central-a
 │   ├── build/convert.py             # agent's view -> chat + tools JSONL, stock SYSTEM_PROMPT
 │   ├── build/card.py                # the dataset card, logged to tau-telecom-sft/data
 │   ├── train/sft.py                 # TRL SFTTrainer + PEFT LoRA, assistant-only loss
+│   ├── serve/mlx.py                 # M2 on the Mac: merge, convert to MLX bf16, mlx_lm.server
 │   ├── serve/vllm.py                # base + adapter, tool parser on, port 8000
 │   ├── score/loop.py                # calls tau2-loop's make eval, records the run id
 │   └── track.py                     # MLflow tags, bucket metrics sink, sync from the Mac
@@ -2060,15 +2066,16 @@ teacher-one                # ONE GLM-5.1 conversation, cost printed, nothing els
 teacher N=12               # the batch on the 74 training tasks, only after teacher-one        M7?
 
 # --- train ---
-train-smoke                # Mac: Qwen3-0.6B, 5 steps, 2k tokens, prints the loss mask          M3
+train-smoke                # Mac: Qwen3-0.6B, a few steps at 12k tokens, prints the loss mask   M2
 image                      # CI builds amd64, pushes to ECR (and GHCR, which RunPod can pull)    M4
 train CONFIG=sft_a         # on the L4: docker run --gpus all <image> --config configs/...      M4
 train CONFIG=sft_shadow    # on the 80 GB A100, the same image                                  M6
 
 # --- serve and score ---
-serve ADAPTER=<path>       # vLLM's own image on the GPU: base (+ adapter), tool parser on      M2
-tunnel                     # SSM (EC2) or SSH (RunPod) port forward: Mac localhost:8000 -> GPU M2
-score SPLIT=test|train TRIALS=4 AGENT=<student version>  # make -C ../tau2-loop eval ...         M2, M5, M6
+serve-mac ADAPTER=<path>   # Mac: merge, MLX in bf16, mlx_lm.server on :8000, tool calls parsed M2
+serve ADAPTER=<path>       # vLLM's own image on the GPU: base (+ adapter), tool parser on      M3
+tunnel                     # SSM (EC2) or SSH (RunPod) port forward: Mac localhost:8000 -> GPU M3
+score SPLIT=test|train TRIALS=4 AGENT=<student version>  # make -C ../tau2-loop eval ...     M2, M3, M5, M6
 sync-mlflow                # bucket metrics and scored runs -> central MLflow, from the Mac    every run
 
 # --- housekeeping ---

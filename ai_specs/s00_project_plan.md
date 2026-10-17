@@ -28,15 +28,25 @@ each of the 40 tasks is worth 2.5 points.
   the same loader and test that they match. Read 10 kept and 10 dropped conversations.
   - Done when: the card's counts add up, the leak test passes, and the person has signed off on
     the sample. Evidence: `data/sft/v1/card.md` · MLflow data
-- [ ] **M2 · Serve the untrained 4B and record the before row** (EC2 L4 · tau2-loop). Start
-  vLLM on the L4 with vLLM's own image, make the three tau2-loop changes, and play the 40 test
-  tasks × 4 trials.
-  - Done when: R0 is filled in, tool calls come back as `tool_calls`, and the prompt-bytes test
-    passes. Evidence: MLflow eval · tau2-loop run ids
-- [ ] **M3 · Smoke-train on the Mac.** 5 steps on Qwen3-0.6B at 2K tokens; print the loss mask
-  for one example.
-  - Done when: the tokens with loss are exactly the agent's turns, with nothing from the
-    customer or the tools. Evidence: a test asserts the mask
+- [ ] **M2 · Prove the pipeline on the Mac, end to end** (Mac · tau2-loop). A proof of concept
+  with Qwen3-0.6B before anything runs on EC2; its scores are not results. (Reordered on
+  2026-10-17 at the person's request: this was M3's smoke-train, now extended to serve and score.)
+  - Train: `make train-smoke` runs the same TRL code as the EC2 job (`train/sft.py`, LoRA,
+    assistant-only loss) for a few steps on v1's rows at 12K tokens. The system prompt and tools
+    take about 7.6K tokens (characters ÷ 4), so 2K would hold no agent turn. It prints the loss
+    mask for one row.
+  - Serve: merge the adapter, convert it to MLX in bf16, and serve it with `mlx_lm.server` on
+    `localhost:8000` with tool calls parsed. llama.cpp's `llama-server --jinja` is the fallback.
+  - Score: make the three tau2-loop changes; play 3 training tasks × 1 trial for the untrained
+    and the tuned 0.6B, with the Haiku 5.5 customer. Training tasks only.
+  - Done when: the loss mask is exactly the agent's turns; a served tool call comes back as
+    `tool_calls`; the prompt-bytes test passes; tau2-loop records both runs. Evidence: tests
+    assert the mask and the prompt bytes · MLflow train and eval (kind=smoke) · tau2-loop run ids
+- [ ] **M3 · Serve the untrained 4B on EC2 and record the before row** (EC2 L4 · tau2-loop).
+  Start vLLM on the L4 with vLLM's own image, point M2's tau2-loop student version at it through
+  the port forward, and play the 40 test tasks × 4 trials.
+  - Done when: R0 is filled in, tool calls come back as `tool_calls` from vLLM too, and the
+    prompt-bytes test passes on the served bytes. Evidence: MLflow eval · tau2-loop run ids
 - [ ] **M4 · SFT the 4B on v1** (EC2 L4). `configs/sft_a.yaml` on all 74 training tasks for a
   fixed 3 epochs. The final checkpoint is the model, and earlier epochs are kept for the record.
   Fix the success criteria and the epoch count before the run starts.
