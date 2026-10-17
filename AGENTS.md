@@ -52,6 +52,9 @@ The plan's §12 decisions:
 | D5 | Where the student is scored | open; plan default | tau2-loop, with three changes made there |
 | D6 | Which tasks are trained on | open; plan default | The 74 training tasks only (`allow_pool=False`) |
 | D7 | Where the student is served | open; plan default | vLLM on the training GPU, reached through a port forward |
+| D8 | The viewer's hue | open; plan default | lower the platform's 30° separation to 25° and take 228 (needs a change in nmp-central-ai) |
+| D9 | Who can open the viewer | open; plan default | the Mac only (127.0.0.1), built to the portfolio site's contract (nmp-central-ai s06) so it can join later |
+| D10 | Where sign-offs live | open; plan default | `data/sft/vN/review.jsonl`, append-only and committed |
 
 Choices made while building M0:
 
@@ -97,7 +100,8 @@ tests/                               split, no-leak, build (agent view, filters,
 tests/fixtures/                      board_mini.json and the script that writes it
 ```
 
-Still to come, from the plan's §9 tree: `sources/board.py` (M1), `train/sft.py`, `configs/` and
+Still to come: the viewer (plan §10: `frontend/` and `serving/app.py`, API :8085, UI :5177, house
+UI, tau2-loop's URL grammar; data side at M1, training and scoring side at M2). From the plan's §9 tree: `sources/board.py` (M1), `train/sft.py`, `configs/` and
 `serve/mlx.py` (M2, the Mac proof of concept), `serve/vllm.py` (M3), `score/` (M2, M3), the
 `Dockerfile` and `infra/terraform/` (M4), `runs/` (M2 on),
 and `sources/teacher.py` (M7, only if needed).

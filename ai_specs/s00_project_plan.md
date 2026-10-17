@@ -25,9 +25,11 @@ each of the 40 tasks is worth 2.5 points.
 - [ ] **M1 · Build dataset v1** (Mac). Download S1 and S2 (128 MB) and keep the 74 training
   tasks. Strip the customer's phone calls, run F1 to F10 and convert. Measure token lengths with
   the student's tokenizer and set the F10 limit. Load S1, S2 and one tau2-loop telecom run with
-  the same loader and test that they match. Read 10 kept and 10 dropped conversations.
+  the same loader and test that they match. Start the viewer's data side (plan §10): `/data`,
+  the rows in the chat and raw lenses, and `/data/v1/review`. Read 10 kept and 10 dropped
+  conversations there and sign off.
   - Done when: the card's counts add up, the leak test passes, and the person has signed off on
-    the sample. Evidence: `data/sft/v1/card.md` · MLflow data
+    the sample in the viewer. Evidence: `data/sft/v1/card.md` · `review.jsonl` · MLflow data
 - [ ] **M2 · Prove the pipeline on the Mac, end to end** (Mac · tau2-loop). A proof of concept
   with Qwen3-0.6B before anything runs on EC2; its scores are not results. (Reordered on
   2026-10-17 at the person's request: this was M3's smoke-train, now extended to serve and score.)
@@ -39,8 +41,10 @@ each of the 40 tasks is worth 2.5 points.
     `localhost:8000` with tool calls parsed. llama.cpp's `llama-server --jinja` is the fallback.
   - Score: make the three tau2-loop changes; play 3 training tasks × 1 trial for the untrained
     and the tuned 0.6B, with the Haiku 5.5 customer. Training tasks only.
+  - See it: the viewer's `/train` and `/eval` pages and the rows' tokens lens, fed by the smoke run.
   - Done when: the loss mask is exactly the agent's turns; a served tool call comes back as
-    `tool_calls`; the prompt-bytes test passes; tau2-loop records both runs. Evidence: tests
+    `tool_calls`; the prompt-bytes test passes; tau2-loop records both runs; the viewer shows the
+    chain from the smoke dataset to both scored runs. Evidence: tests
     assert the mask and the prompt bytes · MLflow train and eval (kind=smoke) · tau2-loop run ids
 - [ ] **M3 · Serve the untrained 4B on EC2 and record the before row** (EC2 L4 · tau2-loop).
   Start vLLM on the L4 with vLLM's own image, point M2's tau2-loop student version at it through
@@ -65,6 +69,6 @@ each of the 40 tasks is worth 2.5 points.
   - Done when: R4 is filled in with its cost report, or the README records that the trigger
     didn't fire. Evidence: `data/sft/v2/card.md` · MLflow
 - [ ] **M8 · Write it up** (Mac). A model card, and cost per conversation against Haiku and
-  Sonnet. R5: replay Claude v2 on the 40 test tasks × 4 trials. A Lavish results page set
-  against the talk, and the adapters on the HF Hub, kept private.
+  Sonnet. R5: replay Claude v2 on the 40 test tasks × 4 trials. The viewer's `/method` page
+  finished. A Lavish results page set against the talk, and the adapters on the HF Hub, kept private.
   - Done when: published, with every number traced to a run id. Evidence: README · .lavish/
