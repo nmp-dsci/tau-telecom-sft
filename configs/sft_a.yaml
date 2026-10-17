@@ -1,0 +1,31 @@
+# M4: step 1's run (plan §7). Qwen3-4B-Instruct-2507 with LoRA on dataset v1, all 74 training
+# tasks, 3 epochs fixed in advance; the final checkpoint is the model. Written at M2 so the Mac
+# smoke run and this job share one script; not run until M4, and only when asked.
+label: sft-a-4b
+purpose: result
+base_model: Qwen/Qwen3-4B-Instruct-2507
+tokenizer: Qwen/Qwen3-4B-Instruct-2507
+dataset: v1
+rows:
+  max_tokens: 24576
+lora:
+  r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  target_modules: all-linear
+sft:
+  max_length: 24576
+  assistant_only_loss: true
+  packing: false
+  learning_rate: 1.0e-4
+  lr_scheduler_type: cosine
+  warmup_steps: 0.05
+  num_train_epochs: 3
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 16
+  gradient_checkpointing: true
+  bf16: true
+  use_liger_kernel: true
+  logging_steps: 1
+  save_strategy: epoch
+  seed: 300
