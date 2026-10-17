@@ -1,0 +1,14 @@
+{
+  "file": "data/splits/telecom.json",
+  "sha256": "45d481019e630fba8a5a1e0b55f3fc789ba3118858300e8688c37b6c2fc4f90a",
+  "bytes": 35018,
+  "domain": "telecom",
+  "version": 3,
+  "train_n": 74,
+  "test_n": 40,
+  "seed": 300,
+  "source": "tau2-loop data/splits/telecom.json",
+  "source_commit": "cfa1d4fb2fbae755ce6351d34d2bd87be0753b76",
+  "copied": "2026-10-17",
+  "note": "A byte-for-byte copy. Never edit it here: a new split is a new version in tau2-loop, copied again with a new sha256."
+}

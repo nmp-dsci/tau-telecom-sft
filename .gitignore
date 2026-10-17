@@ -1,0 +1,27 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# Keys: ~/.env on the Mac, the cloud's secret store elsewhere
+.env
+.env.*
+
+# Immutable downloads and teacher runs (M1, M7): recorded by sha256 in data/sources.json
+raw/
+
+# Dataset rows live in S3 under their content hash; each version's card, stats and drops are
+# committed (none of them names a test task)
+data/sft/*/train.jsonl
+
+# Training outputs: adapters go to S3; runs/<id>/ records point at them
+outputs/
+adapters/
+
+# opensrc/ fetches (setup_opensrc.sh copies each source tree here)
+opensrc/*/
+
+.DS_Store

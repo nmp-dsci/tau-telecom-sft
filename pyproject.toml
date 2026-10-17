@@ -1,0 +1,68 @@
+[project]
+name = "tau-telecom-sft"
+version = "0.1.0"
+description = "Shadow the TMLS talk: SFT an open model on clean tau2 telecom conversations, scored in tau2-loop on split v3's 40 test tasks."
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+license = { text = "MIT" }
+dependencies = [
+  # tau2-bench v1.0.1, pinned at 2174a60 as the vendor/tau2-bench submodule (the same pin as
+  # tau2-loop): its data models, its agent-view rule, its stock prompt and the telecom tools.
+  "tau2",
+  # tau2's data model imports it at the pin, though tau2 declares it only in its `voice` extra
+  "websockets>=13.0",
+  "mlflow>=3.12,<4",
+  "typer>=0.15",
+  "rich>=13.9",
+  "pydantic>=2.9",
+  "pyyaml>=6.0",
+  "python-dotenv>=1.0",
+]
+# The trainer (trl, peft, transformers, liger-kernel, datasets) joins at M3 as an extra, so the
+# Mac's data work never installs torch.
+
+[project.scripts]
+tausft = "tau_telecom_sft.cli:app"
+
+[dependency-groups]
+dev = [
+  "pytest>=8.3",
+  "ruff>=0.14.2",
+  "mypy>=1.13",
+  "types-PyYAML",
+]
+
+[tool.uv.sources]
+tau2 = { path = "vendor/tau2-bench", editable = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tau_telecom_sft"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+extend-exclude = ["vendor", "opensrc"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "N", "W"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["tau_telecom_sft"]
+mypy_path = "src"
+
+[[tool.mypy.overrides]]
+module = ["tau2.*", "mlflow.*", "loguru.*"]
+ignore_missing_imports = true
+follow_imports = "skip"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q -p no:warnings"

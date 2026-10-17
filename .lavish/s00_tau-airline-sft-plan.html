@@ -1,0 +1,2176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tau-telecom-sft Plan</title>
+<script>
+  (function(){
+    var t; try{t=localStorage.getItem('theme')}catch(e){}
+    var mq=window.matchMedia('(prefers-color-scheme: dark)');
+    if(t!=='light'&&t!=='dark'){t=mq.matches?'dark':'light'}
+    document.documentElement.setAttribute('data-theme',t);
+    mq.addEventListener('change',function(e){
+      try{if(localStorage.getItem('theme'))return}catch(err){}
+      document.documentElement.setAttribute('data-theme',e.matches?'dark':'light');
+    });
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#F4F6F3; --panel:#FFFFFF; --ink:#14181C; --ink-soft:#3E4A44;
+  --muted:#5A655D; --faint:#77837A; --line:#DDE4DC; --line-2:#C9D2C9;
+  --signal:#17876B; --signal-soft:#E4F1EC; --amber:#B26A12;
+  --chip-bg:#E4F1EC; --chip-ink:#11674F; --hover:#FAFBF9;
+  --grid-line:rgba(16,22,19,.028); --hero-glow:rgba(23,135,107,.07);
+  --pre-bg:#14181C; --pre-ink:#E8ECE9;
+  --shadow:0 1px 2px rgba(16,22,19,.04),0 10px 26px -14px rgba(16,22,19,.16);
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,monospace;
+  --sans:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  --w:1120px;
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#101511; --panel:#171E19; --ink:#E8EDE9; --ink-soft:#C3CCC5;
+  --muted:#96A29A; --faint:#71807A; --line:#242E27; --line-2:#33413A;
+  --signal:#43C29A; --signal-soft:#173428; --amber:#D19243;
+  --chip-bg:#173428; --chip-ink:#7FDDBB; --hover:#1C2420;
+  --grid-line:rgba(232,237,233,.035); --hero-glow:rgba(67,194,154,.09);
+  --pre-bg:#0B0F0C; --pre-ink:#DEE5E0;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 10px 26px -14px rgba(0,0,0,.55);
+}
+*,*::before,*::after{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+  font-size:16px;line-height:1.6;letter-spacing:-.005em;
+  background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+  background-size:34px 34px;transition:background-color .2s,color .2s}
+a{color:var(--signal);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+h1,h2,h3,h4{font-weight:600;letter-spacing:-.02em;line-height:1.2;margin:0}
+:where(p,h1,h2,h3,h4,li,td,th,dd,summary){overflow-wrap:anywhere}
+.wrap{max-width:var(--w);margin:0 auto;padding:0 22px}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+code{font-family:var(--mono);font-size:12px;background:var(--chip-bg);color:var(--chip-ink);border-radius:5px;padding:1px 5px}
+
+header.hero{position:relative;border-bottom:1px solid var(--line);
+  background:radial-gradient(600px 300px at 85% -40%,var(--hero-glow),transparent);padding:34px 0 30px}
+h1{font-size:clamp(30px,4.8vw,50px);letter-spacing:-.028em;margin:12px 0 14px;max-width:24ch}
+.sub{color:var(--muted);font-size:16.5px;max-width:82ch;margin:0}
+.theme-toggle{position:absolute;top:18px;right:22px;font-family:var(--mono);font-size:11.5px;
+  background:var(--panel);border:1px solid var(--line-2);color:var(--ink-soft);
+  border-radius:999px;padding:5px 13px;cursor:pointer}
+.theme-toggle:hover{border-color:var(--signal);color:var(--signal)}
+.mets{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:24px 0 4px}
+.met{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+.met-n{font-family:var(--mono);font-weight:600;font-size:24px;color:var(--signal);line-height:1.15;font-variant-numeric:tabular-nums}
+.met-l{font-size:12px;color:var(--faint);margin-top:6px;line-height:1.42}
+.nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.nav a{font-family:var(--mono);font-size:11.5px;background:var(--panel);border:1px solid var(--line-2);color:var(--ink-soft);border-radius:999px;padding:5px 12px}
+.nav a:hover{border-color:var(--signal);color:var(--signal);text-decoration:none}
+
+section{padding:38px 0;border-bottom:1px solid var(--line)}
+section h2{font-size:clamp(22px,3vw,27px);margin:9px 0 8px;max-width:44ch}
+.lede{color:var(--ink-soft);max-width:82ch;margin:0 0 6px}
+.note{color:var(--muted);font-size:14px;max-width:86ch}
+.insight{font-size:15px;color:var(--ink);border-left:3px solid var(--signal);padding:4px 0 4px 14px;margin:18px 0 0;max-width:86ch}
+.insight.warn{border-left-color:var(--amber)}
+
+.tldr{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--signal);
+  border-radius:12px;padding:20px 22px;box-shadow:var(--shadow);margin:22px 0 0}
+.tldr h3{font-size:19px;margin-bottom:8px}
+.tldr ol{margin:4px 0 0;padding-left:20px;color:var(--ink-soft)}
+.tldr ol li{margin-bottom:8px}
+.tldr ol li b{color:var(--ink)}
+
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,430px),1fr));gap:14px;margin-top:16px}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:14px;margin-top:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:var(--shadow);transition:transform .15s}
+.card:hover{transform:translateY(-2px)}
+.card h3{font-size:17px;margin:6px 0 8px}
+.card p{margin:0 0 10px;color:var(--ink-soft);font-size:14.6px}
+.card p:last-child{margin-bottom:0}
+.card .ck{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--signal);font-weight:600}
+.card ul{margin:6px 0 0;padding-left:18px;color:var(--ink-soft);font-size:14.4px}
+.card li{margin-bottom:6px}
+.card li b{color:var(--ink)}
+.card .ex{font-size:13.4px;color:var(--muted);border-top:1px dashed var(--line);padding-top:9px;margin-top:10px}
+.card .ex b{color:var(--ink);font-weight:600}
+.tag{font-family:var(--mono);font-size:10.5px;background:var(--chip-bg);color:var(--chip-ink);
+  border-radius:999px;padding:2px 8px;display:inline-block;white-space:nowrap}
+.tag.plain{background:transparent;color:var(--faint);border:1px solid var(--line-2)}
+.tag.amber{background:transparent;color:var(--amber);border:1px solid var(--amber)}
+
+/* popularity bars */
+.bars{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);margin-top:18px}
+.bars h3{font-size:16px;margin:4px 0 4px}
+.bars .bsub{font-size:13px;color:var(--muted);margin:0 0 10px}
+.br{display:grid;grid-template-columns:minmax(0,250px) minmax(0,1fr) 62px;gap:12px;align-items:center;padding:4px 6px;border-radius:6px;position:relative}
+.br:hover{background:var(--hover)}
+.br .bl{font-size:13px;color:var(--ink-soft);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.br .bl b{color:var(--ink);font-weight:600}
+.br .bt{height:14px;position:relative;display:block}
+.br .bb{display:block;height:14px;border-radius:0 4px 4px 0;background:var(--signal);min-width:4px}
+.br.off .bb{background:var(--line-2)}
+.br .bv{font-family:var(--mono);font-size:12.5px;color:var(--ink);text-align:right;font-variant-numeric:tabular-nums}
+.st{font-family:var(--mono);font-size:10px;border-radius:999px;padding:0 7px;white-space:nowrap;display:inline-block;line-height:17px}
+.st.active{background:var(--chip-bg);color:var(--chip-ink)}
+.st.archived,.st.stale,.st.broken{border:1px solid var(--amber);color:var(--amber)}
+.st.new{border:1px solid var(--line-2);color:var(--ink-soft)}
+.lg{display:flex;flex-wrap:wrap;gap:14px;font-family:var(--mono);font-size:11px;color:var(--muted);margin:2px 0 10px}
+.lg span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:14px;height:9px;border-radius:2px;background:var(--signal)}
+.sw.off{background:var(--line-2)}
+.tip{position:absolute;z-index:5;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12.5px;line-height:1.45;
+  border-radius:8px;padding:8px 10px;max-width:300px;box-shadow:var(--shadow);opacity:0;transition:opacity .12s}
+.tip b{color:var(--bg)}
+
+/* method types */
+.mt{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin-top:16px}
+.mt .card .eg{display:flex;flex-wrap:wrap;gap:5px;margin:2px 0 10px}
+.mt .card .good,.mt .card .bad{font-size:13.6px;margin:0 0 8px;color:var(--ink-soft)}
+.mt .card .good b{color:var(--signal)}
+.mt .card .bad b{color:var(--amber)}
+
+/* jd demand */
+.jd .br{grid-template-columns:minmax(0,240px) minmax(0,1fr) 92px}
+.jd .bmap{grid-column:1 / -1;font-size:12.4px;color:var(--faint);padding:0 0 4px;margin-top:-2px}
+
+/* filters + board cards */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.pill{font-family:var(--mono);font-size:11.5px;background:var(--panel);border:1px solid var(--line-2);color:var(--ink-soft);border-radius:999px;padding:5px 12px;cursor:pointer}
+.pill:hover{border-color:var(--signal);color:var(--signal)}
+.pill[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.fcount{font-family:var(--mono);font-size:11.5px;color:var(--faint);align-self:center;margin-left:4px}
+.boards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,500px),1fr));gap:14px;margin-top:16px}
+.bc{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
+.bc.rel-high{border-top:3px solid var(--signal)}
+.bc.rel-med{border-top:3px solid var(--line-2)}
+.bc.rel-low{border-top:3px dashed var(--line-2)}
+.bc .bh{padding:14px 18px 10px;border-bottom:1px solid var(--line)}
+.bc .bh .row1{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.bc .bh h3{font-size:17.5px}
+.bc .bh .likes{font-family:var(--mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.bc .bh .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px;align-items:center}
+.bc .bh .sid{font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+.bc dl{margin:0;padding:10px 18px 4px;display:grid;grid-template-columns:86px minmax(0,1fr);gap:7px 12px;font-size:14px}
+.bc dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);padding-top:3px}
+.bc dd{margin:0;color:var(--ink-soft);line-height:1.5}
+.bc dd b{color:var(--ink);font-weight:600}
+.bc .rel{margin:auto 0 0;padding:11px 18px 14px;border-top:1px dashed var(--line);font-size:14px;color:var(--ink-soft);display:grid;grid-template-columns:86px minmax(0,1fr);gap:12px}
+.bc .rel .rl{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding-top:2px}
+.bc.rel-high .rel .rl{color:var(--signal)}
+.bc.rel-med .rel .rl{color:var(--ink-soft)}
+.bc.rel-low .rel .rl{color:var(--faint)}
+.bc .rel b{color:var(--ink)}
+.bc .rel .yours{display:block;margin-top:5px;font-size:13px;color:var(--muted)}
+.bc .rel .yours b{color:var(--signal)}
+
+/* tables */
+.tw{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:auto;max-height:78vh;box-shadow:var(--shadow);margin-top:18px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{position:sticky;top:0;z-index:2;background:var(--panel);box-shadow:0 1px 0 var(--line-2);
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);
+  text-align:left;padding:11px 12px;font-weight:600;white-space:nowrap}
+td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top;color:var(--ink-soft)}
+tbody tr:hover{background:var(--hover)}
+td b{color:var(--ink);font-weight:600}
+td .sm{display:block;font-size:12.4px;color:var(--muted);margin-top:3px;line-height:1.45}
+td.n{font-family:var(--mono);font-size:13px;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.grp td{background:var(--bg);font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--signal);padding:8px 12px;font-weight:600}
+tbody tr.grp:hover{background:none}
+.matrix{min-width:980px}
+.matrix td:first-child{min-width:150px}
+.matrix td:nth-child(2){min-width:250px}
+.matrix td:nth-child(3){min-width:165px}
+.matrix .mst{display:block;margin-top:5px}
+.matrix .mmt{display:block;font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:4px;white-space:nowrap}
+.dsl{display:flex;flex-wrap:wrap;gap:4px 10px}
+.dsi{white-space:nowrap;font-size:13.4px}
+.dsi a{font-weight:600}
+.dsx{color:var(--ink-soft);font-weight:600}
+.dsn,.dsg{font-family:var(--mono);font-size:10.5px;color:var(--faint);margin-left:4px;font-variant-numeric:tabular-nums}
+.dsg{border:1px solid var(--line-2);border-radius:999px;padding:0 5px}
+th .thn{text-transform:none;letter-spacing:0}
+.matrix td:last-child{min-width:130px;overflow-wrap:normal}
+.dsets{min-width:760px}
+.ftab{min-width:720px}
+.ftab td:first-child{min-width:230px}
+.ftab td.n{text-align:right}
+.ftab th:not(:first-child){text-align:right}
+.mt.ft4{grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr))}
+.ftds{min-width:820px}
+.ftds td:first-child{min-width:200px}
+.ftds td:nth-child(4){min-width:220px}
+.ftds td:last-child{min-width:220px}
+.subh{font-size:18px;margin:30px 0 0}
+.card h3 .st{vertical-align:middle;margin-left:4px}
+.dsets td:first-child{min-width:190px}
+.dsets td:nth-child(3){min-width:300px}
+.dsets td:last-child{min-width:210px}
+.dot{font-family:var(--mono);font-size:11px;border-radius:999px;padding:1px 8px;white-space:nowrap;display:inline-block}
+.dot.high{background:var(--chip-bg);color:var(--chip-ink);font-weight:600}
+.dot.med{border:1px solid var(--line-2);color:var(--ink-soft)}
+.dot.low{border:1px dashed var(--line-2);color:var(--faint)}
+
+/* portfolio */
+.pf{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:14px;margin-top:16px}
+.pf .card .arrow{font-family:var(--mono);font-size:12px;color:var(--faint);margin:2px 0 8px}
+.pf .card .arrow b{color:var(--ink)}
+
+/* interview qa */
+details.qa{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);margin-top:10px}
+details.qa summary{cursor:pointer;padding:13px 18px;font-weight:600;font-size:15px;list-style:none;display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;align-items:baseline}
+details.qa summary::-webkit-details-marker{display:none}
+details.qa summary .qn{font-family:var(--mono);font-size:12px;color:var(--signal)}
+details.qa summary .qb{font-family:var(--mono);font-size:10.5px;color:var(--faint);font-weight:400}
+details.qa[open] summary{border-bottom:1px dashed var(--line)}
+details.qa .ans{padding:12px 18px 14px 62px;color:var(--ink-soft);font-size:14.6px}
+details.qa .ans p{margin:0 0 8px}
+details.qa .ans p:last-child{margin-bottom:0}
+details.qa .ans b{color:var(--ink)}
+
+/* form */
+.qcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px;box-shadow:var(--shadow);margin-top:18px}
+.qcard h3{font-size:18px;margin-bottom:4px}
+.nrow{display:grid;grid-template-columns:50px minmax(0,1fr) 120px;gap:12px;align-items:start;padding:12px 0;border-top:1px dashed var(--line)}
+.nrow:first-of-type{border-top:none}
+.nrow .id{font-family:var(--mono);font-size:12px;color:var(--signal);font-weight:600;padding-top:2px}
+.nrow .t b{color:var(--ink);display:block;font-size:14.8px}
+.nrow .t span{font-size:13.6px;color:var(--muted);display:block;margin-top:3px}
+.nrow .t .cost{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin-top:4px}
+select{font-family:var(--mono);font-size:12.5px;padding:6px 8px;border:1px solid var(--line-2);border-radius:8px;background:var(--bg);color:var(--ink);width:100%;accent-color:var(--signal)}
+select:focus,textarea:focus{outline:none;border-color:var(--signal)}
+textarea{width:100%;font-family:var(--sans);font-size:14.4px;padding:10px 12px;border-radius:10px;
+  border:1px solid var(--line-2);background:var(--bg);color:var(--ink);resize:vertical;min-height:70px;margin-top:10px}
+.btn-solid{background:var(--ink);color:var(--bg);font-weight:600;border:none;border-radius:10px;
+  padding:11px 20px;cursor:pointer;font-family:var(--sans);font-size:14.5px;margin-top:12px}
+.btn-solid:hover{opacity:.9}
+.btn-ghost{background:var(--panel);color:var(--ink-soft);font-weight:500;font-size:14px;border:1px solid var(--line-2);border-radius:10px;padding:10px 16px;cursor:pointer;font-family:var(--sans);margin:12px 0 0 8px}
+.btn-ghost:hover{border-color:var(--signal);color:var(--signal)}
+.ack{font-family:var(--mono);font-size:12px;color:var(--signal);margin-left:10px}
+footer{padding:26px 0 48px;color:var(--faint);font-size:13px}
+footer h3{font-size:14px;color:var(--ink-soft);margin:14px 0 4px}
+footer ul{padding-left:18px;margin:4px 0 0}
+footer li{margin-bottom:4px}
+
+@media (max-width:760px){
+  .br,.jd .br{grid-template-columns:minmax(0,1fr) 70px}
+  .br .bt{grid-column:1 / -1;order:3}
+  .bc dl,.bc .rel{grid-template-columns:1fr;gap:2px 0}
+  .bc dd{margin-bottom:6px}
+}
+@media (max-width:620px){
+  .theme-toggle{position:static;margin-bottom:8px}
+  .nrow{grid-template-columns:44px minmax(0,1fr)}
+  .nrow select{grid-column:2}
+  .btn-ghost{margin-left:0}
+  details.qa .ans{padding-left:18px}
+  details.qa summary{grid-template-columns:30px minmax(0,1fr)}
+  details.qa summary .qb{grid-column:2}
+}
+
+/* s63 additions */
+h4{font-size:13px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--faint);font-weight:600;margin:0 0 8px}
+.steps{list-style:none;padding:0;margin:16px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:12px}
+.steps .card{padding:14px}
+.steps .card h3{font-size:15px;margin:4px 0 6px}
+.steps .card p{font-size:13.6px}
+.pairs{min-width:1040px}
+.pairs td:first-child{min-width:122px}
+.pairs td:nth-child(2){min-width:178px}
+.pairs td:nth-child(3){min-width:146px}
+.pairs td:nth-child(4){min-width:168px}
+.pairs td:nth-child(5){min-width:170px}
+.pairs td:nth-child(6){min-width:138px}
+.pairs td:last-child{min-width:104px}
+.pairs td:nth-child(4)>a{font-weight:600;overflow-wrap:anywhere}
+.pairs .fit{color:var(--faint)}
+.repos{min-width:980px}
+.repos td:nth-child(5){min-width:300px}
+.repos td:nth-child(5) code{overflow-wrap:anywhere}
+.runs{min-width:760px}
+.runs td:nth-child(2){min-width:320px}
+.runs td:first-child{min-width:150px}
+.runs td:nth-child(3){min-width:150px}
+span.n{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin-left:4px;font-variant-numeric:tabular-nums;white-space:nowrap}
+td .uc{display:table;margin-top:6px;font-family:var(--mono);font-size:10.5px;color:var(--signal);border:1px solid var(--signal);border-radius:999px;padding:0 7px}
+.mac{font-family:var(--mono);font-size:10.5px;border-radius:999px;padding:1px 8px;white-space:nowrap;display:inline-block}
+.mac.yes{background:var(--chip-bg);color:var(--chip-ink);font-weight:600}
+.mac.part{border:1px solid var(--line-2);color:var(--ink-soft)}
+.mac.no{border:1px solid var(--amber);color:var(--amber)}
+.chip{font-family:var(--mono);font-size:10.5px;border-radius:999px;padding:1px 8px;white-space:nowrap;display:inline-block;border:1px solid var(--line-2);color:var(--ink-soft);background:var(--panel)}
+.uc-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:22px;margin-top:22px}
+.uc-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.uc-head h3{font-size:22px;margin:4px 0 0}
+.uc-head .ck{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--signal);font-weight:600}
+.uc-chips{display:flex;gap:6px;flex-wrap:wrap}
+.prove{margin:12px 0 0;color:var(--ink-soft);max-width:90ch}
+.prove b{color:var(--ink)}
+.recipe{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:16px 0 0}
+.recipe div{background:var(--panel);padding:10px 14px}
+.recipe dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.recipe dd{margin:3px 0 0;font-size:14px;color:var(--ink-soft)}
+.uc-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:20px;margin:20px 0 6px}
+.uc-steps ol{margin:0;padding-left:20px;color:var(--ink-soft);font-size:14.4px}
+.uc-steps li{margin-bottom:7px}
+table.mini{width:100%;border-collapse:collapse;font-size:13.4px}
+table.mini th{position:static;box-shadow:none;background:none;border-bottom:1px solid var(--line-2);text-align:left;font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);padding:5px 6px;font-weight:500}
+table.mini th:not(:first-child){text-align:right}
+table.mini td{padding:6px;border-bottom:1px solid var(--line);color:var(--ink-soft)}
+table.mini td.n{text-align:right}
+.codeblock{margin:14px 0 0}
+.codehead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 6px}
+.codehead .path{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:600}
+.codehead .why{font-size:13px;color:var(--muted)}
+.codemount{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:auto;max-height:70vh;font-size:12.5px}
+.codemount pre{margin:0;padding:16px;background:var(--pre-bg);color:var(--pre-ink);border-radius:12px;font-family:var(--mono);font-size:12.3px;line-height:1.55;overflow:auto;white-space:pre}
+.uc-foot{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px;margin-top:18px;border-top:1px dashed var(--line);padding-top:14px}
+.uc-foot ul{margin:0;padding-left:18px;color:var(--ink-soft);font-size:14px}
+.uc-foot li{margin-bottom:6px}
+.quote{margin:0;font-size:14.6px;color:var(--ink);border-left:3px solid var(--signal);padding:2px 0 2px 12px}
+.honest{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:12px;margin-top:16px}
+.honest .card h3{font-size:15px}
+.honest .card p{font-size:13.8px}
+.qcard h3{margin-top:14px}
+.qcard h3:first-child{margin-top:0}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:6px 18px;margin:6px 0 4px}
+.opts label{display:flex;gap:8px;align-items:baseline;font-size:14.4px;color:var(--ink-soft);cursor:pointer}
+.opts input{accent-color:var(--signal)}
+.opts b{font-family:var(--mono);font-size:12px;color:var(--signal)}
+#pick-form textarea,#uc5-form textarea{margin-top:12px}
+.tldr.warnbox{border-left-color:var(--amber);margin-top:20px}
+.tldr.warnbox p{color:var(--ink-soft);margin:0 0 8px;max-width:95ch}
+.tldr.warnbox p:last-child{margin-bottom:0}
+.tldr.warnbox b{color:var(--ink)}
+.ms{min-width:820px}
+.ms td:first-child{width:52px}
+.ms td:nth-child(2){min-width:420px}
+.ms td:nth-child(3){min-width:110px;white-space:nowrap}
+.ms td:last-child{min-width:200px}
+.risks{min-width:640px}
+.risks td:first-child{min-width:240px}
+#s-uc5plan .grid2 .card ul{font-size:14px}
+@media (max-width:760px){
+  .uc-grid,.uc-foot{grid-template-columns:minmax(0,1fr)}
+  .uc-card{padding:16px}
+}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:14px;margin-top:16px}
+.card.rec{border-color:var(--signal);box-shadow:0 0 0 1px var(--signal),var(--shadow)}
+.cmp{min-width:900px}
+.cmp td:first-child{min-width:170px}
+.cmp td:nth-child(2){min-width:220px}
+.cmp td:last-child{min-width:240px}
+.verdict{font-family:var(--mono);font-size:10.5px;border-radius:999px;padding:0 7px;display:inline-block;line-height:17px;white-space:nowrap}
+.verdict.go{background:var(--chip-bg);color:var(--chip-ink);font-weight:600}
+.verdict.alt{border:1px solid var(--signal);color:var(--signal)}
+.verdict.no{border:1px solid var(--line-2);color:var(--muted)}
+#shortlist .lede{margin-bottom:0}
+.uc-nums .note{font-size:12.6px;color:var(--muted);margin:8px 0 0;line-height:1.45}
+.fmt-h{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:20px 0 0;font-weight:600}
+.grid2.fmt{margin-top:10px}
+.grid2.fmt .card ul{font-size:14px}
+.fmt-note{font-size:13.6px;color:var(--muted);margin:10px 0 18px;max-width:95ch}
+.gpu{min-width:980px}
+.gpu td:first-child{min-width:150px}
+.gpu td:nth-child(2){min-width:260px}
+.gpu td:nth-child(3){min-width:210px}
+.gpu td .verdict{margin-top:6px}
+.gpu td:first-child .verdict{display:block;width:max-content}
+#gpu{margin-top:16px}
+#s-run .grid2 .card ul{font-size:14px}
+#s-run .tldr.warnbox p{font-size:14px}
+.acc{min-width:900px}
+.acc td:nth-child(2){min-width:280px}
+.acc td:last-child{min-width:260px}
+
+/* s64 additions */
+.fig{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);margin-top:18px;overflow:auto;padding:14px}
+.fig svg{display:block;width:100%;height:auto}
+.fig.flow svg{min-width:720px}
+.fig.waf svg{min-width:470px;max-width:680px;margin:0 auto}
+.figcap{font-size:13.4px;color:var(--muted);margin:10px 2px 0;max-width:95ch}
+.figcap b{color:var(--ink)}
+.sn rect{fill:var(--panel);stroke:var(--line-2);stroke-width:1.5}
+.sn.key rect{stroke:var(--signal);stroke-width:2.2}
+.sk{font-family:var(--mono);font-size:12px;letter-spacing:.08em;fill:var(--faint)}
+.sn.key .sk{fill:var(--signal)}
+.stt{font-family:var(--sans);font-size:17px;font-weight:600;fill:var(--ink)}
+.sd{font-family:var(--sans);font-size:13px;fill:var(--muted)}
+.se{stroke:var(--signal);stroke-width:2;fill:none}
+.sa{fill:var(--signal)}
+.wf rect{stroke-width:1.6}
+.wf .tr rect{fill:var(--signal-soft);stroke:var(--signal)}
+.wf .te rect{fill:var(--bg);stroke:var(--line-2)}
+.wf .ex rect{fill:var(--bg);stroke:var(--amber);stroke-dasharray:4 3}
+.wf text{font-family:var(--mono);font-size:15px;text-anchor:middle;dominant-baseline:central;font-variant-numeric:tabular-nums}
+.wf .tr text{fill:var(--chip-ink);font-weight:600}
+.wf .te text{fill:var(--faint)}
+.wf .ex text{fill:var(--amber);font-weight:600}
+.wf circle{fill:var(--amber)}
+.wlg{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--mono);font-size:11.5px;color:var(--muted);margin:12px 2px 0}
+.wlg span{display:inline-flex;align-items:center;gap:7px}
+.wsw{display:inline-block;width:18px;height:13px;border-radius:3px;border:1.6px solid var(--line-2);background:var(--bg)}
+.wsw.tr{background:var(--signal-soft);border-color:var(--signal)}
+.wsw.ex{border-color:var(--amber);border-style:dashed}
+.wdot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--amber)}
+.budget{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:10px;margin-top:14px}
+.budget>div{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.budget .bn{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--signal);font-variant-numeric:tabular-nums}
+.budget .bn.am{color:var(--amber)}
+.budget .bn.mu{color:var(--ink-soft)}
+.budget .bl2{font-size:12.4px;color:var(--muted);line-height:1.4;margin-top:3px}
+.xtab{min-width:560px}
+.xtab td.n,.xtab th:not(:first-child){text-align:right}
+.xtab td:first-child{min-width:190px}
+.talk{min-width:860px}
+.talk td:first-child{min-width:140px}
+.talk td:nth-child(2){min-width:280px}
+.talk td:nth-child(3){min-width:320px}
+.src{min-width:980px}
+.src td:first-child{width:46px}
+.src td:nth-child(2){min-width:220px}
+.src td:nth-child(3){min-width:300px}
+.src td:nth-child(4){min-width:140px}
+.src td:nth-child(5){min-width:170px}
+.flt{min-width:860px}
+.flt td:first-child{width:52px}
+.flt td:nth-child(2){min-width:300px}
+.flt td:nth-child(3){min-width:300px}
+.flt td:last-child{min-width:130px}
+.res{min-width:860px}
+.res td:first-child{width:46px}
+.res td:nth-child(2){min-width:260px}
+.res td.n{text-align:right}
+.res th:nth-child(n+3){text-align:right}
+.res td.tbd{font-family:var(--mono);font-size:11.5px;color:var(--faint);text-align:right;white-space:nowrap}
+.ms2{min-width:980px}
+.ms2 td:first-child{width:52px}
+.ms2 td:nth-child(2){min-width:380px}
+.ms2 td:nth-child(3){min-width:110px}
+.ms2 td:nth-child(4){min-width:240px}
+.ms2 td:last-child{min-width:170px}
+.ms2 td .opt{display:inline-block;margin-left:6px;font-family:var(--mono);font-size:10px;border:1px solid var(--line-2);border-radius:999px;padding:0 7px;color:var(--muted);vertical-align:1px}
+.rk{min-width:760px}
+.stu{min-width:980px}
+.stu td:first-child{min-width:190px}
+.stu td:nth-child(3){min-width:200px}
+.stu td:nth-child(4){min-width:200px}
+.stu td:nth-child(5){min-width:160px}
+.stu td:last-child{min-width:130px}
+.cmp2{min-width:760px}
+.cmp2 td:first-child{min-width:150px}
+.nt svg{min-width:900px}
+.nb rect{fill:var(--panel);stroke:var(--line-2);stroke-width:1.4}
+.nb.ag rect{fill:var(--signal-soft);stroke:var(--signal)}
+.ntt{font-family:var(--mono);font-size:11px;fill:var(--ink);text-anchor:middle}
+.nb.ag .ntt{fill:var(--chip-ink);font-weight:600}
+.ntn{font-family:var(--mono);font-size:9.5px;fill:var(--faint);text-anchor:middle}
+.ntk{font-family:var(--mono);font-size:11px;letter-spacing:.08em;fill:var(--faint)}
+.ntd{font-family:var(--sans);font-size:13px;fill:var(--ink-soft)}
+.nl.tr rect{fill:var(--signal-soft);stroke:var(--signal);stroke-width:1.6}
+.nl.tr .ntt{fill:var(--chip-ink);font-weight:600}
+.nl.ig rect{fill:var(--bg);stroke:var(--line-2);stroke-dasharray:4 3}
+.nl.ig .ntt{fill:var(--faint)}
+.nts{font-family:var(--mono);font-size:10px;fill:var(--faint);text-anchor:middle}
+.nts.on{fill:var(--signal);font-weight:600}
+.nfaint{stroke:var(--line-2);stroke-width:1;fill:none}
+.nt .se{stroke-width:1.6}
+.nloss{fill:var(--panel);stroke:var(--line);stroke-width:1}
+.ca svg{max-width:420px;margin:0 auto}
+.ntr{font-family:var(--mono);font-size:10px;fill:var(--muted);text-anchor:end}
+.ntr.hi{fill:var(--signal);font-weight:600}
+.cv{fill:var(--line-2)}
+.cv.hi{fill:var(--signal)}
+.cv.no{fill:none;stroke:var(--line);stroke-width:1}
+ol.rundown{display:block;padding-left:22px}
+ol.rundown li{margin:4px 0}
+.ca-row{align-items:start}
+.xpre{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);margin:10px 0 0;padding:14px 16px;font-family:var(--mono);font-size:12px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;max-height:78vh;overflow:auto;color:var(--muted)}
+.xpre .trn{background:var(--signal-soft);color:var(--chip-ink);font-weight:600;border-radius:3px;box-shadow:0 0 0 1px var(--signal)}
+.xpre .sp{color:var(--ink);font-weight:600}
+.xpre .trn .sp{color:var(--chip-ink)}
+.xlg{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--mono);font-size:11.5px;color:var(--muted);margin:14px 2px 0}
+.xlg span{display:inline-flex;align-items:center;gap:7px}
+.xsw{display:inline-block;width:18px;height:13px;border-radius:3px;border:1px solid var(--line-2);background:var(--panel)}
+.xsw.trn{background:var(--signal-soft);border-color:var(--signal)}
+.xsw.sp{background:var(--ink);border-color:var(--ink)}
+.tf{min-width:820px}
+.tf td:first-child{width:70px}
+.tf td:nth-child(2){min-width:300px}
+.tf td:nth-child(3){min-width:380px}
+.tf .tg{display:block;font-family:var(--mono);font-size:11.5px;white-space:pre-wrap;color:var(--chip-ink);background:var(--signal-soft);border-radius:6px;padding:6px 8px}
+.prm{min-width:980px}
+.prm td:first-child{min-width:240px}
+.prm td:nth-child(2){min-width:280px}
+.prm td.d,.prm td.p{font-family:var(--mono);font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.prm td.p{color:var(--signal);font-weight:600}
+.prm td:last-child{min-width:260px}
+.prm tr.grp td{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);background:var(--hover);padding-top:10px}
+.fmt{min-width:980px}
+.fmt td:first-child{min-width:150px}
+.fmt td:nth-child(2),.fmt td:nth-child(3){min-width:250px}
+.fmt td:last-child{min-width:220px}
+.fmt td .verdict{margin-right:4px}
+.lib{min-width:760px}
+.lib td:first-child{min-width:140px}
+.lib td:nth-child(3){min-width:300px}
+.chn{min-width:980px}
+.chn td:first-child{min-width:170px}
+.chn td:nth-child(2){min-width:200px}
+.chn td:nth-child(3){min-width:150px}
+.chn td:last-child{min-width:180px}
+.oxr rect{stroke-width:1.4}
+.oxr.trn rect{fill:var(--signal-soft);stroke:var(--signal)}
+.oxr.ctx rect{fill:var(--bg);stroke:var(--line-2)}
+.oxk{font-family:var(--mono);font-size:11px;letter-spacing:.08em;fill:var(--faint)}
+.oxr.trn .oxk{fill:var(--chip-ink);font-weight:600}
+.oxt{font-family:var(--sans);font-size:13.5px;fill:var(--ink-soft)}
+.oxl{font-family:var(--mono);font-size:11px;text-anchor:end;fill:var(--faint)}
+.oxr.trn .oxl{fill:var(--signal);font-weight:600}
+.srv{min-width:980px}
+.srv td:first-child{min-width:170px}
+.srv td:nth-child(2){min-width:260px}
+.srv td:nth-child(3){min-width:230px}
+.srv td:nth-child(4){min-width:170px}
+.srv td:last-child{min-width:130px}
+ul.lede{margin:6px 0 8px;padding-left:20px}
+ul.lede li{margin-bottom:4px}
+.rk td:first-child{min-width:280px}
+.rec-l{font-family:var(--mono);font-size:10px;color:var(--chip-ink);background:var(--chip-bg);border-radius:999px;padding:0 7px;margin-left:4px;white-space:nowrap}
+.tools{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.tools code{font-size:11.5px}
+.tools code.w{background:transparent;border:1px solid var(--signal);color:var(--signal)}
+.copyrow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:14px}
+.copyrow .btn-ghost{margin:0}
+.copyrow textarea{flex-basis:100%}
+#plan-form .opts{grid-template-columns:minmax(0,1fr)}
+#plan-form .dq{font-size:13.6px;color:var(--muted);margin:2px 0 4px;max-width:95ch}
+.dsec{border-top:1px dashed var(--line);margin-top:14px;padding-top:12px}
+.dsec:first-of-type{border-top:none;margin-top:4px;padding-top:0}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <button class="theme-toggle" type="button" id="themeBtn">theme</button>
+    <div class="kicker">s64 · build plan · tau-telecom-sft · 16 Oct 2026 · nothing built yet</div>
+    <h1>tau-telecom-sft: shadow the TMLS talk and teach an open model tau2 telecom</h1>
+    <p class="sub">This is the plan for a repo you'll create. It repeats Kai Wei Tan's TMLS talk on the same domain, telecom, using your own tau2-loop split of the same 114 tasks, so the student and your Claude agent face the same 40 test tasks. It covers where the training conversations come from, how they're filtered and formatted, how the student is trained, served and scored, and how you track progress. It was first written for airline and was pointed at telecom on 16 Oct. Nothing in it has been built, downloaded, trained or run.</p>
+    <div class="mets">
+      <div class="met"><div class="met-n">74 / 40</div><div class="met-l">tau2-loop's telecom split v3: 74 training and 40 test tasks, the split your Claude v2 agent was scored on</div></div>
+      <div class="met"><div class="met-n">822 → 669</div><div class="met-l">the talk's teacher conversations on the training tasks, and the clean ones kept</div></div>
+      <div class="met"><div class="met-n">592</div><div class="met-l">free conversations on those 74 tasks: GLM-5 and Qwen3.5-397B, 4 trials each, published by taubench.com</div></div>
+      <div class="met"><div class="met-n">13.2%</div><div class="met-l">Qwen3-4B-Instruct-2507's own tau2 telecom score, from Qwen's model card</div></div>
+      <div class="met"><div class="met-n">0 → 75%</div><div class="met-l">the talk's pass^3 on telecom, from the untrained base to after SFT (77.5% after RL)</div></div>
+    </div>
+    <nav class="nav">
+      <a href="#s-goal">1 · Goal</a><a href="#s-flow">2 · Pipeline</a><a href="#s-split">3 · Tasks</a><a href="#s-sources">4 · Sources</a><a href="#s-filters">5 · Filters</a><a href="#s-format">6 · Format</a><a href="#s-train">7 · Training</a><a href="#s-score">8 · Serve and score</a><a href="#s-repo">9 · Repo</a><a href="#s-ms">10 · Milestones</a><a href="#s-risks">11 · Risks</a><a href="#s-decide">12 · Decide</a>
+    </nav>
+    <div class="tldr">
+      <h3>The plan in six points</h3>
+      <ol>
+        <li><b>Use your split:</b> tau2-loop's telecom split v3, 74 training and 40 test tasks, the one your Claude v2 agent ran on (24/40 on test). Train on all 74, the same set Claude v2 used, and play the 40 test tasks once per model.</li>
+        <li><b>Data: the board's conversations now, the talk's teacher only if needed.</b>
+          <ul>
+            <li><b>Now, free:</b> taubench.com publishes GLM-5's and Qwen3.5-397B's telecom conversations, 4 trials of every task: 592 on the training tasks. Sierra ran both in tau2's standard tool-calling loop (<a href="#loop">§4</a>).</li>
+            <li><b>Only if needed:</b> running the talk's teacher, GLM-5.1, about 12 times per training task (about 822 conversations, $40 to $140) waits until a result shows the board data is what's holding the student back (M7).</li>
+          </ul>
+        </li>
+        <li><b>A pass alone isn't enough, which was the talk's main lesson.</b> Ten filters drop passes that called a missing tool, hit a tool error or ran long. Every drop is counted.</li>
+        <li><b>Train in two steps:</b>
+          <ul>
+            <li>Qwen3-4B on one EC2 L4 first, which is cheap and proves the pipeline.</li>
+            <li>Then the talk's own Qwen3-30B-A3B on one rented 80 GB GPU (an A100 on RunPod or Modal), as the true shadow.</li>
+          </ul>
+          Both use LoRA in TRL, with the loss on the agent's turns only.</li>
+        <li><b>Serve and score:</b> vLLM serves the tuned model on the GPU it trained on. tau2-loop on your Mac plays the 40 test tasks 4 times each, with the same Haiku 5.5 customer your v2 agent faced. Report pass^3 as the talk did, plus pass^1 to pass^4 and a paired test against the untrained model.</li>
+        <li><b>Track progress in the repo:</b>
+          <ul>
+            <li>a milestone checklist in <code>ai_specs/</code> and a status table in the README;</li>
+            <li>a dataset card for each data build;</li>
+            <li>MLflow experiments <code>tau-telecom-sft/data</code>, <code>/train</code> and <code>/eval</code>.</li>
+          </ul>
+        </li>
+      </ol>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- 1 GOAL -->
+<section id="s-goal">
+  <div class="kicker">1 · Goal and starting point</div>
+  <h2>Repeat the talk's telecom result with your own pipeline, then show where yours differs</h2>
+  <p class="lede">The talk took Qwen3 30B from passing none of the telecom test tasks three times running to 75% after SFT and 77.5% after RL, beating GPT-4.1 mini. This repo repeats the SFT half with the same kind of teacher data on your own split, and measures it with your own harness. RL stays out of scope, as before.</p>
+  <div class="grid2">
+    <div class="card">
+      <div class="ck">Success criteria, fixed before training (M4)</div>
+      <h3>What counts as a result</h3>
+      <ul>
+        <li><b>Floor:</b> the tuned student beats the untrained one on the 40 test tasks. That means a one-sided sign test p &lt; 0.05 on the tasks that changed, which is tau2-loop's own gate.</li>
+        <li><b>Target, 4B:</b> pass^3 of 50% or more on test.</li>
+        <li><b>Target, 30B shadow:</b> pass^3 of 70% or more, against the talk's 75%.</li>
+        <li><b>Head-to-head:</b> your Claude v2 passed 24 of these 40 test tasks (60%) in one trial. R5 replays it with 4 trials, so it can be compared on pass^3.</li>
+        <li><b>Always:</b> report counts as well as percentages. With 40 tasks, each one is worth 2.5 points.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="ck">Where you start</div>
+      <h3>What already exists</h3>
+      <ul>
+        <li><b>tau2 telecom</b> (tau2-loop's pin <code>2174a60</code>):
+          <ul>
+            <li>114 base tasks. tau2 ships its own 74/40 split; this plan uses yours (below);</li>
+            <li>a 3,715-word policy and 13 agent tools;</li>
+            <li>30 tools on the customer's phone, which the customer runs, not the agent.</li>
+          </ul>
+          A task is graded on the phone's final state: for example, mobile data on and the speed test excellent.</li>
+        <li><b>tau2-loop's telecom split v3</b> (16 Oct): a fresh seed-300 draw of the 114 tasks, 74 train and 40 test, stratified by symptom and persona.</li>
+        <li><b>Your Claude telecom v2</b> (Haiku 5.5 at high effort, the v1 prompt) on split v3: <b>45/74</b> on train and <b>24/40</b> on test, one trial each, with a Haiku 5.5 customer at high effort and rules <code>tau2_loop/2</code>.</li>
+        <li><b>The board's telecom scores (pass^1, all 114 tasks):</b>
+          <ul>
+            <li>GLM-5 86.8% and Qwen3.5-397B 97.8%;</li>
+            <li>GPT-4.1 mini 48.9% (pass^3 31.2%), from an older tau2 version with a GPT-4.1 customer.</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 class="subh">How the talk collected its 822 conversations</h3>
+  <div class="grid2">
+    <div class="card">
+      <div class="ck">What the talk says</div>
+      <h3>Yes: the teacher ran many attempts on the training tasks only</h3>
+      <ul>
+        <li><b>Teacher:</b> GLM 5.1 played tau2's 74 telecom training tasks, against tau2's customer simulator.</li>
+        <li><b>Coverage:</b> it solved 68 of the 74.</li>
+        <li><b>Volume:</b> the speaker then "got more rollouts", 822 in all. That's about 11 per task, or 12 per solved task.</li>
+        <li><b>Logging:</b> each rollout is one multi-turn conversation, logged as a trace in Weights &amp; Biases. A customer prompt sets the scenario and a persona from easy to hard.</li>
+        <li><b>Filtering:</b> the speaker kept <b>669 clean</b> ones, and also mentions "760 raw trajectories", which is probably the passing ones before the quality filter.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="ck">What the talk doesn't say</div>
+      <h3>Choices you'll make yourself</h3>
+      <ul>
+        <li><b>Attempts per task:</b> how many, and whether only the solved tasks were re-run.</li>
+        <li><b>The customer model:</b> which model played the customer, and at what temperature.</li>
+        <li><b>The generated pool:</b> whether any of tau2's 2,285 generated tasks were used. The talk only mentions 74.</li>
+        <li><b>Checkpoint choice:</b> how the SFT checkpoint was picked. This plan trains on all 74 tasks, so it fixes the epoch count in advance and keeps the final checkpoint.</li>
+        <li><b>The test set:</b> which tasks the test scores came from. Every score the talk gives (0, 37.5, 75, 77.5%) is a multiple of 2.5%, which is 1 task in 40, so almost certainly tau2's 40 test tasks.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 class="subh">The talk, and this plan's shadow of it</h3>
+  <div class="tw">
+    <table class="talk">
+      <thead><tr><th>Step</th><th>The talk (telecom)</th><th>This plan (telecom)</th></tr></thead>
+      <tbody>
+        <tr><td><b>Training tasks</b></td><td>74, tau2's telecom training set</td><td><b>74:</b> all of split v3's training tasks, exactly the set your Claude v2 was optimised and promoted on. 51 of them are also in tau2's training set.</td></tr>
+        <tr><td><b>Held-out test</b></td><td>almost certainly tau2's 40 telecom test tasks (see above)</td><td>split v3's 40. Only 17 of them are in tau2's 40, so the talk's numbers sit beside yours, not head to head.</td></tr>
+        <tr><td><b>Teacher</b></td><td>GLM 5.1, which solved 68 of the 74</td><td>The published GLM-5 and Qwen3.5-397B conversations (S1, S2). GLM-5.1, the talk's teacher, only if M7's trigger fires.</td></tr>
+        <tr><td><b>Conversations</b></td><td>about 822</td><td>592 on the 74 training tasks, before filtering. About 822 more from GLM-5.1 only if needed.</td></tr>
+        <tr><td><b>Kept for SFT</b></td><td><b>669 clean</b></td><td>Counted at M1. My guess is 430 to 520, because the board's teachers pass 87% and 98% of telecom tasks. That's 60 to 70% of the talk's volume, the main known difference in data.</td></tr>
+        <tr><td><b>Quality filter</b></td><td>dropped passes that called tools that don't exist, or took far too many steps</td><td>the same, plus tool errors, tool calls written out as text, length and duplicates</td></tr>
+        <tr><td><b>Student</b></td><td>Qwen3 30B, released before tau2</td><td>Qwen3-4B first on one L4, then <b>Qwen3-30B-A3B</b>, the talk's model, on one rented 80 GB A100</td></tr>
+        <tr><td><b>SFT infrastructure</b></td><td>Weights &amp; Biases serverless SFT</td><td>TRL and LoRA in a Docker container. W&amp;B's serverless training (now CoreWeave) lists only Gemma 4 26B-A4B, Llama 3.1 8B and Nemotron 3.5 Lightning today.</td></tr>
+        <tr><td><b>RL</b></td><td>GRPO with OpenPipe ART on one H100 and a shaped reward. It learned to repeat a rewarded tool call until task completion was weighted up.</td><td>Out of scope here; it's a later plan, once SFT works</td></tr>
+        <tr><td><b>Metric</b></td><td>pass^3</td><td>pass^3, plus pass^1 to pass^4 over 4 trials, and a paired test against the untrained student</td></tr>
+        <tr><td><b>Result</b></td><td>pass^3 went 0% → 75% after SFT → 77.5% after RL, beating GPT-4.1 mini. The talk also gives 37.5%, most likely GPT-4.1 mini's score, though the transcript doesn't make that certain.</td><td>to be measured</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="insight">The talk's main lesson applies here unchanged. The speaker first trained on every passing run, and RL on top was unstable. On inspection, many passing runs had called tools that don't exist or had passed by luck. Filtering for clean runs, not just passing ones, is what made SFT work.</p>
+  <h3 class="subh" id="sft-vs-rl">SFT and RL are two different steps</h3>
+  <div class="tw">
+    <table class="cmp2">
+      <thead><tr><th></th><th>SFT (this repo)</th><th>RL, such as the talk's GRPO (a later plan)</th></tr></thead>
+      <tbody>
+        <tr><td><b>What the model learns from</b></td><td>Fixed examples written by someone else: the teacher's clean conversations</td><td>Its own attempts, played live against tau2 during training</td></tr>
+        <tr><td><b>The signal</b></td><td>"Write these exact tokens." The loss is cross-entropy on the agent's turns.</td><td>A reward after each attempt: the talk shaped it from required actions, finishing, valid tools, valid arguments and a step penalty. Better-than-average attempts are pushed up; worse ones are pushed down.</td></tr>
+        <tr><td><b>Failures</b></td><td>Dropped. The model never sees them (§5).</td><td>Used directly: a failed attempt is what teaches "don't".</td></tr>
+        <tr><td><b>Needs during training</b></td><td>A dataset and a GPU</td><td>The environment, the customer simulator and a reward running inside the training loop. That means many more conversations and much more compute.</td></tr>
+        <tr><td><b>Typical failure</b></td><td>It copies the teacher's habits, good and bad. That's why the talk filters.</td><td>Reward hacking. The talk's model repeated a rewarded tool call until task completion was weighted up.</td></tr>
+        <tr><td><b>In the talk</b></td><td>pass^3 went 0% → 75%: most of the gain</td><td>75% → 77.5%: a small extra gain on top of SFT</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">SFT first, then RL, is the usual order. SFT teaches the format and the procedure cheaply, and RL then sharpens a model that already mostly works. RL from scratch on a model that passes nothing gets almost no reward to learn from.</p>
+  <div class="insight warn"><b>Why the talk's lift was possible: telecom's test tasks recombine what the training tasks teach.</b> Each task is a symptom plus a set of root issues plus a customer persona.
+    <ul class="note">
+      <li>The 40 test tasks are new combinations: none repeats a training task's exact set of root issues.</li>
+      <li>But every root issue in them also appears in the 74 training tasks: 3 symptoms and 19 root issues in train.</li>
+    </ul>
+  So a result here shows the model handles known faults in new combinations, not faults it has never seen. State it that way.</div>
+</section>
+
+<!-- 2 FLOW -->
+<section id="s-flow">
+  <div class="kicker">2 · The pipeline</div>
+  <h2>Six steps, from conversations to a score on held-out tasks</h2>
+  <p class="lede">Data work runs on your Mac. Training and serving run in one container on a rented GPU. Scoring runs in tau2-loop on the Mac, which reaches the GPU through a port forward. Every step writes a record that progress tracking reads (§10).</p>
+  <div class="fig flow">
+    <svg viewBox="0 0 960 316" role="img" aria-labelledby="fl-t fl-d">
+      <title id="fl-t">tau-telecom-sft pipeline</title>
+      <desc id="fl-d">Sources, filter, convert on the Mac; train and serve on a rented GPU; score in tau2-loop.</desc>
+      <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="sa" d="M0 0 L10 5 L0 10 z"/></marker></defs>
+      <g id="n-src" class="sn"><title>Sources: the board's conversations (S1, S2); GLM-5.1 runs only if needed (§4)</title><rect x="20" y="20" width="280" height="96" rx="12"/><text class="sk" x="38" y="47">1 · SOURCES · MAC</text><text class="stt" x="38" y="75">Conversations</text><text class="sd" x="38" y="99">board files (S1, S2)</text></g>
+      <g id="n-flt" class="sn key"><title>Filter: keep clean passes only, count every drop (§5)</title><rect x="340" y="20" width="280" height="96" rx="12"/><text class="sk" x="358" y="47">2 · FILTER · MAC</text><text class="stt" x="358" y="75">Clean passes only</text><text class="sd" x="358" y="99">ten filters, every drop counted</text></g>
+      <g id="n-cnv" class="sn"><title>Convert: tau2 messages to chat plus tools JSONL, the agent's view only (§6)</title><rect x="660" y="20" width="280" height="96" rx="12"/><text class="sk" x="678" y="47">3 · CONVERT · MAC</text><text class="stt" x="678" y="75">Chat + tools JSONL</text><text class="sd" x="678" y="99">agent's view, 13 tools</text></g>
+      <g id="n-trn" class="sn"><title>Train: LoRA SFT in a container: L4 for the 4B, an 80 GB A100 for the 30B (§7)</title><rect x="20" y="200" width="280" height="96" rx="12"/><text class="sk" x="38" y="227">4 · TRAIN · L4 / A100</text><text class="stt" x="38" y="255">LoRA SFT</text><text class="sd" x="38" y="279">Qwen3-4B, then Qwen3-30B-A3B</text></g>
+      <g id="n-srv" class="sn"><title>Serve: vLLM with the adapter, OpenAI-compatible with tool calls (§8)</title><rect x="340" y="200" width="280" height="96" rx="12"/><text class="sk" x="358" y="227">5 · SERVE · SAME GPU</text><text class="stt" x="358" y="255">OpenAI-compatible API</text><text class="sd" x="358" y="279">vLLM with the adapter</text></g>
+      <g id="n-scr" class="sn key"><title>Score: tau2-loop plays the 40 test tasks 4 times with its own customer and gate (§8)</title><rect x="660" y="200" width="280" height="96" rx="12"/><text class="sk" x="678" y="227">6 · SCORE · TAU2-LOOP</text><text class="stt" x="678" y="255">tau2-loop, 40 × 4</text><text class="sd" x="678" y="279">Haiku 5.5 customer, pass^k, gate</text></g>
+      <path id="e1" class="se" d="M300 68 H334" marker-end="url(#ah)"><title>filtered</title></path>
+      <path id="e2" class="se" d="M620 68 H654" marker-end="url(#ah)"><title>converted</title></path>
+      <path id="e3" class="se" d="M800 116 V158 H160 V194" marker-end="url(#ah)"><title>dataset version to S3, by content hash</title></path>
+      <path id="e4" class="se" d="M300 248 H334" marker-end="url(#ah)"><title>adapter</title></path>
+      <path id="e5" class="se" d="M620 248 H654" marker-end="url(#ah)"><title>endpoint through a port forward</title></path>
+    </svg>
+  </div>
+  <div class="figcap"><b>What carries between steps:</b>
+    <ul>
+      <li>a dataset version (JSONL and its card), stored under its content hash;</li>
+      <li>an adapter, with the image tag and data hash beside it;</li>
+      <li>an endpoint the scorer calls;</li>
+      <li>a tau2-loop run folder that tau-telecom-sft records.</li>
+    </ul>
+  The two green boxes are where this plan differs most from a naive one: the filter, and scoring with the same protocol for every model.</div>
+</section>
+
+<!-- 3 SPLIT -->
+<section id="s-split">
+  <div class="kicker">3 · Tasks and split</div>
+  <h2>Your split v3: all 74 to train on, 40 locked for test</h2>
+  <p class="lede">tau-telecom-sft copies tau2-loop's <code>data/splits/telecom.json</code> (version 3) and records its sha256, so the student is trained and scored on exactly the tasks your Claude v2 agent played. Each task ID spells out its makeup, for example <code>[mms_issue]airplane_mode_on|break_app_sms_permission|…[PERSONA:Hard]</code>. A test fails if any test ID, or any training task with a test task's exact set of root issues, reaches a training file.</p>
+  <div class="tw">
+    <table class="xtab">
+      <thead><tr><th>Symptom</th><th>Train</th><th>Test</th><th>All</th></tr></thead>
+      <tbody>
+        <tr><td><b>MMS not sending</b> <code>mms_issue</code></td><td class="n">32</td><td class="n">17</td><td class="n">49</td></tr>
+        <tr><td><b>Mobile data slow or off</b> <code>mobile_data_issue</code></td><td class="n">22</td><td class="n">14</td><td class="n">36</td></tr>
+        <tr><td><b>No service</b> <code>service_issue</code></td><td class="n">20</td><td class="n">9</td><td class="n">29</td></tr>
+        <tr><td><b>Total</b></td><td class="n"><b>74</b></td><td class="n"><b>40</b></td><td class="n"><b>114</b></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="budget">
+    <div><div class="bn">74</div><div class="bl2">training tasks, all trained on: the same set your Claude v2 was optimised on</div></div>
+    <div><div class="bn mu">0</div><div class="bl2">tasks held out for dev. The epoch count is fixed before training instead.</div></div>
+    <div><div class="bn mu">40</div><div class="bl2">test tasks, played once per model. Their IDs never enter any file the trainer reads.</div></div>
+    <div><div class="bn am">2,285</div><div class="bl2">generated tasks in tau2's pool, which contains all 114. They're used only if D6 adds them, minus any test twin.</div></div>
+  </div>
+  <h3 class="subh">Why split v3: your call, and it makes the Claude comparison exact</h3>
+  <ul class="note">
+    <li><b>Same tasks as your Claude agent.</b> Your telecom v2 played split v3's 74 and 40 on 16 Oct, so the student and Claude face identical test tasks.</li>
+    <li><b>No change to tau2-loop's splits.</b> v3 is already its telecom split. The changes tau2-loop needs drop from four to three (§8).</li>
+    <li><b>The leak checks pass.</b> Train and test share no task. All 19 root issues in the test tasks appear in train, as in tau2's split. No test task's symptom and root-issue set appears in train under another persona.</li>
+    <li><b>What it costs:</b> the talk's comparison gets looser. Only 17 of split v3's 40 test tasks are in tau2's 40, and 23 of tau2's test tasks are training tasks here. Compare the lift over each model's own base, not raw scores.</li>
+  </ul>
+</section>
+
+<!-- 4 SOURCES -->
+<section id="s-sources">
+  <div class="kicker">4 · Where the conversations come from</div>
+  <h2>Use the free leaderboard conversations; run the talk's teacher only if a result says you need more</h2>
+  <p class="lede">For the leaderboard, Sierra ran GLM-5 and Qwen3.5-397B on every telecom task, 4 times each, and taubench.com serves those conversations from a public S3 bucket. S1 and S2 are the plan's data. S3, the talk's own teacher, is held back until M7's trigger fires.</p>
+  <div class="tw">
+    <table class="src">
+      <thead><tr><th>ID</th><th>Source</th><th>What it is</th><th>On the 74 training tasks</th><th>Cost</th><th>Use</th></tr></thead>
+      <tbody>
+        <tr><td class="n">S1</td><td><b>Board: GLM-5</b><span class="sm"><code>glm-5_enabled_telecom_gpt-5.2_4trials.json</code>, 56.3 MB</span></td><td>Run by Sierra on tau2 1.0.1 with the stock agent prompt and thinking on.<span class="sm">The customer is GPT-5.2. 4 trials, seed 300. Scores 86.8% pass^1 on all 114 tasks.</span></td><td class="n">296 conversations</td><td>free</td><td><span class="verdict go">use now</span></td></tr>
+        <tr><td class="n">S2</td><td><b>Board: Qwen3.5-397B-A17B</b><span class="sm"><code>qwen3.5-397b-a17b_enabled_telecom_gpt-5.2_4trials.json</code>, 72.0 MB</span></td><td>Same protocol, self-hosted by Sierra on vLLM.<span class="sm">Scores 97.8% pass^1 on all 114 tasks.</span></td><td class="n">296 conversations</td><td>free</td><td><span class="verdict go">use now</span></td></tr>
+        <tr><td class="n">S3</td><td><b>Your teacher runs: GLM-5.1</b><span class="sm">the talk's teacher, through OpenRouter, tau2 at the pin</span></td><td>GLM-5.1 plays each training task about 12 times. The customer is an open model with the phone tools, such as Qwen3-30B-A3B-Instruct-2507.<span class="sm">OpenRouter on 15 Oct: GLM-5.1 costs $0.966 in and $3.036 out per million tokens, $0.179 cached.</span></td><td class="n">about 822</td><td>About $0.05 to $0.17 a conversation, so about $40 to $140 in all, before thinking tokens. Measure one first.</td><td><span class="verdict alt">only if needed (M7)</span></td></tr>
+        <tr><td class="n">S4</td><td><b>tau2's generated pool</b><span class="sm">2,285 tasks</span></td><td>More training tasks built from the same symptoms and root issues. A test task's exact combination is excluded, under any persona.</td><td class="n">n/a</td><td>teacher cost</td><td><span class="verdict no">only if D6</span></td></tr>
+        <tr><td class="n">S5</td><td><b>Your Claude agents' runs</b><span class="sm">tau2-loop <code>runs/</code></span></td><td>Haiku conversations on the same tasks: v1 on Haiku 4.5, v2 on Haiku 5.5. Same file structure as S1 and S2 (<a href="#formats">below</a>), so they can be read for comparison, never trained on.</td><td class="n">n/a</td><td>n/a</td><td><span class="verdict no">never</span><span class="sm">The Consumer Terms forbid training a model on Claude's output.</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <div class="ck">How the S3 estimate was made</div>
+      <h3>Telecom conversations are longer than airline's</h3>
+      <ul>
+        <li><b>Token counts:</b> I took them from tau2-loop's 60 telecom conversations. The median is 14 agent turns and 140K prompt tokens per conversation; p90 is 241K. The customer also makes a median of 9 phone tool calls of its own, so a conversation takes about 5 minutes.</li>
+        <li><b>Price per conversation:</b> at GLM-5.1's prices, that is about $0.03 if the cache holds the shared prefix and $0.14 if nothing is cached. The open-model customer adds a few cents.</li>
+        <li><b>Caveats:</b> Haiku's tokenizer and tau2-loop's prompt differ from the teacher's, so treat this as an order of magnitude. If M7 runs, it measures one real conversation before any batch.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="ck">Before you rely on the board files</div>
+      <h3>Five things M1 checks after downloading</h3>
+      <ul>
+        <li><b>The customer's phone calls.</b> The files hold the customer's tool calls and results too. The agent never sees those, so they come out (§6).</li>
+        <li><b>Reasoning text.</b> Both models ran with thinking on. For a non-thinking student, only replies and tool calls are kept. Check whether the files hold reasoning at all: tau2 keeps the provider's raw response in each message's <code>raw_data</code>, which is the only place it could be.</li>
+        <li><b>The system prompt.</b> If the files don't carry it, rebuild it from tau2's <code>SYSTEM_PROMPT</code> and the telecom policy at the pin. The policy is the main policy plus the tech-support manual.</li>
+        <li><b>Customer turns.</b> These are GPT-5.2 output. They go in as context, with no loss on them. Whether that's fine under OpenAI's terms is your call. S3 with an open customer would avoid the question, if it's ever run.</li>
+        <li><b>License.</b> tau2-bench is MIT. I found no separate license on the published conversations. Note that in the dataset card.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 class="subh" id="loop">How the board ran these models: a native tool-calling loop, not a text ReAct prompt</h3>
+  <p class="note">Sierra ran both models in tau2's standard agent, with the stock prompt unmodified (their submission files say "Standard tau-bench scaffold"). Each model ran at temperature 1.0, top_p 0.95, seed 300. Qwen3.5 was self-hosted on vLLM. The loop has three players, and the agent is the only one being tested.</p>
+  <div class="fig flow">
+    <svg viewBox="0 0 1000 330" role="img" aria-labelledby="lp-t lp-d">
+      <title id="lp-t">tau2's agent loop on telecom</title>
+      <desc id="lp-d">The agent either calls tools, which tau2 runs and answers with results, or messages the customer simulator, which replies. The customer has its own phone tools. tau2 grades the phone's final state at the end.</desc>
+      <defs><marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="sa" d="M0 0 L10 5 L0 10 z"/></marker></defs>
+      <g class="sn"><title>tau2 runs the agent's tool calls as real Python code against the telecom database</title>
+        <rect x="10" y="20" width="250" height="210" rx="14"/>
+        <text class="sk" x="30" y="52">TAU2 ENVIRONMENT</text>
+        <text class="stt" x="30" y="82">Runs the tools</text>
+        <text class="sd" x="30" y="122">telecom database</text>
+        <text class="sd" x="30" y="150">13 agent tools, as code</text>
+        <text class="sd" x="30" y="178">a result for each call</text>
+        <text class="sd" x="30" y="206">counts tool errors (cap 10)</text></g>
+      <g class="sn key"><title>The model being tested: one API call per turn, with the tool schemas in the API's tools field</title>
+        <rect x="375" y="20" width="250" height="210" rx="14"/>
+        <text class="sk" x="395" y="52">AGENT · THE MODEL TESTED</text>
+        <text class="stt" x="395" y="82">One call per turn</text>
+        <text class="sd" x="395" y="122">instructions + policy</text>
+        <text class="sd" x="395" y="150">13 tool schemas via the API</text>
+        <text class="sd" x="395" y="178">replies OR calls tools</text>
+        <text class="sd" x="395" y="206">never both in one turn</text></g>
+      <g class="sn"><title>Another LLM plays the customer from the task's hidden scenario, with its own phone tools</title>
+        <rect x="740" y="20" width="250" height="210" rx="14"/>
+        <text class="sk" x="760" y="52">CUSTOMER SIMULATOR</text>
+        <text class="stt" x="760" y="82">Plays the customer</text>
+        <text class="sd" x="760" y="122">GPT-5.2, reasoning low</text>
+        <text class="sd" x="760" y="150">30 phone tools of its own</text>
+        <text class="sd" x="760" y="178">agent never sees those calls</text>
+        <text class="sd" x="760" y="206">ends with a stop token</text></g>
+      <path class="se" d="M371 92 H264" marker-end="url(#ah3)"><title>The agent's turn is one or more structured tool calls</title></path>
+      <text class="sd" x="317" y="80" text-anchor="middle">tool calls</text>
+      <path class="se" d="M264 160 H371" marker-end="url(#ah3)"><title>tau2 returns each result as a tool message, then calls the agent again</title></path>
+      <text class="sd" x="317" y="148" text-anchor="middle">results</text>
+      <path class="se" d="M629 92 H736" marker-end="url(#ah3)"><title>The agent's turn is a text message to the customer</title></path>
+      <text class="sd" x="682" y="80" text-anchor="middle">message</text>
+      <path class="se" d="M736 160 H629" marker-end="url(#ah3)"><title>The customer's reply, after any phone tool calls of its own</title></path>
+      <text class="sd" x="682" y="148" text-anchor="middle">reply</text>
+      <g class="sn"><title>Grading happens once, after the conversation ends</title>
+        <rect x="10" y="256" width="980" height="56" rx="12"/>
+        <text class="sk" x="30" y="289">GRADED ONCE, AT THE END</text>
+        <text class="sd" x="250" y="289">tau2 checks the phone's final state (ENV_ASSERTION). No turn is scored on its own.</text></g>
+    </svg>
+  </div>
+  <p class="figcap"><b>Each turn:</b> tau2 sends the agent the whole conversation so far, with the 13 tool schemas in the API's <code>tools</code> field and <code>tool_choice: auto</code>. If the answer is tool calls, tau2 runs them and calls the agent again with the results. If it's text, the customer gets it. That repeats until the customer sends its stop token, or a cap on steps or tool errors ends it.</p>
+  <p class="insight"><b>Short answer: yes, it's a ReAct-style loop of think, act, observe, but with native tool calling.</b> Nobody writes a "Thought: / Action: / Observation:" prompt or parses tool calls out of text. The model's own API returns structured tool calls, and its thinking (when on) happens inside the model.</p>
+  <div class="tw">
+    <table class="cmp2">
+      <thead><tr><th></th><th>Classic text ReAct</th><th>What tau2 does</th></tr></thead>
+      <tbody>
+        <tr><td><b>How tools are described</b></td><td>Listed in the prompt as text, with a format to follow</td><td>JSON schemas in the API's <code>tools</code> field. The model's chat template places them (for Qwen, inside <code>&lt;tools&gt;</code> in the system turn).</td></tr>
+        <tr><td><b>How a tool is called</b></td><td>The model writes <code>Action: get_data_usage[...]</code> and a regex parses it</td><td>The model returns structured <code>tool_calls</code>. The provider, or vLLM's tool parser, turns the model's tags into them.</td></tr>
+        <tr><td><b>Reasoning</b></td><td>"Thought:" lines, kept in the history</td><td>The model's own thinking, if it has it. tau2's history keeps only replies and tool calls, so earlier thinking isn't sent back on the next turn.</td></tr>
+        <tr><td><b>The turn rule</b></td><td>Loop until "Final Answer"</td><td>Each turn is a message to the customer or tool calls. A turn with both, or with neither, ends the conversation as an agent error.</td></tr>
+        <tr><td><b>Who ends it</b></td><td>The model</td><td>Usually the customer's stop token. A transfer to a human, or the step or error cap, also ends it.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <ul class="note">
+    <li><b>The student is scored in the same loop.</b> Every training row is this loop written down: one assistant message per turn, either text or tool calls (§6). F3 drops conversations that ended in an agent error, and F7 drops tool calls written as text.</li>
+    <li><b>There's no agent prompt to design.</b> The student uses tau2's stock prompt, and native tool calling does the rest. Qwen3 emits <code>&lt;tool_call&gt;</code> tags, and vLLM's hermes parser turns them into tool calls (§8).</li>
+    <li><b>Thinking stays out of v1.</b> The board models thought before each turn, but only their replies and tool calls are in the history. A non-thinking student trains on exactly that.</li>
+    <li><b>The talk ran in tau2 too.</b> It doesn't describe a different harness, so assume this same loop for the talk's teacher and student.</li>
+  </ul>
+
+  <h3 class="subh" id="formats">Do your Claude runs have the same structure as S1 and S2? Yes in the file, not in how they were made</h3>
+  <p class="insight"><b>Short answer:</b> tau2-loop already saves tau2's own results file, untouched. Its runner calls tau2's <code>run_tasks</code> with <code>save_path=runs/&lt;id&gt;/tau2_results.json</code>, which is tau2's own writer, an earlier version of which made the board files. So nothing in tau2-loop needs changing, and one loader in this repo reads S1, S2, your Claude runs and the student's scored runs. What differs is how each conversation was produced, which matters for comparison. Claude's runs still never go into training.</p>
+  <div class="tw">
+    <table class="fmt">
+      <thead><tr><th></th><th>Board files (S1, S2)</th><th>tau2-loop's Claude runs (S5)</th><th>What it means here</th></tr></thead>
+      <tbody>
+        <tr><td><b>The file</b></td><td>tau2's results JSON: <code>info</code>, <code>tasks</code>, <code>simulations</code>. One file per model and domain.</td><td>The same JSON as <code>tau2_results.json</code>, plus one conversation per file in <code>traces/</code> and tau2-loop's summary line per conversation in <code>results.jsonl</code>.</td><td><span class="verdict go">same</span> One loader for both.</td></tr>
+        <tr><td><b>A conversation</b></td><td><code>simulations[i]</code>: <code>task_id</code>, <code>trial</code>, <code>messages</code>, <code>reward_info</code>, <code>termination_reason</code>. This is what taubench.com's viewer reads.</td><td>The same keys</td><td><span class="verdict go">same</span></td></tr>
+        <tr><td><b>Messages</b></td><td>Roles <code>assistant</code>, <code>user</code> and <code>tool</code>. Tool calls are structured as <code>{id, name, arguments}</code>. Each tool result's <code>requestor</code> says whether the agent or the customer made the call.</td><td>The same. In one telecom conversation I checked, 8 of the 14 tool results were the customer's phone calls (<code>requestor: user</code>).</td><td><span class="verdict go">same</span> The agent-view step drops <code>requestor: user</code> in both.</td></tr>
+        <tr><td><b>How the agent made its tool calls</b></td><td>Native tool calling, through each provider's API</td><td><code>tool_mode: json</code>: tau2-loop asks Claude for one JSON object and turns it into tool calls before tau2 saves the message</td><td><span class="verdict alt">differs</span> The saved shape is the same; the way it was generated isn't. The student uses native mode, like the board.</td></tr>
+        <tr><td><b>System prompt</b></td><td>tau2's stock prompt. It isn't stored in the file, so rebuild it at the pin.</td><td>tau2-loop's optimised prompt: the stock instructions and policy plus a checklist the optimiser wrote, saved as <code>agent/system.md</code></td><td><span class="verdict alt">differs</span> A Claude row isn't a like-for-like prompt.</td></tr>
+        <tr><td><b>Raw response</b> (<code>raw_data</code>)</td><td>The provider's own response. It may hold the model's reasoning.</td><td>An Agent SDK reply reshaped as a chat completion. The one I checked has no reasoning field.</td><td><span class="verdict alt">differs</span> The converter ignores <code>raw_data</code> for both.</td></tr>
+        <tr><td><b>Customer</b></td><td>GPT-5.2, reasoning low</td><td>Haiku 5.5 at high effort for v2 on split v3, on your subscription</td><td><span class="verdict alt">differs</span> R5 replays Claude under the shared protocol.</td></tr>
+        <tr><td><b>tau2 version</b></td><td>Labelled 1.0.1, but run on 27 Feb, before 1.0.1 was released on 15 Jul</td><td>1.0.1 at the pin <code>2174a60</code></td><td><span class="verdict alt">check</span> Fields added since February may be missing from S1 and S2. M1 confirms.</td></tr>
+        <tr><td><b>MLflow traces</b></td><td>none</td><td>One trace per conversation, rebuilt from <code>traces/</code>, with each field cut to 2,000 characters</td><td><span class="verdict no">not a source</span> For browsing only; read the JSON.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <ul class="note">
+    <li><b>M1 makes sure of it.</b> Load S1, S2 and one tau2-loop telecom run with tau2's own <code>Results</code> model at the pin, then run all three through the agent-view step. The test asserts the same keys, the same roles and the same <code>requestor</code> split. If S1 or S2 fail to load, the loader maps the older fields, and the dataset card says so.</li>
+    <li><b>Why one format pays off:</b> the student's scored runs come out of tau2-loop in this same file. So M7's trigger, the failure reading and the results page all reuse the loader written for S1 and S2.</li>
+  </ul>
+</section>
+
+<!-- 5 FILTERS -->
+<section id="s-filters">
+  <div class="kicker">5 · Filters</div>
+  <h2>Ten rules a conversation must pass, each with a counted reason when it fails</h2>
+  <p class="lede">The filters run in order, and each drop is recorded against the first rule it failed. The dataset card prints one row per rule: how many conversations came in, how many were dropped, and the reason. You read 10 kept and 10 dropped conversations before any training (M1).</p>
+  <div class="tw">
+    <table class="flt">
+      <thead><tr><th>ID</th><th>Keep a conversation only if</th><th>Why</th><th>From</th></tr></thead>
+      <tbody>
+        <tr><td class="n">F1</td><td><b>tau2 scored it a pass:</b> reward = 1. For telecom that means the phone's final state matches, for example mobile data on and an excellent speed test.</td><td>SFT copies whatever it's shown. Failed conversations would teach wrong diagnoses.</td><td>talk</td></tr>
+        <tr><td class="n">F2</td><td><b>Its task is a training task:</b> in split v3's 74</td><td>A test task in the data voids the result. <code>tests/test_no_leak.py</code> fails the build if any built file mentions one.</td><td>tau2 split</td></tr>
+        <tr><td class="n">F3</td><td><b>It ended normally:</b> the customer stopped, or the agent transferred when the task expects it. Not by the step limit or an error.</td><td>A conversation cut off by a limit can still leave the phone in the right state. It doesn't show a finished job.</td><td>talk</td></tr>
+        <tr><td class="n">F4</td><td><b>Every agent tool call names one of the 13 telecom agent tools</b>, never one of the customer's 30 phone tools</td><td>The talk's main finding: passing conversations that invent tools teach the student to invent tools. Telecom adds a trap, calling a phone tool the agent doesn't have.</td><td>talk</td></tr>
+        <tr><td class="n">F5</td><td><b>No agent tool result is marked as an error</b>, such as a missing tool or bad arguments</td><td>A pass that recovered from a bad call teaches the bad call too. A later dataset version can keep recoveries with the bad call masked (see the box below).</td><td>talk</td></tr>
+        <tr><td class="n">F6</td><td><b>Its agent turns are at most 1.5 times the median for that task's passes</b></td><td>Long, wandering passes teach wandering. The talk dropped "very long" ones; 1.5 times is my starting threshold.</td><td>talk</td></tr>
+        <tr><td class="n">F7</td><td><b>No reply contains a tool call written as text</b>, such as JSON or a call tag inside a message</td><td>tau2-loop found 138 of 1,017 replies doing this in its first airline agent. Writing a call out instead of making it means nothing runs.</td><td>tau2-loop</td></tr>
+        <tr><td class="n">F8</td><td><b>No test twin:</b> a task from the generated pool (D6) never has a test task's exact set of root issues, under any persona</td><td>A twin is the same problem in different words, which would leak test into training.</td><td>§3</td></tr>
+        <tr><td class="n">F9</td><td><b>Not a near-duplicate:</b> at most 3 conversations per task with the same sequence of agent tool calls and arguments</td><td>Ten copies of one path through one task make the student memorise it, not learn the manual.</td><td>s63 §9</td></tr>
+        <tr><td class="n">F10</td><td><b>It fits the length limit</b> once tokenized with the student's chat template and tools: 24,576 tokens to start</td><td>Telecom's policy alone is about 5K tokens. tau2-loop's telecom conversations reach a median of 15K tokens and a maximum of 26K. M1 measures the real distribution, and every drop is counted.</td><td>§7</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">The filters never look at the customer's wording, so customer style isn't filtered. F1 to F10 are pure functions in <code>build/filters.py</code>, tested on small fixture conversations that need no network or GPU.</p>
+  <div class="tldr warnbox" id="failures">
+    <h3>What happens to the conversations that fail</h3>
+    <p><b>SFT trains only on clean passes, so the model never sees a failed conversation.</b> SFT copies every agent token it's shown, so a failed conversation would teach its mistakes as readily as its good turns. Nothing in SFT learns "don't do this".</p>
+    <p><b>The failures are still used, in four ways:</b></p>
+    <ul class="note">
+      <li><b>1. They're counted.</b> The dataset card reports every drop by rule. Any task where the teacher fails every time gets no training data, and the card shows it. The talk's teacher failed 6 of 74.</li>
+      <li><b>2. Recovered errors can be kept, in a later dataset version.</b> A pass that hit a tool error and then fixed it stays in, with the loss switched off on the bad call only. The student learns the recovery, not the error.</li>
+      <li><b>3. The part before the first mistake can be kept, also an option.</b> Train on the turns before the first wrong step, with the rest masked. This is riskier: a correct-looking early step can still start a bad diagnosis.</li>
+      <li><b>4. The stage after SFT learns from them directly.</b> Preference training (DPO) pairs a passing and a failing conversation on the same task. RL, like the talk's GRPO, pushes down runs that score below the group average. It's out of scope for this repo and is noted for the follow-on plan.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 6 FORMAT -->
+<section id="s-format">
+  <div class="kicker">6 · Training format</div>
+  <h2>One conversation per line, as the agent saw it, with loss on the agent's turns only</h2>
+  <div class="grid2">
+    <div class="card">
+      <div class="ck">Conversion rules</div>
+      <h3>From tau2 messages to chat format</h3>
+      <ul>
+        <li><b>The agent's view only.</b> A telecom conversation has two tool users: the agent and the customer's phone. tau2 shows the agent only its own calls and results and the customer's text replies (<code>is_valid_agent_history_message</code> in tau2's <code>base_agent.py</code>). The converter applies that same function, so the customer's phone calls and results never appear.</li>
+        <li><b>System prompt:</b> tau2's stock agent prompt (<code>SYSTEM_PROMPT</code>, with the telecom policy and tech-support manual) byte for byte at the pin. The student is scored with exactly the same bytes (§8).</li>
+        <li><b>Tools:</b> the 13 agent tool schemas from tau2 at the pin, passed as <code>tools</code> so the student's own chat template formats them.</li>
+        <li><b>Turns:</b> each agent turn becomes an <code>assistant</code> message, either text or tool calls. Customer turns become <code>user</code>; agent tool results become <code>tool</code>.</li>
+        <li><b>Dropped:</b> reasoning text, cost and usage fields, timestamps.</li>
+        <li><b>Loss:</b> on assistant turns only, every one in one pass. Customer turns and tool results are context.</li>
+        <li><b>Metadata:</b> the <code>meta</code> object goes in the card and the provenance logs, never into the model's input.</li>
+      </ul>
+      <div class="tools">
+        <code class="w">suspend_line</code><code class="w">resume_line</code><code class="w">send_payment_request</code><code class="w">enable_roaming</code><code class="w">disable_roaming</code><code class="w">refuel_data</code><code>get_customer_by_phone</code><code>get_customer_by_id</code><code>get_customer_by_name</code><code>get_details_by_id</code><code>get_bills_for_customer</code><code>get_data_usage</code><code>transfer_to_human_agents</code>
+      </div>
+      <p class="figcap">The 13 agent tools. The six outlined ones change the customer's account. Fixes on the phone itself (airplane mode, APN, app permissions) are the customer's tools, which the agent can only ask for in words.</p>
+    </div>
+    <div class="card">
+      <div class="ck">Dataset versions</div>
+      <h3>Versions are append-only, and each has a card</h3>
+      <ul>
+        <li><b>The versions:</b>
+          <ul>
+            <li>v1: S1 and S2 (the board), filters F1 to F10. Every result up to M6 uses it;</li>
+            <li>v2, only if M7 runs: v1 plus S3, the GLM-5.1 conversations;</li>
+            <li>later, optional: masked recoveries (§5) or pool tasks (D6), each as a new version.</li>
+          </ul>
+          A version never changes; a new rule means a new version.</li>
+        <li><b>Card:</b> <code>data/sft/vN/card.md</code> is committed. It holds:
+          <ul>
+            <li>the sources with their sha256 hashes and download dates;</li>
+            <li>the filter table, and counts by task, symptom, root issue and source (M7's trigger reads the root-issue counts);</li>
+            <li>the length distribution;</li>
+            <li>the hash of <code>train.jsonl</code>.</li>
+          </ul>
+        </li>
+        <li><b>Storage:</b> the JSONL files go to S3 under their content hash. The Mac keeps a copy in <code>data/sft/vN/</code>, which git ignores.</li>
+        <li><b>Expected scale:</b> v1 should be about 430 to 520 conversations, at roughly 10K to 20K tokens each.</li>
+      </ul>
+    </div>
+  </div>
+  <h3 class="subh" id="one-row">Does a conversation appear several times? No: one conversation is one row, trained at every agent turn</h3>
+  <div class="fig waf">
+    <svg viewBox="0 0 640 372" role="img" aria-labelledby="ox-t ox-d">
+      <title id="ox-t">One conversation as one training row</title>
+      <desc id="ox-d">Each agent turn in the row is trained, seeing the true conversation before it. Customer turns and tool results are context with no loss.</desc>
+      <g class="oxr ctx"><rect x="10" y="10" width="620" height="34" rx="7"/><text class="oxk" x="24" y="32">SYSTEM</text><text class="oxt" x="120" y="32">instructions, policy, manual, 13 tool schemas</text><text class="oxl" x="616" y="32">context</text></g>
+      <g class="oxr trn"><rect x="10" y="50" width="620" height="34" rx="7"/><text class="oxk" x="24" y="72">AGENT</text><text class="oxt" x="120" y="72">"Hi! How can I help you today?"</text><text class="oxl" x="616" y="72">trained</text></g>
+      <g class="oxr ctx"><rect x="10" y="90" width="620" height="34" rx="7"/><text class="oxk" x="24" y="112">CUSTOMER</text><text class="oxt" x="120" y="112">"My mobile data is off or really slow."</text><text class="oxl" x="616" y="112">context</text></g>
+      <g class="oxr trn"><rect x="10" y="130" width="620" height="34" rx="7"/><text class="oxk" x="24" y="152">AGENT</text><text class="oxt" x="120" y="152">tool call: get_customer_by_phone("555-123-2002")</text><text class="oxl" x="616" y="152">trained</text></g>
+      <g class="oxr ctx"><rect x="10" y="170" width="620" height="34" rx="7"/><text class="oxk" x="24" y="192">TOOL</text><text class="oxt" x="120" y="192">{customer_id, line_ids, ...}</text><text class="oxl" x="616" y="192">context</text></g>
+      <g class="oxr trn"><rect x="10" y="210" width="620" height="34" rx="7"/><text class="oxk" x="24" y="232">AGENT</text><text class="oxt" x="120" y="232">"Is airplane mode on? Please check your status bar."</text><text class="oxl" x="616" y="232">trained</text></g>
+      <g class="oxr ctx"><rect x="10" y="250" width="620" height="34" rx="7"/><text class="oxk" x="24" y="272">CUSTOMER</text><text class="oxt" x="120" y="272">"Yes, the airplane icon is showing."</text><text class="oxl" x="616" y="272">context</text></g>
+      <g class="oxr trn"><rect x="10" y="290" width="620" height="34" rx="7"/><text class="oxk" x="24" y="312">AGENT</text><text class="oxt" x="120" y="312">"Please turn it off, then run a speed test."</text><text class="oxl" x="616" y="312">trained</text></g>
+      <text class="oxt" x="320" y="358" text-anchor="middle">… about 14 agent turns in all: one row, one forward pass, loss on every green turn</text>
+    </svg>
+  </div>
+  <ul class="note">
+    <li><b>Each conversation is in the file once.</b> In one pass the model learns every agent decision in it: the greeting, each tool call, each instruction to the customer and the close. Each decision sees the true conversation before it.</li>
+    <li><b>What appears many times is the task, not the conversation.</b> The teacher plays each training task about 8 to 12 times, so the file holds several different conversations per task. F9 caps near-identical ones at 3.</li>
+    <li><b>The alternative is one row per agent turn.</b> Each row ends at a different agent turn and only that turn is trained, so the same conversation does appear many times, cut at different points. It teaches the same thing, but repeats the history each time: about 14 rows and roughly 100K+ tokens instead of one 15K row. Use it only if the trainer can train just the last message, or for a thinking student whose template drops earlier reasoning.</li>
+    <li><b>Grading isn't per turn.</b> tau2 grades the conversation as a whole, from the phone's final state, which is why filters keep or drop whole conversations.</li>
+  </ul>
+
+  <h3 class="subh" id="how-row">How one input trains every decision: the output is a guess at every token</h3>
+  <p class="insight"><b>Short answer:</b> in training, the model doesn't produce one answer at the end. It reads the whole conversation once and, at <i>every</i> position, outputs a guess at the next token. The target at each position is simply the token that actually comes next. Only the guesses for the agent's tokens are scored. Because each position can only look backwards, the guess for agent turn 5 uses only what happened before turn 5. So one row gives the same lesson as cutting the conversation at each agent turn, without repeating it.</p>
+  <ol class="note rundown">
+    <li><b>Input.</b> The row, rendered by the chat template, is one sequence of about 15K tokens: system prompt and tools, then every turn in order (<a href="#worked">the worked example</a> shows it in full).</li>
+    <li><b>One forward pass.</b> At every one of those positions, the model outputs a probability for each of its 151,936 vocabulary tokens being next. That table of guesses is the training "output". Nothing is generated.</li>
+    <li><b>Targets.</b> The targets are the input shifted left by one: the target at position <i>t</i> is the real token at <i>t</i> + 1. They come free from the conversation itself; nobody writes them.</li>
+    <li><b>Mask.</b> If the target belongs to the agent's turn, it counts. If it belongs to the system prompt, the customer or a tool result, its label is −100 and it's ignored.</li>
+    <li><b>Looking backwards only.</b> Attention is causal: position <i>t</i> can read positions 1 to <i>t</i>, never later ones. The guess at each agent token is made from exactly the history the agent had at that moment.</li>
+    <li><b>Loss and update.</b> The loss is the average of −log p(target) over the agent's tokens. One backward pass updates the LoRA weights for all the agent's decisions in the conversation at once.</li>
+  </ol>
+  <div class="fig flow nt">
+    <svg viewBox="0 0 1000 340" role="img" aria-labelledby="nt-t nt-d">
+<title id="nt-t">One input, a target at every position</title>
+<desc id="nt-d">Twelve input tokens. Under each, its target is the next token. Targets that are agent tokens are trained; the rest are ignored.</desc>
+<defs><marker id="ah4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="sa" d="M0 0 L10 5 L0 10 z"/></marker></defs>
+<text class="ntk" x="20" y="22">1 · INPUT: THE WHOLE CONVERSATION, READ ONCE (POSITIONS 1 TO 12)</text>
+<g class="nb"><title>Position 1: system token</title><rect x="20" y="34" width="74" height="40" rx="7"/><text class="ntt" x="57.0" y="58">…tools</text></g>
+<text class="ntn" x="57.0" y="90">1 · system</text>
+<g class="nb"><title>Position 2: customer token</title><rect x="100" y="34" width="74" height="40" rx="7"/><text class="ntt" x="137.0" y="58">data off</text></g>
+<text class="ntn" x="137.0" y="90">2 · customer</text>
+<g class="nb"><title>Position 3: header token</title><rect x="180" y="34" width="74" height="40" rx="7"/><text class="ntt" x="217.0" y="58">‹asst›</text></g>
+<text class="ntn" x="217.0" y="90">3 · header</text>
+<g class="nb ag"><title>Position 4: agent token</title><rect x="260" y="34" width="74" height="40" rx="7"/><text class="ntt" x="297.0" y="58">What's</text></g>
+<text class="ntn" x="297.0" y="90">4 · agent</text>
+<g class="nb ag"><title>Position 5: agent token</title><rect x="340" y="34" width="74" height="40" rx="7"/><text class="ntt" x="377.0" y="58">number?</text></g>
+<text class="ntn" x="377.0" y="90">5 · agent</text>
+<g class="nb ag"><title>Position 6: agent token</title><rect x="420" y="34" width="74" height="40" rx="7"/><text class="ntt" x="457.0" y="58">‹end›</text></g>
+<text class="ntn" x="457.0" y="90">6 · agent</text>
+<g class="nb"><title>Position 7: customer token</title><rect x="500" y="34" width="74" height="40" rx="7"/><text class="ntt" x="537.0" y="58">555-2002</text></g>
+<text class="ntn" x="537.0" y="90">7 · customer</text>
+<g class="nb"><title>Position 8: header token</title><rect x="580" y="34" width="74" height="40" rx="7"/><text class="ntt" x="617.0" y="58">‹asst›</text></g>
+<text class="ntn" x="617.0" y="90">8 · header</text>
+<g class="nb ag"><title>Position 9: agent token</title><rect x="660" y="34" width="74" height="40" rx="7"/><text class="ntt" x="697.0" y="58">‹call›</text></g>
+<text class="ntn" x="697.0" y="90">9 · agent</text>
+<g class="nb ag"><title>Position 10: agent token</title><rect x="740" y="34" width="74" height="40" rx="7"/><text class="ntt" x="777.0" y="58">get_cust…</text></g>
+<text class="ntn" x="777.0" y="90">10 · agent</text>
+<g class="nb ag"><title>Position 11: agent token</title><rect x="820" y="34" width="74" height="40" rx="7"/><text class="ntt" x="857.0" y="58">‹end›</text></g>
+<text class="ntn" x="857.0" y="90">11 · agent</text>
+<g class="nb"><title>Position 12: tool token</title><rect x="900" y="34" width="74" height="40" rx="7"/><text class="ntt" x="937.0" y="58">{C1001…}</text></g>
+<text class="ntn" x="937.0" y="90">12 · tool</text>
+<g class="nl ig"><title>Position 1 predicts position 2: ignored</title><rect x="20" y="140" width="74" height="40" rx="7"/><text class="ntt" x="57.0" y="164">data off</text></g>
+<text class="nts" x="57.0" y="196">ignored</text>
+<path class="nfaint" d="M129.0 98 L65.0 136"/>
+<g class="nl ig"><title>Position 2 predicts position 3: ignored</title><rect x="100" y="140" width="74" height="40" rx="7"/><text class="ntt" x="137.0" y="164">‹asst›</text></g>
+<text class="nts" x="137.0" y="196">ignored</text>
+<path class="nfaint" d="M209.0 98 L145.0 136"/>
+<g class="nl tr"><title>Position 3 predicts position 4: trained</title><rect x="180" y="140" width="74" height="40" rx="7"/><text class="ntt" x="217.0" y="164">What's</text></g>
+<text class="nts on" x="217.0" y="196">trained</text>
+<path class="se" d="M289.0 98 L225.0 136" marker-end="url(#ah4)"/>
+<g class="nl tr"><title>Position 4 predicts position 5: trained</title><rect x="260" y="140" width="74" height="40" rx="7"/><text class="ntt" x="297.0" y="164">number?</text></g>
+<text class="nts on" x="297.0" y="196">trained</text>
+<path class="se" d="M369.0 98 L305.0 136" marker-end="url(#ah4)"/>
+<g class="nl tr"><title>Position 5 predicts position 6: trained</title><rect x="340" y="140" width="74" height="40" rx="7"/><text class="ntt" x="377.0" y="164">‹end›</text></g>
+<text class="nts on" x="377.0" y="196">trained</text>
+<path class="se" d="M449.0 98 L385.0 136" marker-end="url(#ah4)"/>
+<g class="nl ig"><title>Position 6 predicts position 7: ignored</title><rect x="420" y="140" width="74" height="40" rx="7"/><text class="ntt" x="457.0" y="164">555-2002</text></g>
+<text class="nts" x="457.0" y="196">ignored</text>
+<path class="nfaint" d="M529.0 98 L465.0 136"/>
+<g class="nl ig"><title>Position 7 predicts position 8: ignored</title><rect x="500" y="140" width="74" height="40" rx="7"/><text class="ntt" x="537.0" y="164">‹asst›</text></g>
+<text class="nts" x="537.0" y="196">ignored</text>
+<path class="nfaint" d="M609.0 98 L545.0 136"/>
+<g class="nl tr"><title>Position 8 predicts position 9: trained</title><rect x="580" y="140" width="74" height="40" rx="7"/><text class="ntt" x="617.0" y="164">‹call›</text></g>
+<text class="nts on" x="617.0" y="196">trained</text>
+<path class="se" d="M689.0 98 L625.0 136" marker-end="url(#ah4)"/>
+<g class="nl tr"><title>Position 9 predicts position 10: trained</title><rect x="660" y="140" width="74" height="40" rx="7"/><text class="ntt" x="697.0" y="164">get_cust…</text></g>
+<text class="nts on" x="697.0" y="196">trained</text>
+<path class="se" d="M769.0 98 L705.0 136" marker-end="url(#ah4)"/>
+<g class="nl tr"><title>Position 10 predicts position 11: trained</title><rect x="740" y="140" width="74" height="40" rx="7"/><text class="ntt" x="777.0" y="164">‹end›</text></g>
+<text class="nts on" x="777.0" y="196">trained</text>
+<path class="se" d="M849.0 98 L785.0 136" marker-end="url(#ah4)"/>
+<g class="nl ig"><title>Position 11 predicts position 12: ignored</title><rect x="820" y="140" width="74" height="40" rx="7"/><text class="ntt" x="857.0" y="164">{C1001…}</text></g>
+<text class="nts" x="857.0" y="196">ignored</text>
+<path class="nfaint" d="M929.0 98 L865.0 136"/>
+<g class="nl ig"><title>Position 12 predicts position 13: ignored</title><rect x="900" y="140" width="74" height="40" rx="7"/><text class="ntt" x="937.0" y="164">…</text></g>
+<text class="nts" x="937.0" y="196">ignored</text>
+<text class="ntk" x="20" y="222">2 · TARGETS: EACH ARROW MOVES A TOKEN ONE STEP LEFT, TO THE POSITION THAT MUST GUESS IT</text>
+<rect class="nloss" x="20" y="238" width="960" height="84" rx="10"/>
+<text class="ntk" x="40" y="266">3 · LOSS: ONLY THE 6 TRAINED TARGETS COUNT</text>
+<text class="ntd" x="40" y="292">loss = average of −log p(target) at positions 3, 4, 5, 8, 9 and 10. Every other position has label −100 and adds nothing.</text>
+<text class="ntd" x="40" y="312">One backward pass then nudges the LoRA weights so those six targets become more likely next time.</text>
+</svg>
+  </div>
+  <p class="figcap"><b>Reading it:</b> each arrow takes a token one step left, to become the target of the position before it. Position 3 is the assistant header: from everything before it, the model must guess "What's", the first token of its reply. Position 8 is the header before the tool call: there it must guess <code>‹call›</code>, which is the decision to call a tool. Tokens are simplified here; real ones are word pieces.</p>
+  <div class="grid2 ca-row">
+    <div class="fig ca">
+      <svg viewBox="0 0 360 262" role="img" aria-labelledby="ca-t ca-d">
+<title id="ca-t">What each position can see</title>
+<desc id="ca-d">A lower-triangular grid: each position attends only to itself and earlier positions. Row 8 is highlighted and sees positions 1 to 8.</desc>
+<text class="ntk" x="120" y="18">CAN SEE POSITION →</text>
+<text class="ntn" x="128.5" y="248">1</text>
+<text class="ntn" x="145.5" y="248">2</text>
+<text class="ntn" x="162.5" y="248">3</text>
+<text class="ntn" x="179.5" y="248">4</text>
+<text class="ntn" x="196.5" y="248">5</text>
+<text class="ntn" x="213.5" y="248">6</text>
+<text class="ntn" x="230.5" y="248">7</text>
+<text class="ntn" x="247.5" y="248">8</text>
+<text class="ntn" x="264.5" y="248">9</text>
+<text class="ntn" x="281.5" y="248">10</text>
+<text class="ntn" x="298.5" y="248">11</text>
+<text class="ntn" x="315.5" y="248">12</text>
+<text class="ntr" x="112" y="42.5">1 …tools</text>
+<rect class="cv" x="121" y="31" width="15" height="15" rx="2"/>
+<rect class="cv no" x="138" y="31" width="15" height="15" rx="2"/>
+<rect class="cv no" x="155" y="31" width="15" height="15" rx="2"/>
+<rect class="cv no" x="172" y="31" width="15" height="15" rx="2"/>
+<rect class="cv no" x="189" y="31" width="15" height="15" rx="2"/>
+<rect class="cv no" x="206" y="31" width="15" height="15" rx="2"/>
+<rect class="cv no" x="223" y="31" width="15" height="15" rx="2"/>
+<rect class="cv no" x="240" y="31" width="15" height="15" rx="2"/>
+<rect class="cv no" x="257" y="31" width="15" height="15" rx="2"/>
+<rect class="cv no" x="274" y="31" width="15" height="15" rx="2"/>
+<rect class="cv no" x="291" y="31" width="15" height="15" rx="2"/>
+<rect class="cv no" x="308" y="31" width="15" height="15" rx="2"/>
+<text class="ntr" x="112" y="59.5">2 data off</text>
+<rect class="cv" x="121" y="48" width="15" height="15" rx="2"/>
+<rect class="cv" x="138" y="48" width="15" height="15" rx="2"/>
+<rect class="cv no" x="155" y="48" width="15" height="15" rx="2"/>
+<rect class="cv no" x="172" y="48" width="15" height="15" rx="2"/>
+<rect class="cv no" x="189" y="48" width="15" height="15" rx="2"/>
+<rect class="cv no" x="206" y="48" width="15" height="15" rx="2"/>
+<rect class="cv no" x="223" y="48" width="15" height="15" rx="2"/>
+<rect class="cv no" x="240" y="48" width="15" height="15" rx="2"/>
+<rect class="cv no" x="257" y="48" width="15" height="15" rx="2"/>
+<rect class="cv no" x="274" y="48" width="15" height="15" rx="2"/>
+<rect class="cv no" x="291" y="48" width="15" height="15" rx="2"/>
+<rect class="cv no" x="308" y="48" width="15" height="15" rx="2"/>
+<text class="ntr" x="112" y="76.5">3 ‹asst›</text>
+<rect class="cv" x="121" y="65" width="15" height="15" rx="2"/>
+<rect class="cv" x="138" y="65" width="15" height="15" rx="2"/>
+<rect class="cv" x="155" y="65" width="15" height="15" rx="2"/>
+<rect class="cv no" x="172" y="65" width="15" height="15" rx="2"/>
+<rect class="cv no" x="189" y="65" width="15" height="15" rx="2"/>
+<rect class="cv no" x="206" y="65" width="15" height="15" rx="2"/>
+<rect class="cv no" x="223" y="65" width="15" height="15" rx="2"/>
+<rect class="cv no" x="240" y="65" width="15" height="15" rx="2"/>
+<rect class="cv no" x="257" y="65" width="15" height="15" rx="2"/>
+<rect class="cv no" x="274" y="65" width="15" height="15" rx="2"/>
+<rect class="cv no" x="291" y="65" width="15" height="15" rx="2"/>
+<rect class="cv no" x="308" y="65" width="15" height="15" rx="2"/>
+<text class="ntr" x="112" y="93.5">4 What's</text>
+<rect class="cv" x="121" y="82" width="15" height="15" rx="2"/>
+<rect class="cv" x="138" y="82" width="15" height="15" rx="2"/>
+<rect class="cv" x="155" y="82" width="15" height="15" rx="2"/>
+<rect class="cv" x="172" y="82" width="15" height="15" rx="2"/>
+<rect class="cv no" x="189" y="82" width="15" height="15" rx="2"/>
+<rect class="cv no" x="206" y="82" width="15" height="15" rx="2"/>
+<rect class="cv no" x="223" y="82" width="15" height="15" rx="2"/>
+<rect class="cv no" x="240" y="82" width="15" height="15" rx="2"/>
+<rect class="cv no" x="257" y="82" width="15" height="15" rx="2"/>
+<rect class="cv no" x="274" y="82" width="15" height="15" rx="2"/>
+<rect class="cv no" x="291" y="82" width="15" height="15" rx="2"/>
+<rect class="cv no" x="308" y="82" width="15" height="15" rx="2"/>
+<text class="ntr" x="112" y="110.5">5 number?</text>
+<rect class="cv" x="121" y="99" width="15" height="15" rx="2"/>
+<rect class="cv" x="138" y="99" width="15" height="15" rx="2"/>
+<rect class="cv" x="155" y="99" width="15" height="15" rx="2"/>
+<rect class="cv" x="172" y="99" width="15" height="15" rx="2"/>
+<rect class="cv" x="189" y="99" width="15" height="15" rx="2"/>
+<rect class="cv no" x="206" y="99" width="15" height="15" rx="2"/>
+<rect class="cv no" x="223" y="99" width="15" height="15" rx="2"/>
+<rect class="cv no" x="240" y="99" width="15" height="15" rx="2"/>
+<rect class="cv no" x="257" y="99" width="15" height="15" rx="2"/>
+<rect class="cv no" x="274" y="99" width="15" height="15" rx="2"/>
+<rect class="cv no" x="291" y="99" width="15" height="15" rx="2"/>
+<rect class="cv no" x="308" y="99" width="15" height="15" rx="2"/>
+<text class="ntr" x="112" y="127.5">6 ‹end›</text>
+<rect class="cv" x="121" y="116" width="15" height="15" rx="2"/>
+<rect class="cv" x="138" y="116" width="15" height="15" rx="2"/>
+<rect class="cv" x="155" y="116" width="15" height="15" rx="2"/>
+<rect class="cv" x="172" y="116" width="15" height="15" rx="2"/>
+<rect class="cv" x="189" y="116" width="15" height="15" rx="2"/>
+<rect class="cv" x="206" y="116" width="15" height="15" rx="2"/>
+<rect class="cv no" x="223" y="116" width="15" height="15" rx="2"/>
+<rect class="cv no" x="240" y="116" width="15" height="15" rx="2"/>
+<rect class="cv no" x="257" y="116" width="15" height="15" rx="2"/>
+<rect class="cv no" x="274" y="116" width="15" height="15" rx="2"/>
+<rect class="cv no" x="291" y="116" width="15" height="15" rx="2"/>
+<rect class="cv no" x="308" y="116" width="15" height="15" rx="2"/>
+<text class="ntr" x="112" y="144.5">7 555-2002</text>
+<rect class="cv" x="121" y="133" width="15" height="15" rx="2"/>
+<rect class="cv" x="138" y="133" width="15" height="15" rx="2"/>
+<rect class="cv" x="155" y="133" width="15" height="15" rx="2"/>
+<rect class="cv" x="172" y="133" width="15" height="15" rx="2"/>
+<rect class="cv" x="189" y="133" width="15" height="15" rx="2"/>
+<rect class="cv" x="206" y="133" width="15" height="15" rx="2"/>
+<rect class="cv" x="223" y="133" width="15" height="15" rx="2"/>
+<rect class="cv no" x="240" y="133" width="15" height="15" rx="2"/>
+<rect class="cv no" x="257" y="133" width="15" height="15" rx="2"/>
+<rect class="cv no" x="274" y="133" width="15" height="15" rx="2"/>
+<rect class="cv no" x="291" y="133" width="15" height="15" rx="2"/>
+<rect class="cv no" x="308" y="133" width="15" height="15" rx="2"/>
+<text class="ntr hi" x="112" y="161.5">8 ‹asst›</text>
+<rect class="cv hi" x="121" y="150" width="15" height="15" rx="2"/>
+<rect class="cv hi" x="138" y="150" width="15" height="15" rx="2"/>
+<rect class="cv hi" x="155" y="150" width="15" height="15" rx="2"/>
+<rect class="cv hi" x="172" y="150" width="15" height="15" rx="2"/>
+<rect class="cv hi" x="189" y="150" width="15" height="15" rx="2"/>
+<rect class="cv hi" x="206" y="150" width="15" height="15" rx="2"/>
+<rect class="cv hi" x="223" y="150" width="15" height="15" rx="2"/>
+<rect class="cv hi" x="240" y="150" width="15" height="15" rx="2"/>
+<rect class="cv no" x="257" y="150" width="15" height="15" rx="2"/>
+<rect class="cv no" x="274" y="150" width="15" height="15" rx="2"/>
+<rect class="cv no" x="291" y="150" width="15" height="15" rx="2"/>
+<rect class="cv no" x="308" y="150" width="15" height="15" rx="2"/>
+<text class="ntr" x="112" y="178.5">9 ‹call›</text>
+<rect class="cv" x="121" y="167" width="15" height="15" rx="2"/>
+<rect class="cv" x="138" y="167" width="15" height="15" rx="2"/>
+<rect class="cv" x="155" y="167" width="15" height="15" rx="2"/>
+<rect class="cv" x="172" y="167" width="15" height="15" rx="2"/>
+<rect class="cv" x="189" y="167" width="15" height="15" rx="2"/>
+<rect class="cv" x="206" y="167" width="15" height="15" rx="2"/>
+<rect class="cv" x="223" y="167" width="15" height="15" rx="2"/>
+<rect class="cv" x="240" y="167" width="15" height="15" rx="2"/>
+<rect class="cv" x="257" y="167" width="15" height="15" rx="2"/>
+<rect class="cv no" x="274" y="167" width="15" height="15" rx="2"/>
+<rect class="cv no" x="291" y="167" width="15" height="15" rx="2"/>
+<rect class="cv no" x="308" y="167" width="15" height="15" rx="2"/>
+<text class="ntr" x="112" y="195.5">10 get_cust…</text>
+<rect class="cv" x="121" y="184" width="15" height="15" rx="2"/>
+<rect class="cv" x="138" y="184" width="15" height="15" rx="2"/>
+<rect class="cv" x="155" y="184" width="15" height="15" rx="2"/>
+<rect class="cv" x="172" y="184" width="15" height="15" rx="2"/>
+<rect class="cv" x="189" y="184" width="15" height="15" rx="2"/>
+<rect class="cv" x="206" y="184" width="15" height="15" rx="2"/>
+<rect class="cv" x="223" y="184" width="15" height="15" rx="2"/>
+<rect class="cv" x="240" y="184" width="15" height="15" rx="2"/>
+<rect class="cv" x="257" y="184" width="15" height="15" rx="2"/>
+<rect class="cv" x="274" y="184" width="15" height="15" rx="2"/>
+<rect class="cv no" x="291" y="184" width="15" height="15" rx="2"/>
+<rect class="cv no" x="308" y="184" width="15" height="15" rx="2"/>
+<text class="ntr" x="112" y="212.5">11 ‹end›</text>
+<rect class="cv" x="121" y="201" width="15" height="15" rx="2"/>
+<rect class="cv" x="138" y="201" width="15" height="15" rx="2"/>
+<rect class="cv" x="155" y="201" width="15" height="15" rx="2"/>
+<rect class="cv" x="172" y="201" width="15" height="15" rx="2"/>
+<rect class="cv" x="189" y="201" width="15" height="15" rx="2"/>
+<rect class="cv" x="206" y="201" width="15" height="15" rx="2"/>
+<rect class="cv" x="223" y="201" width="15" height="15" rx="2"/>
+<rect class="cv" x="240" y="201" width="15" height="15" rx="2"/>
+<rect class="cv" x="257" y="201" width="15" height="15" rx="2"/>
+<rect class="cv" x="274" y="201" width="15" height="15" rx="2"/>
+<rect class="cv" x="291" y="201" width="15" height="15" rx="2"/>
+<rect class="cv no" x="308" y="201" width="15" height="15" rx="2"/>
+<text class="ntr" x="112" y="229.5">12 {C1001…}</text>
+<rect class="cv" x="121" y="218" width="15" height="15" rx="2"/>
+<rect class="cv" x="138" y="218" width="15" height="15" rx="2"/>
+<rect class="cv" x="155" y="218" width="15" height="15" rx="2"/>
+<rect class="cv" x="172" y="218" width="15" height="15" rx="2"/>
+<rect class="cv" x="189" y="218" width="15" height="15" rx="2"/>
+<rect class="cv" x="206" y="218" width="15" height="15" rx="2"/>
+<rect class="cv" x="223" y="218" width="15" height="15" rx="2"/>
+<rect class="cv" x="240" y="218" width="15" height="15" rx="2"/>
+<rect class="cv" x="257" y="218" width="15" height="15" rx="2"/>
+<rect class="cv" x="274" y="218" width="15" height="15" rx="2"/>
+<rect class="cv" x="291" y="218" width="15" height="15" rx="2"/>
+<rect class="cv" x="308" y="218" width="15" height="15" rx="2"/>
+</svg>
+    </div>
+    <div class="card">
+      <div class="ck">Why one row equals many cuts</div>
+      <h3>Each position sees only its past</h3>
+      <ul>
+        <li><b>Row 8 is highlighted:</b> the moment the agent decides to call a tool. It sees positions 1 to 8, including the customer's number, but not the tool result at 12, which hasn't happened yet.</li>
+        <li><b>That's the cut you'd have made by hand.</b> A separate row "history up to turn <i>k</i> → turn <i>k</i>" would give each agent token the same view and the same target.</li>
+        <li><b>So the gradients match.</b> The difference is cost: the shared history is computed once instead of once per agent turn.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="tw">
+    <table class="cmp2">
+      <thead><tr><th></th><th>One row per agent turn</th><th>One row per conversation (this plan)</th></tr></thead>
+      <tbody>
+        <tr><td><b>A row holds</b></td><td>The history up to agent turn <i>k</i>, then turn <i>k</i></td><td>The whole conversation, start to end</td></tr>
+        <tr><td><b>What's trained</b></td><td>Turn <i>k</i> only</td><td>Every agent turn, about 14 in a telecom conversation</td></tr>
+        <tr><td><b>Rows per conversation</b></td><td>About 14, each repeating the history</td><td>1</td></tr>
+        <tr><td><b>Tokens processed</b></td><td>The sum of all the prefixes: often 100K or more for one 15K conversation</td><td>About 15K</td></tr>
+        <tr><td><b>What each agent token learns from</b></td><td>The history before it</td><td>The same history before it, thanks to causal attention</td></tr>
+        <tr><td><b>When you'd use it</b></td><td>A thinking student whose template drops earlier reasoning, or a trainer that can only score the last message</td><td>Everything else, including this plan's non-thinking students</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note"><b>At serving time it runs the other way.</b> tau2 sends the history so far, vLLM adds the assistant header, and the model writes its turn one token at a time, each token fed back in before the next. Training taught exactly those steps, at the positions marked trained above, using the teacher's tokens instead of the model's own.</p>
+  <div class="codeblock">
+    <div class="codehead"><span class="path">data/sft/v1/train.jsonl</span><span class="why">One row's shape, pretty-printed (in the file it is one line per conversation), for a mobile-data task like the talk's examples. Contents are shortened.</span></div>
+    <div class="codemount" id="m-row"></div>
+  </div>
+
+  <h3 class="subh" id="worked">A worked example: what the model reads, and what it learns to write</h3>
+  <p class="note">A short, made-up telecom conversation, built the way the converter builds every row. The three tool schemas are tau2's own at <code>2174a60</code> (3 of the 13), and the policy is cut to one line. Below is the exact text TRL trains on: the row from above, rendered by TRL's training copy of the Qwen3-4B-Instruct-2507 chat template.</p>
+  <ol class="note">
+    <li><b>The row</b> is the JSONL line: <code>messages</code> plus <code>tools</code>. In a real row, the agent's turns are exactly what the teacher wrote in the board file. Those turns are the "observed output" the student learns to copy.</li>
+    <li><b>The chat template</b> turns the row into one long text. The tools go into the system turn, each tool call becomes a <code>&lt;tool_call&gt;</code> block, and each tool result becomes a <code>&lt;tool_response&gt;</code> inside a user turn.</li>
+    <li><b>The loss mask</b> marks which tokens are trained. TRL's training template wraps each agent turn in generation markers. With <code>assistant_only_loss=True</code>, every other token gets the label <code>-100</code>, which the loss ignores.</li>
+  </ol>
+  <div class="xlg"><span><i class="xsw ctx"></i>context: read, never trained</span><span><i class="xsw trn"></i>trained: the loss is on these tokens</span><span><i class="xsw sp"></i>special tokens</span></div>
+  <pre class="xpre" aria-label="The example row rendered by the chat template, with trained tokens highlighted"><span class="ctx"><span class="sp">&lt;|im_start|&gt;</span>system
+&lt;instructions&gt;
+You are a customer service agent that helps the user according to the &lt;policy&gt; provided below.
+...
+&lt;/instructions&gt;
+&lt;policy&gt;
+... 3,715 words: the telecom policy and the tech support manual ...
+&lt;/policy&gt;
+
+# Tools
+
+You may call one or more functions to assist with the user query.
+
+You are provided with function signatures within &lt;tools&gt;&lt;/tools&gt; XML tags:
+&lt;tools&gt;
+{"type": "function", "function": {"name": "get_customer_by_phone", "description": "Finds a customer by their primary contact or line phone number.", "parameters": {"properties": {"phone_number": {"description": "The phone number to search for.", "title": "Phone Number", "type": "string"}}, "required": ["phone_number"], "title": "parameters", "type": "object"}}}
+{"type": "function", "function": {"name": "get_details_by_id", "description": "Retrieves the details for a given ID.\n\nThe ID must be a valid ID for a Customer, Line, Device, Bill, or Plan.", "parameters": {"properties": {"id": {"description": "The ID of the object to retrieve.", "title": "Id", "type": "string"}}, "required": ["id"], "title": "parameters", "type": "object"}}}
+{"type": "function", "function": {"name": "enable_roaming", "description": "Enables international roaming on a line.", "parameters": {"properties": {"customer_id": {"description": "ID of the customer who owns the line.", "title": "Customer Id", "type": "string"}, "line_id": {"description": "ID of the line to enable roaming for.", "title": "Line Id", "type": "string"}}, "required": ["customer_id", "line_id"], "title": "parameters", "type": "object"}}}
+&lt;/tools&gt;
+
+For each function call, return a json object with function name and arguments within &lt;tool_call&gt;&lt;/tool_call&gt; XML tags:
+&lt;tool_call&gt;
+{"name": &lt;function-name&gt;, "arguments": &lt;args-json-object&gt;}
+&lt;/tool_call&gt;<span class="sp">&lt;|im_end|&gt;</span>
+<span class="sp">&lt;|im_start|&gt;</span>assistant
+</span><span class="trn">Hi! How can I help you today?<span class="sp">&lt;|im_end|&gt;</span>
+</span><span class="ctx"><span class="sp">&lt;|im_start|&gt;</span>user
+My mobile data stopped working. I'm in France at the moment.<span class="sp">&lt;|im_end|&gt;</span>
+<span class="sp">&lt;|im_start|&gt;</span>assistant
+</span><span class="trn">I can help with that. What's the phone number on the affected line?<span class="sp">&lt;|im_end|&gt;</span>
+</span><span class="ctx"><span class="sp">&lt;|im_start|&gt;</span>user
+It's 555-123-2002.<span class="sp">&lt;|im_end|&gt;</span>
+<span class="sp">&lt;|im_start|&gt;</span>assistant
+</span><span class="trn">&lt;tool_call&gt;
+{"name": "get_customer_by_phone", "arguments": {"phone_number": "555-123-2002"}}
+&lt;/tool_call&gt;<span class="sp">&lt;|im_end|&gt;</span>
+</span><span class="ctx"><span class="sp">&lt;|im_start|&gt;</span>user
+&lt;tool_response&gt;
+{"customer_id": "C1001", "full_name": "John Smith", "line_ids": ["L1002"], ...}
+&lt;/tool_response&gt;<span class="sp">&lt;|im_end|&gt;</span>
+<span class="sp">&lt;|im_start|&gt;</span>assistant
+</span><span class="trn">&lt;tool_call&gt;
+{"name": "get_details_by_id", "arguments": {"id": "L1002"}}
+&lt;/tool_call&gt;<span class="sp">&lt;|im_end|&gt;</span>
+</span><span class="ctx"><span class="sp">&lt;|im_start|&gt;</span>user
+&lt;tool_response&gt;
+{"line_id": "L1002", "status": "Active", "roaming_enabled": false, ...}
+&lt;/tool_response&gt;<span class="sp">&lt;|im_end|&gt;</span>
+<span class="sp">&lt;|im_start|&gt;</span>assistant
+</span><span class="trn">Roaming is turned off on your line, which stops mobile data abroad. Shall I turn it on?<span class="sp">&lt;|im_end|&gt;</span>
+</span><span class="ctx"><span class="sp">&lt;|im_start|&gt;</span>user
+Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
+<span class="sp">&lt;|im_start|&gt;</span>assistant
+</span><span class="trn">&lt;tool_call&gt;
+{"name": "enable_roaming", "arguments": {"customer_id": "C1001", "line_id": "L1002"}}
+&lt;/tool_call&gt;<span class="sp">&lt;|im_end|&gt;</span>
+</span><span class="ctx"><span class="sp">&lt;|im_start|&gt;</span>user
+&lt;tool_response&gt;
+... roaming enabled on L1002 ...
+&lt;/tool_response&gt;<span class="sp">&lt;|im_end|&gt;</span>
+<span class="sp">&lt;|im_start|&gt;</span>assistant
+</span><span class="trn">Done. Please also make sure Data Roaming is on in your phone's settings, then run a speed test and tell me the result.<span class="sp">&lt;|im_end|&gt;</span>
+</span><span class="ctx"></span></pre>
+  <p class="figcap"><b>What's trained:</b> each agent turn's text or tool call, plus its <code>&lt;|im_end|&gt;</code>, so the student also learns where a turn stops. The <code>&lt;|im_start|&gt;assistant</code> header before it is context, because at serving time vLLM writes that header itself. In this shortened example the trained part is about a fifth of the text. In a real row, the full policy and all 13 tools are several thousand tokens of context, so the share is smaller.</p>
+  <h3 class="subh">The same row, turn by turn</h3>
+  <div class="tw">
+    <table class="tf">
+      <thead><tr><th>Agent turn</th><th>Input: everything the model has read up to this point</th><th>Target: what it must write next, token by token</th></tr></thead>
+      <tbody>
+        <tr><td class="n">1</td><td>The system prompt: instructions, policy and the tool schemas. Nothing else yet.</td><td><span class="tg">Hi! How can I help you today?&lt;|im_end|&gt;</span><span class="sm">message</span></td></tr>
+        <tr><td class="n">2</td><td>…plus the greeting it just gave, and the customer's first message: <i>“My mobile data stopped working. I'm in France at the moment.”</i></td><td><span class="tg">I can help with that. What&#x27;s the phone number on the affected line?&lt;|im_end|&gt;</span><span class="sm">message</span></td></tr>
+        <tr><td class="n">3</td><td>…plus its own question and the customer's reply: <i>“It's 555-123-2002.”</i></td><td><span class="tg">&lt;tool_call&gt;
+{&quot;name&quot;: &quot;get_customer_by_phone&quot;, &quot;arguments&quot;: {&quot;phone_number&quot;: &quot;555-123-2002&quot;}}
+&lt;/tool_call&gt;&lt;|im_end|&gt;</span><span class="sm">tool call</span></td></tr>
+        <tr><td class="n">4</td><td>…plus that tool call and its result: customer <code>C1001</code>, line <code>L1002</code>.</td><td><span class="tg">&lt;tool_call&gt;
+{&quot;name&quot;: &quot;get_details_by_id&quot;, &quot;arguments&quot;: {&quot;id&quot;: &quot;L1002&quot;}}
+&lt;/tool_call&gt;&lt;|im_end|&gt;</span><span class="sm">tool call</span></td></tr>
+        <tr><td class="n">5</td><td>…plus the line's details: <code>"roaming_enabled": false</code>.</td><td><span class="tg">Roaming is turned off on your line, which stops mobile data abroad. Shall I turn it on?&lt;|im_end|&gt;</span><span class="sm">message</span></td></tr>
+        <tr><td class="n">6</td><td>…plus its question and the customer's <i>“Yes, please.”</i></td><td><span class="tg">&lt;tool_call&gt;
+{&quot;name&quot;: &quot;enable_roaming&quot;, &quot;arguments&quot;: {&quot;customer_id&quot;: &quot;C1001&quot;, &quot;line_id&quot;: &quot;L1002&quot;}}
+&lt;/tool_call&gt;&lt;|im_end|&gt;</span><span class="sm">tool call</span></td></tr>
+        <tr><td class="n">7</td><td>…plus the roaming tool call and its result.</td><td><span class="tg">Done. Please also make sure Data Roaming is on in your phone&#x27;s settings, then run a speed test and tell me the result.&lt;|im_end|&gt;</span><span class="sm">message</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <div class="ck">How one row trains</div>
+      <h3>One forward pass, seven targets</h3>
+      <ul>
+        <li><b>Teacher forcing:</b> the model reads the whole row once. At every trained token it predicts the next token from everything before it, and the input is always the teacher's true history, never the student's own earlier guesses.</li>
+        <li><b>The loss</b> is the average of −log p(correct token) over the trained tokens only. The update changes only the LoRA adapter's weights; the base model stays frozen.</li>
+        <li><b>The table above is not seven rows in the file.</b> It's the same single row, seen from each agent turn (<a href="#one-row">as above</a>).</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="ck">What it doesn't learn</div>
+      <h3>The customer and the tools are never targets</h3>
+      <ul>
+        <li><b>Customer turns</b> (GPT-5.2's text in the board files) are context only. The student never learns to talk like the customer.</li>
+        <li><b>Tool results</b> come from tau2's code. The student learns to read them, not to write them.</li>
+        <li><b>Whether the conversation passed</b> isn't in the row at all. SFT only sees passing, clean rows, so the filters (§5) are the only place success enters.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 7 TRAIN -->
+<section id="s-train">
+  <div class="kicker">7 · Training</div>
+  <h2>LoRA in TRL, in a container: the 4B on one L4, then the talk's Qwen3-30B-A3B on one 80 GB A100</h2>
+  <dl class="recipe">
+    <div><dt>Student, step 1</dt><dd><code>Qwen/Qwen3-4B-Instruct-2507</code> (Apache-2.0), a non-thinking model. It's cheap on one L4 and proves the pipeline end to end.</dd></div>
+    <div><dt>Student, step 2</dt><dd><code>Qwen/Qwen3-30B-A3B</code> (Apr 2025, Apache-2.0): 30B in total with 3B active per token. It's the talk's model, released before tau2, and the true shadow.</dd></div>
+    <div><dt>Method</dt><dd>LoRA r 16, alpha 32, on all linear layers (on the 30B, the attention layers and experts). Learning rate 1e-4 with cosine decay, 3 epochs, bf16. All of these are starting points.</dd></div>
+    <div><dt>Loss</dt><dd>Assistant turns only. TRL patches Qwen3's template to mark them, and M3 checks the mask.</dd></div>
+    <div><dt>Length</dt><dd>24,576 tokens, with no packing. Gradient checkpointing and Liger kernels on.</dd></div>
+    <div><dt>Checkpoint</dt><dd>3 epochs, fixed before training, and the final checkpoint is the model. With all 74 tasks trained on, none are left to pick one. Each epoch is still saved, for the record.</dd></div>
+    <div style="grid-column:1/-1"><dt>Where</dt><dd>
+      <ul>
+        <li><b>The 4B:</b> EC2 <code>g6.2xlarge</code> in Sydney, one L4 with 24 GB, at US$1.271 an hour; your quota covers one.</li>
+        <li><b>The 30B:</b> one 80 GB A100, at $1.79 an hour on RunPod or $2.50 on Modal (both checked 12 Oct), with the same image. In bf16 its weights alone are about 61 GB, so at 24K tokens it may need a shorter length or 8-bit loading; M6 measures it. Neither needs a quota request. GCP spot A100s (your Vertex AI quota) also work, but serving there needs a Compute Engine quota I haven't checked.</li>
+      </ul>
+    </dd></div>
+  </dl>
+  <div class="grid2">
+    <div class="card">
+      <div class="ck">Why 24K fits the 4B on 24 GB (estimate, untested)</div>
+      <h3>The output layer is the problem, not the model</h3>
+      <ul>
+        <li><b>Model weights</b> in bf16 take about 8 GB. LoRA adds little.</li>
+        <li><b>The output layer:</b> at 24,576 tokens and Qwen's 151,936-word vocabulary, it produces about <b>15 GB</b> of scores in fp32. Liger's fused loss never builds that full tensor, which is what makes this fit.</li>
+        <li><b>The layers' saved inputs</b> with checkpointing take about 4.5 GB at 24K.</li>
+        <li><b>Speed:</b> an L4 should manage about 1,500 tokens a second here. That is about 50 to 70 minutes an epoch for v1, so a few dollars a run.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="ck">The talk's own infrastructure today</div>
+      <h3>W&amp;B serverless training has moved on</h3>
+      <ul>
+        <li><b>Supported models:</b> W&amp;B's serverless training, now in CoreWeave's docs, lists three models for both RL and SFT: Gemma 4 26B-A4B, Llama 3.1 8B and Nemotron 3.5 Lightning 30B-A3B. Qwen3 30B isn't listed, so the talk's exact setup isn't available.</li>
+        <li><b>Avoid Nemotron 3.5 Lightning here:</b> its model card lists tau2 telecom trajectories in its training data, so its telecom score says little about fine-tuning.</li>
+        <li><b>Your Mac</b> (M1 Pro, 32 GB) runs <code>make train-smoke</code> only: 5 steps on Qwen3-0.6B at 2K tokens, printing which tokens carry loss.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 class="subh" id="channels">How AI engineers usually run SFT, and what it costs here</h3>
+  <p class="note">Nearly all open-model SFT runs on a handful of open-source trainers. They mostly share TRL and Hugging Face <code>transformers</code> underneath, so the data format in §6 works with all of them. GitHub stars, read 16 Oct 2026:</p>
+  <div class="tw">
+    <table class="lib">
+      <thead><tr><th>Trainer</th><th>Stars</th><th>What it is</th><th>Fit here</th></tr></thead>
+      <tbody>
+        <tr><td><b>Unsloth</b></td><td class="n">78.1K</td><td>Faster, lower-memory LoRA and QLoRA on one GPU, with free Colab notebooks. The most popular way individuals fine-tune.</td><td>A drop-in alternative to plain TRL on the L4. It takes the same <code>messages</code> + <code>tools</code> data.</td></tr>
+        <tr><td><b>LLaMA-Factory</b></td><td class="n">75.5K</td><td>Config-driven SFT, DPO and more for hundreds of models, with a web UI</td><td>Works, but adds a layer over the same engine</td></tr>
+        <tr><td><b>TRL</b> (Hugging Face)</td><td class="n">19.5K</td><td>The reference library for SFT, DPO and GRPO. Many others build on it.</td><td><span class="verdict go">this plan</span> It's the one interviewers recognise, and its docs cover tool-calling SFT.</td></tr>
+        <tr><td><b>ms-swift</b> · <b>Axolotl</b></td><td class="n">15.9K · 12.6K</td><td>YAML-configured trainers, popular for multi-GPU runs</td><td>Worth a look for the 30B</td></tr>
+        <tr><td><b>OpenPipe ART</b></td><td class="n">10.8K</td><td>Agent RL with GRPO, as used in the talk</td><td>The later RL plan</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="tw">
+    <table class="chn">
+      <thead><tr><th>Where it runs</th><th>Price (checked)</th><th>4B step: about 3 hours to train + 4 to score</th><th>Popular with</th><th>Verdict</th></tr></thead>
+      <tbody>
+        <tr><td><b>Modal</b><span class="sm">serverless GPUs, per second</span></td><td>L4 $0.80/h, A100 80 GB $2.50/h; $30 of credit a month (12 Oct)</td><td class="n">about $6, so likely free within the credit</td><td>individuals and startups who want no servers</td><td><span class="verdict alt">cheapest</span></td></tr>
+        <tr><td><b>RunPod</b><span class="sm">GPU machines by the hour</span></td><td>A100 80 GB $1.79/h, L40S $1.09/h, H100 $2.89 to 3.99/h (12 Oct)</td><td class="n">about $5 on an L40S</td><td>individuals, researchers and long single-GPU runs</td><td><span class="verdict go">for the 30B</span></td></tr>
+        <tr><td><b>EC2</b> (your AWS)<span class="sm">your own container on a VM</span></td><td>g6.2xlarge L4 $1.271/h, g6.xlarge $1.046/h (Sydney, 16 Oct)</td><td class="n">about $9</td><td>enterprises; the same building blocks as SageMaker</td><td><span class="verdict go">for the 4B</span><span class="sm">The enterprise story you asked for, and your quota allows it.</span></td></tr>
+        <tr><td><b>Tinker</b><span class="sm">managed LoRA API, per token</span></td><td>Qwen3.5-4B training $0.74 per million tokens (12 Oct)</td><td class="n">about $13 for 3 epochs of v1</td><td>people who want the training loop without GPUs</td><td><span class="verdict no">no</span><span class="sm">It doesn't list either Qwen3 student, so you couldn't shadow the talk.</span></td></tr>
+        <tr><td><b>SageMaker · Vertex AI · Azure ML · Databricks</b><span class="sm">managed training jobs</span></td><td>about the VM price plus a premium</td><td class="n">n/a</td><td>enterprise production pipelines</td><td><span class="verdict no">later</span><span class="sm">Your SageMaker GPU quota is 0.</span></td></tr>
+        <tr><td><b>Colab · Kaggle</b><span class="sm">free notebooks</span></td><td>free T4 (16 GB)</td><td class="n">n/a</td><td>learning, and small models with short examples</td><td><span class="verdict no">too small</span><span class="sm">24K-token conversations don't fit a T4.</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="insight"><b>Is EC2 a good choice?</b> Yes for the 4B. Every option costs single-digit dollars, so the real differences are setup time and what the project shows. EC2 shows the container, IAM, S3 and job pattern enterprises use, which is the point you asked for. Modal is the cheapest and quickest to start, so it's the fallback if EC2 setup drags. For the 30B, one 80 GB A100 on RunPod beats wrangling multi-GPU quotas.</p>
+  <h3 class="subh" id="students">Students, and where each one starts on telecom</h3>
+  <p class="note">The scores are each vendor's own, from its model card, and are measured differently. Use them as starting points only.</p>
+  <div class="tw">
+    <table class="stu">
+      <thead><tr><th>Model</th><th>Uploaded</th><th>Shape</th><th>Vendor's telecom score</th><th>Thinking · tool format</th><th>LoRA where?</th></tr></thead>
+      <tbody>
+        <tr><td><b>Qwen3-4B-Instruct-2507</b><span class="sm">step 1</span></td><td class="n">Aug 2025</td><td>4B dense, text only</td><td><b>13.2</b> TAU2-Telecom</td><td>non-thinking · <code>hermes</code></td><td><span class="verdict go">one L4</span></td></tr>
+        <tr><td><b>Qwen3-30B-A3B</b><span class="sm">step 2: the talk's model</span></td><td class="n">Apr 2025</td><td>30B MoE, 3B active</td><td><b>18.4</b> TAU2-Telecom, non-thinking mode (from Qwen's 4B-2507 card)</td><td>hybrid: thinking can be switched off · <code>hermes</code></td><td><span class="verdict alt">one 80 GB A100</span></td></tr>
+        <tr><td><b>Qwen3-30B-A3B-Instruct-2507</b></td><td class="n">Jul 2025</td><td>30B MoE, 3B active</td><td><b>12.3</b> TAU2-Telecom</td><td>non-thinking · <code>hermes</code></td><td><span class="verdict no">one 80 GB A100</span></td></tr>
+        <tr><td><b>Qwen3.5-4B</b></td><td class="n">Feb 2026</td><td>4B hybrid (Gated DeltaNet) with a vision encoder</td><td><b>79.9</b> TAU2-Bench overall, not telecom alone</td><td>thinks by default · <code>qwen3_coder</code></td><td><span class="verdict no">L4, probably</span><span class="sm">little headroom</span></td></tr>
+        <tr><td><b>Gemma 4 E4B-it</b></td><td class="n">Mar 2026</td><td>4.5B effective</td><td><b>42.2</b> tau2, average of 3 domains</td><td>native function calling</td><td><span class="verdict no">one L4</span><span class="sm">a second-family check</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="codeblock">
+    <div class="codehead"><span class="path">configs/sft_a.yaml</span><span class="why">Step 1: the 4B on dataset v1, all 74 training tasks. The git sha, image tag and data hash are added when the job starts.</span></div>
+    <div class="codemount" id="m-cfg"></div>
+  </div>
+
+  <h3 class="subh" id="params">What you can set in fine-tuning, and what this plan sets</h3>
+  <p class="note">These are the knobs in TRL's <code>SFTConfig</code> (which extends Transformers' <code>TrainingArguments</code>) and PEFT's <code>LoraConfig</code>, under their real names. The defaults are from the libraries' current source (16 Oct). Where a TRL default differs from Transformers', TRL's is shown.</p>
+  <div class="tw">
+    <table class="prm">
+      <thead><tr><th>Parameter</th><th>What it does</th><th>Default</th><th>This plan</th><th>When you'd change it</th></tr></thead>
+      <tbody>
+        <tr class="grp"><td colspan="5">Data and loss</td></tr>
+        <tr><td><code>max_length</code></td><td>The longest row, in tokens. A longer row is cut from the end, so it loses its ending.</td><td class="d">1024</td><td class="p">24,576</td><td>Set at M1 from the length table. F10 drops longer rows rather than cutting them.</td></tr>
+        <tr><td><code>assistant_only_loss</code></td><td>Trains only the agent's turns (the highlighted text in <a href="#worked">§6's example</a>)</td><td class="d">False</td><td class="p">True</td><td>Never, for this task: the customer's turns are another model's text.</td></tr>
+        <tr><td><code>packing</code></td><td>Joins several short rows into one sequence to save padding</td><td class="d">False</td><td class="p">False</td><td>Only for many short rows. Telecom rows are long, and one conversation per sequence is simpler to check.</td></tr>
+        <tr><td><code>loss_type</code></td><td><code>nll</code> is the standard loss. <code>dft</code> reweights each token by the model's own confidence.</td><td class="d">nll</td><td class="p">nll</td><td>An experiment for later, not for the first run</td></tr>
+        <tr class="grp"><td colspan="5">How fast and how long it learns</td></tr>
+        <tr><td><code>learning_rate</code></td><td>The size of each update</td><td class="d">2e-5</td><td class="p">1e-4</td><td>2e-5 suits full fine-tuning. LoRA usually wants 1e-4 to 2e-4. Lower it if the training loss jumps, or drops to near zero within the first epoch.</td></tr>
+        <tr><td><code>num_train_epochs</code></td><td>How many passes over the data</td><td class="d">3</td><td class="p">3, fixed</td><td>Fixed before training, because no tasks are held out to choose. Use 2 if the training loss is near zero before epoch 3 starts.</td></tr>
+        <tr><td><code>lr_scheduler_type</code></td><td>How the learning rate changes during training</td><td class="d">linear</td><td class="p">cosine</td><td>Rarely matters at this size</td></tr>
+        <tr><td><code>warmup_steps</code></td><td>Ramps the learning rate up from 0. A value below 1 is a fraction of all steps; older versions call it <code>warmup_ratio</code>.</td><td class="d">0</td><td class="p">0.05</td><td>Raise it if the first steps' loss spikes</td></tr>
+        <tr><td><code>weight_decay</code> · <code>max_grad_norm</code></td><td>Shrinks weights a little each step · caps the size of one update</td><td class="d">0 · 1.0</td><td class="p">0 · 1.0</td><td>Leave them</td></tr>
+        <tr><td><code>optim</code></td><td>The optimizer</td><td class="d">AdamW</td><td class="p">AdamW</td><td><code>adamw_8bit</code> saves memory if the 30B is tight</td></tr>
+        <tr class="grp"><td colspan="5">Batch and memory</td></tr>
+        <tr><td><code>per_device_train_batch_size</code></td><td>Rows in one forward pass</td><td class="d">8</td><td class="p">1</td><td>A row of up to 24K tokens is about what the L4 holds</td></tr>
+        <tr><td><code>gradient_accumulation_steps</code></td><td>Rows added up before one update. Batch × this = the effective batch.</td><td class="d">1</td><td class="p">16</td><td>About 475 rows ÷ 16 is about 30 updates an epoch. Try 8 for twice as many updates if the loss curve is too coarse.</td></tr>
+        <tr><td><code>gradient_checkpointing</code></td><td>Recomputes activations instead of storing them: less memory, roughly 20 to 30% slower</td><td class="d">True</td><td class="p">True</td><td>Only off if memory is plentiful</td></tr>
+        <tr><td><code>bf16</code></td><td>Trains in bfloat16</td><td class="d">True</td><td class="p">True</td><td>Never on an L4 or A100</td></tr>
+        <tr><td><code>use_liger_kernel</code></td><td>Fused kernels, including a loss that never builds the full 24K × 151,936 logits table</td><td class="d">False</td><td class="p">True</td><td>TRL's own loss is now computed in chunks too. M3 compares memory with and without it.</td></tr>
+        <tr><td><code>model_init_kwargs</code></td><td>How the base model loads: dtype, attention kernel, 4-bit (QLoRA)</td><td class="d">none</td><td class="p">bf16</td><td>4-bit loading for the 30B only if 80 GB isn't enough. It's a different model to serve, so note it.</td></tr>
+        <tr class="grp"><td colspan="5">The adapter (PEFT <code>LoraConfig</code>)</td></tr>
+        <tr><td><code>r</code></td><td>The adapter's rank: how much it can change</td><td class="d">8</td><td class="p">16</td><td>32 if the 4B underfits. The adapter is small either way.</td></tr>
+        <tr><td><code>lora_alpha</code></td><td>Scales the adapter's update. The effect is alpha ÷ r.</td><td class="d">8</td><td class="p">32</td><td>Keep it at 2 × r when r changes</td></tr>
+        <tr><td><code>lora_dropout</code></td><td>Randomly drops adapter inputs during training, against overfitting</td><td class="d">0.0</td><td class="p">0.05</td><td>0.1 if the training loss drops to near zero, a sign of memorising</td></tr>
+        <tr><td><code>target_modules</code></td><td>Which layers get an adapter</td><td class="d">model's own</td><td class="p">all-linear</td><td>On the 30B's mixture of experts, M6 checks which layers this actually covers.</td></tr>
+        <tr><td><code>use_rslora</code> · <code>use_dora</code></td><td>Variants of LoRA</td><td class="d">False</td><td class="p">False</td><td>Experiments for later</td></tr>
+        <tr class="grp"><td colspan="5">Checkpoints and repeatability</td></tr>
+        <tr><td><code>save_strategy</code> · <code>eval_strategy</code></td><td>When to save, and when to compute a held-out loss</td><td class="d">steps · no</td><td class="p">epoch · no</td><td>Every epoch is saved for the record. All 74 tasks are trained on, so there's no held-out set and the final epoch is the model.</td></tr>
+        <tr><td><code>seed</code></td><td>Fixes shuffling and LoRA's starting weights</td><td class="d">42</td><td class="p">300</td><td>Same as tau2-loop. A second seed shows how much a score moves by chance.</td></tr>
+        <tr><td><code>logging_steps</code></td><td>How often loss is recorded</td><td class="d">10</td><td class="p">1</td><td>With about 90 updates in all, log every one</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="insight"><b>What moves the score most here, in order:</b> the data (which rows survive §5), the learning rate, the number of epochs (fixed in advance), and <code>max_length</code> (which decides what F10 drops). LoRA's rank and the scheduler matter far less at this size.</p>
+  <p class="note"><b>Not training settings:</b> temperature, top_p and top_k are set when the student is served for scoring, not when it's trained. The plan fixes and records them per row (§8).</p>
+</section>
+
+<!-- 8 SCORE -->
+<section id="s-score">
+  <div class="kicker">8 · Serving and scoring</div>
+  <h2>Serve the student on the GPU it trained on, and score it from tau2-loop on your Mac</h2>
+  <div class="lede">Scoring is split across two machines.
+    <ul class="lede">
+      <li><b>On your Mac:</b> tau2-loop plays the conversation. It runs tau2's orchestrator, the telecom tools, the customer's phone, the grader and the Haiku 5.5 customer on your subscription.</li>
+      <li><b>On the GPU:</b> the fine-tuned model answers as the agent, once per agent turn.</li>
+    </ul>
+  Only the model sits on the GPU, so the customer, the phone and the grading are the same for every model.</div>
+  <h3 class="subh" id="serve">Where the model is served</h3>
+  <div class="fig flow">
+    <svg viewBox="0 0 980 300" role="img" aria-labelledby="sv-t sv-d">
+      <title id="sv-t">Serving and scoring topology</title>
+      <desc id="sv-d">tau2-loop on the Mac sends the conversation and tools to vLLM on the GPU through a port forward; vLLM returns a reply or a tool call.</desc>
+      <defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="sa" d="M0 0 L10 5 L0 10 z"/></marker></defs>
+      <g id="sv-mac" class="sn"><title>Your Mac runs everything except the model: the customer stays on your Claude subscription</title>
+        <rect x="20" y="20" width="360" height="260" rx="14"/>
+        <text class="sk" x="42" y="52">YOUR MAC · TAU2-LOOP</text>
+        <text class="stt" x="42" y="82">Plays the conversation</text>
+        <text class="sd" x="42" y="122">tau2 orchestrator, unmodified</text>
+        <text class="sd" x="42" y="152">telecom tools + the customer's phone</text>
+        <text class="sd" x="42" y="182">customer: Haiku 5.5, on your subscription</text>
+        <text class="sd" x="42" y="212">grader: the phone's final state</text>
+        <text class="sd" x="42" y="242">run folder, gate, viewer</text></g>
+      <g id="sv-ec2" class="sn key"><title>The GPU only answers as the agent: base model plus the LoRA adapter, in bf16 as trained</title>
+        <rect x="600" y="20" width="360" height="260" rx="14"/>
+        <text class="sk" x="622" y="52">EC2 L4 (4B) · A100 (30B)</text>
+        <text class="stt" x="622" y="82">Answers as the agent</text>
+        <text class="sd" x="622" y="122">vLLM, OpenAI-compatible API</text>
+        <text class="sd" x="622" y="152">base model in bf16 + LoRA adapter</text>
+        <text class="sd" x="622" y="182">tool calls parsed (hermes)</text>
+        <text class="sd" x="622" y="212">sampling fixed and recorded</text>
+        <text class="sd" x="622" y="242">max length 32,768 tokens</text></g>
+      <path id="sv-req" class="se" d="M384 128 H594" marker-end="url(#ah2)"><title>Each agent turn: the system prompt, the tools and the conversation so far</title></path>
+      <text class="sd" x="489" y="116" text-anchor="middle">history + tools</text>
+      <path id="sv-rep" class="se" d="M596 186 H386" marker-end="url(#ah2)"><title>The student's turn: a message to the customer, or tool calls</title></path>
+      <text class="sd" x="489" y="210" text-anchor="middle">reply or tool call</text>
+      <text class="sk" x="489" y="262" text-anchor="middle">PORT FORWARD</text>
+      <text class="sd" x="489" y="280" text-anchor="middle">localhost:8000, no public port</text>
+    </svg>
+  </div>
+  <p class="insight"><b>Short answer:</b> serve each student with vLLM on the GPU it trained on, and score it from tau2-loop on your Mac through a private port forward. Use SSM for EC2, and an SSH port forward for a RunPod machine.</p>
+  <ul class="note">
+    <li>One vLLM process serves both the untrained base and each adapter by name, so rows on the same base differ only by the adapter.</li>
+    <li>tau2-loop stays on the Mac because its customer runs on your Claude subscription through <code>claude login</code>.</li>
+  </ul>
+  <div class="tw">
+    <table class="srv">
+      <thead><tr><th>Option</th><th>How</th><th>160 test conversations (estimate)</th><th>Same model as trained?</th><th>Verdict</th></tr></thead>
+      <tbody>
+        <tr><td><b>A · vLLM on the training GPU</b></td><td>The same instance as training. vLLM's own image serves the base model plus the adapter in bf16, bound to localhost.</td><td>About 3 to 4 hours with 3 conversations at a time, so about $4 to $5 on the L4.<span class="sm">tau2-loop's telecom conversations take a median 289 s, because the customer makes its own phone tool calls.</span></td><td>Yes</td><td><span class="verdict go">recommended</span></td></tr>
+        <tr><td><b>B · mlx_lm.server on your Mac</b></td><td>Merge the adapter, convert to MLX at 4 bits, serve locally</td><td>Probably 10 hours or more for the 4B, one conversation at a time. Not practical for the 30B.</td><td>No: 4-bit is a different model</td><td><span class="verdict alt">smoke tests only</span></td></tr>
+        <tr><td><b>C · SageMaker real-time endpoint</b></td><td>The enterprise pattern, behind IAM</td><td>Similar to A once it's up</td><td>Yes</td><td><span class="verdict no">later</span><span class="sm">It needs a GPU endpoint quota.</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <div class="ck">Rules for any serving choice</div>
+      <h3>What must be the same for every scored row</h3>
+      <ul>
+        <li><b>Precision:</b> bf16 for every headline row. Never quantize one row and not another.</li>
+        <li><b>Template and tools:</b>
+          <ul>
+            <li>the student's own chat template, with the 13 agent tools passed natively;</li>
+            <li>vLLM's <code>hermes</code> parser for Qwen3, so calls come back as OpenAI <code>tool_calls</code>.</li>
+          </ul>
+        </li>
+        <li><b>Prompt bytes:</b> exactly the bytes the model was trained on, including or excluding tau2-loop's clock note.</li>
+        <li><b>Sampling:</b>
+          <ul>
+            <li>Qwen's recommended values, set by the student's version and recorded: 0.7 / 0.8 / 20 for the instruct models, non-thinking mode for the 30B.</li>
+            <li>tau2-loop sends no temperature to its agent today (it drops tau2's 0.0), so the student's version must set one.</li>
+          </ul>
+        </li>
+        <li><b>Length:</b> the limit is 32,768 tokens. A conversation that goes past it fails and is counted as a serving failure.</li>
+        <li><b>Recorded:</b> each eval run logs the vLLM image tag, model, adapter sha256, sampling and length limit.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="ck">What tau2-loop needs (your call, D5)</div>
+      <h3>Three changes, made in tau2-loop, not here</h3>
+      <ul>
+        <li><b>1. A model entry for each student</b> in <code>llm/core.py</code>, the only place tau2-loop names models. The agent is already reached as <code>openai/&lt;model&gt;</code> at an <code>api_base</code> (<code>agent/factory.py</code>).</li>
+        <li><b>2. A student agent version:</b>
+          <ul>
+            <li><code>system.md</code> is tau2's stock prompt;</li>
+            <li><code>agent.yaml</code> names the student with <code>tool_mode: native</code> and its sampling, which tau2-loop must pass through;</li>
+            <li>there are no hooks, so the score is the model's alone.</li>
+          </ul>
+        </li>
+        <li><b>3. An exception to "every model call on the subscription"</b> for the agent only. The customer stays on the subscription.</li>
+        <li><b>No split change.</b> Split v3 is already in tau2-loop, so the student plays the same 40 test tasks with <code>make eval</code> as your Claude agents do.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="codeblock">
+    <div class="codehead"><span class="path">serve/serve.sh</span><span class="why">A sketch of M2 and M5 on the L4: one process serves the base model (R0) and each adapter by name</span></div>
+    <div class="codemount" id="m-serve"></div>
+  </div>
+
+  <h3 class="subh">The results table this repo fills in</h3>
+  <p class="note">The protocol is the same for every row: tau2 at <code>2174a60</code>, unmodified, driven by tau2-loop with rules <code>tau2_loop/2</code> and a Haiku 5.5 customer at high effort, as for your v2 runs. Each row is the 40 test tasks × 4 trials, 160 conversations, paired by task with the sign test against its own untrained base.</p>
+  <div class="tw">
+    <table class="res">
+      <thead><tr><th>Row</th><th>Model</th><th>pass^1</th><th>pass^3</th><th>vs base (p)</th><th>Cost / conv</th></tr></thead>
+      <tbody>
+        <tr><td class="n">R0</td><td><b>Qwen3-4B, untrained</b><span class="sm">M2: the control for whatever the model already knew</span></td><td class="tbd">M2</td><td class="tbd">M2</td><td class="tbd">n/a</td><td class="tbd">M2</td></tr>
+        <tr><td class="n">R1</td><td><b>Qwen3-4B + SFT on v1</b><span class="sm">board conversations</span></td><td class="tbd">M5</td><td class="tbd">M5</td><td class="tbd">M5</td><td class="tbd">M5</td></tr>
+                <tr><td class="n">R2</td><td><b>Qwen3-30B-A3B, untrained</b><span class="sm">the talk's base; the talk reports 0% pass^3</span></td><td class="tbd">M6</td><td class="tbd">M6</td><td class="tbd">n/a</td><td class="tbd">M6</td></tr>
+        <tr><td class="n">R3</td><td><b>Qwen3-30B-A3B + SFT on v1</b><span class="sm">the shadow, on board data; the talk reports 75% pass^3</span></td><td class="tbd">M6</td><td class="tbd">M6</td><td class="tbd">M6</td><td class="tbd">M6</td></tr>
+        <tr><td class="n">R4</td><td><b>The student that missed + SFT on v2</b><span class="sm">only if M7 runs: v1 plus the GLM-5.1 conversations</span></td><td class="tbd">if M7</td><td class="tbd">if M7</td><td class="tbd">if M7</td><td class="tbd">if M7</td></tr>
+        <tr><td class="n">R5</td><td><b>Your Claude telecom v2</b><span class="sm">Haiku 5.5 at high, on split v3. One trial on 16 Oct passed 24/40; R5 replays it with 4 trials.</span></td><td class="n">60%<span class="sm">1 trial</span></td><td class="tbd">M8</td><td class="tbd">n/a</td><td class="tbd">M8</td></tr>
+        <tr><td class="n">ref</td><td><b>The talk: Qwen3 30B</b><span class="sm">a different 40 test tasks (17 shared), customer and harness</span></td><td class="tbd">n/a</td><td class="n">0 → 75 → 77.5%</td><td class="tbd">n/a</td><td class="tbd">n/a</td></tr>
+        <tr><td class="n">ref</td><td><b>GPT-4.1 mini on the board</b><span class="sm">all 114 tasks, tau2 0.1.3, GPT-4.1 customer</span></td><td class="n">48.9%</td><td class="n">31.2%</td><td class="tbd">n/a</td><td class="tbd">n/a</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 9 REPO -->
+<section id="s-repo">
+  <div class="kicker">9 · The repo</div>
+  <h2>One repo, one image, and data, runs and records it can always find again</h2>
+  <p class="lede">The repo is named for telecom now, <code>tau-telecom-sft</code>. Keep "airline" if you'd rather; nothing else depends on the name. The layout follows s63 §5: one Docker image with the training code, run by hand on the GPU first. tau2-bench is a submodule at the same pin as tau2-loop. The repo is registered in nmp-central-ai like every other portfolio project.</p>
+  <div class="codeblock">
+    <div class="codehead"><span class="path">tau-telecom-sft/ (proposed)</span><span class="why">What each folder holds and which milestone fills it</span></div>
+    <div class="codemount" id="m-tree"></div>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <div class="ck">AGENTS.md: the rules</div>
+      <h3>What any agent or person working here must keep</h3>
+      <ul>
+        <li><b>Test task IDs</b>, and any test task's exact set of root issues, never enter <code>data/sft/</code>, <code>configs/</code> or anything the trainer reads. <code>tests/test_no_leak.py</code> enforces this.</li>
+        <li><b>Never train on Claude's output.</b> Agent turns come from open-weights models only.</li>
+        <li><b>Never edit <code>vendor/tau2-bench</code></b>, and never change tau2-loop from this repo.</li>
+        <li><b>Immutable data:</b> raw downloads and teacher runs under <code>raw/</code> never change. Dataset versions and run folders are append-only.</li>
+        <li><b>Keys:</b> <code>OPENROUTER_API_KEY</code> and <code>HF_TOKEN</code> come from <code>~/.env</code> on the Mac and from the cloud's secret store when running there. Never put them in the image or the repo.</li>
+        <li><b>Tracking:</b> central MLflow only, with the tags <code>project</code>, <code>git_sha</code>, <code>env</code> and <code>billing</code>. No local MLflow store.</li>
+        <li><b>Paid runs:</b> a teacher batch or a GPU job only after one measured conversation or step, and only when you ask for it.</li>
+        <li><b>Never</b> add <code>.lavish/</code> to <code>.gitignore</code>.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="ck">Joining the platform (M0)</div>
+      <h3>Register it like every other project</h3>
+      <ul>
+        <li><b>Register:</b> add <code>tau-telecom-sft</code> to <code>nmp-central-ai/registry/projects.yaml</code>:
+          <ul>
+            <li>a free hue, 30° from the others;</li>
+            <li>experiments <code>tau-telecom-sft/data</code>, <code>/train</code> and <code>/eval</code>;</li>
+            <li>a registered model <code>tau-telecom-sft-student</code>.</li>
+          </ul>
+        </li>
+        <li><b>Initialise:</b> run <code>make mlflow-init</code> for the experiment IDs. Never hardcode one.</li>
+        <li><b>Smoke check:</b> one that costs nothing, which builds a dataset from the fixture conversations and logs it. It must pass <code>make check ARGS="--only &lt;ID&gt;"</code>.</li>
+        <li><b>Start-up files:</b> <code>ai_specs/</code>, <code>skills/</code> and <code>opensrc/</code> from <code>ai-project-template</code>.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="codeblock">
+    <div class="codehead"><span class="path">Makefile (targets)</span><span class="why">The commands each milestone runs, and where each one runs</span></div>
+    <div class="codemount" id="m-make"></div>
+  </div>
+</section>
+
+<!-- 10 MILESTONES -->
+<section id="s-ms">
+  <div class="kicker">10 · Milestones and tracking</div>
+  <h2>Prove serving and scoring on the 4B first, then spend on the 30B shadow</h2>
+  <p class="lede">The order puts the riskiest link first. M2 scores the untrained 4B end to end through the serving path before any training, so a format or prompt mismatch shows up cheaply. The 30B step only starts once the 4B has a clean before and after. Each row has a check you can verify and a place where its evidence lives.</p>
+  <div class="tw">
+    <table class="ms2" id="ms-table">
+      <thead><tr><th>ID</th><th>Work</th><th>Runs on</th><th>Done when</th><th>Evidence in</th></tr></thead>
+      <tbody>
+        <tr><td class="n">M0</td><td><b>Create the repo and connect it.</b>
+          <ul>
+            <li>Use the template files and add the tau2 submodule at <code>2174a60</code>.</li>
+            <li>Copy tau2-loop's split v3 and record its sha256.</li>
+            <li>Write AGENTS.md and the leak test, which checks test IDs and test root-issue sets.</li>
+            <li>Register the repo in nmp-central-ai and add the smoke check.</li>
+          </ul></td><td>Mac</td><td>The platform's smoke check passes, the split's sha matches tau2-loop's split v3, and the leak test runs.</td><td>README status · git</td></tr>
+        <tr><td class="n">M1</td><td><b>Build dataset v1.</b>
+          <ul>
+            <li>Download S1 and S2 (128 MB) and keep the 74 training tasks.</li>
+            <li>Strip the customer's phone calls, run F1 to F10 and convert.</li>
+            <li>Measure token lengths with the student's tokenizer and set the F10 limit.</li>
+            <li>Load S1, S2 and one tau2-loop telecom run with the same loader, and test that they match (<a href="#formats">§4</a>).</li>
+            <li>Read 10 kept and 10 dropped conversations.</li>
+          </ul></td><td>Mac</td><td>The card's counts add up, the leak test passes, and you've signed off on the sample you read.</td><td><code>data/sft/v1/card.md</code> · MLflow data</td></tr>
+        <tr><td class="n">M2</td><td><b>Serve the untrained 4B and record the before row.</b>
+          <ul>
+            <li>Start vLLM on the L4, using vLLM's own image.</li>
+            <li>Make the three tau2-loop changes.</li>
+            <li>Play the 40 test tasks, 4 trials each.</li>
+          </ul></td><td>EC2 L4 · tau2-loop</td><td>R0 is filled in. Tool calls come back as <code>tool_calls</code> and the prompt-bytes test passes.</td><td>MLflow eval · tau2-loop run IDs</td></tr>
+        <tr><td class="n">M3</td><td><b>Smoke-train on the Mac.</b> Run 5 steps on Qwen3-0.6B at 2K tokens and print the loss mask for one example.</td><td>Mac</td><td>The tokens with loss are exactly the agent's turns, nothing from the customer or the tools.</td><td>a test asserts the mask</td></tr>
+        <tr><td class="n">M4</td><td><b>SFT the 4B on v1.</b>
+          <ul>
+            <li>Use <code>configs/sft_a.yaml</code> on all 74 training tasks, for a fixed 3 epochs.</li>
+            <li>The final checkpoint is the model; earlier epochs are kept for the record.</li>
+            <li>Fix the success criteria and the epoch count before this run starts.</li>
+          </ul></td><td>EC2 L4</td><td>The final adapter is in S3, with its config, data hash and image tag logged.</td><td>MLflow train · <code>runs/</code></td></tr>
+        <tr><td class="n">M5</td><td><b>Score it on test, once.</b> 40 tasks × 4 trials, with the sign test against R0. Optionally, also play the 74 training tasks once, the run Claude v2 got (45/74). That number is in-sample, so it's labelled that way and is never the result.</td><td>EC2 L4 · tau2-loop</td><td>R1 is filled in, with its counts.</td><td>MLflow eval · README table</td></tr>
+        <tr><td class="n">M6</td><td><b>Train the shadow: Qwen3-30B-A3B on v1.</b>
+          <ul>
+            <li>Rent one 80 GB A100 (RunPod or Modal) and run the same image.</li>
+            <li>Score the untrained base (R2) and the tuned one (R3) on the 40 test tasks.</li>
+          </ul></td><td>A100 80 GB · tau2-loop</td><td>R2 and R3 are filled in, beside the talk's numbers.</td><td>MLflow · README table <span class="opt">after M5</span></td></tr>
+        <tr><td class="n">M7</td><td><b>Only if needed: add the GLM-5.1 data (S3).</b>
+          <ul>
+            <li>Trigger: R1 or R3 misses its target, and its failed test tasks share root issues that are thin in v1's card. If the misses are spread evenly, more of the same kind of data is unlikely to help, so skip it.</li>
+            <li>Measure one conversation's cost first, then run up to about 822 on the 74 training tasks with an open customer.</li>
+            <li>Build dataset v2, then retrain and score the student that missed (R4).</li>
+          </ul></td><td>OpenRouter · L4 or A100 · tau2-loop</td><td>R4 is filled in with the cost report beside it, or the README records that the trigger didn't fire.</td><td><code>data/sft/v2/card.md</code> · MLflow <span class="opt">optional</span></td></tr>
+        <tr><td class="n">M8</td><td><b>Write it up.</b>
+          <ul>
+            <li>A model card, and cost per conversation against Haiku and Sonnet.</li>
+            <li>R5: replay your Claude v2 on the 40 test tasks with 4 trials, for a pass^3 head-to-head.</li>
+            <li>A Lavish results page set against the talk, and the adapters on the HF Hub, kept private.</li>
+          </ul></td><td>Mac</td><td>Published, with every number traced to a run ID.</td><td>README · <code>.lavish/</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="subh">How you track progress</h3>
+  <div class="grid4">
+    <div class="card"><div class="ck">The plan</div><h3><code>ai_specs/s00_project_plan.md</code></h3><p>This milestone list as a checklist. Tick a box when its "done when" holds, and add the date and the run or data hash. The button below copies it as markdown.</p></div>
+    <div class="card"><div class="ck">The status</div><h3>README status table</h3><p>One row per milestone: status, date, evidence. Below it sits the results table from §8, filled in as rows land.</p></div>
+    <div class="card"><div class="ck">The ledger</div><h3>Three MLflow experiments</h3><p><b>data:</b> one run per dataset build, with drop counts and the card. <b>train:</b> one run per job, with loss curves, config, image tag and data hash. <b>eval:</b> one run per scored model, with pass^k, p and cost.</p></div>
+    <div class="card"><div class="ck">From the cloud</div><h3>Object storage, then sync from the Mac</h3><p>A job in AWS or GCP can't reach MLflow at <code>localhost:5000</code>. It writes <code>metrics.jsonl</code> to the bucket, and <code>make sync-mlflow</code> logs it from the Mac. There's no local store in between.</p></div>
+  </div>
+  <div class="copyrow">
+    <button type="button" class="btn-ghost" id="copyMs">Copy milestones as markdown</button>
+    <span class="ack" id="copyMsAck" role="status" aria-live="polite"></span>
+  </div>
+</section>
+
+<!-- 11 RISKS -->
+<section id="s-risks">
+  <div class="kicker">11 · Risks</div>
+  <h2>Your numbers won't match the talk's exactly; the job is to know why</h2>
+  <div class="tw">
+    <table class="risks rk">
+      <thead><tr><th>Risk</th><th>What the plan does</th></tr></thead>
+      <tbody>
+        <tr><td><b>A different customer from the talk's:</b> a Haiku 5.5 customer here, an unknown one there, and GPT-5.2 in the board data</td><td>Compare lifts over each model's own base, not raw scores with the talk. State the customer on every row.</td></tr>
+        <tr><td><b>Phone calls leak into the agent's view</b> when converting the board files</td><td>The converter uses tau2's own <code>is_valid_agent_history_message</code>, and a test asserts that no customer tool call or result survives.</td></tr>
+        <tr><td><b>The test reuses training root issues</b>, so the result could be read as more than it is</td><td>Say what it shows: known faults in new combinations. If you want a harder claim, a later split could hold out whole root issues.</td></tr>
+        <tr><td><b>Generated-pool leakage</b> if D6 adds pool tasks</td><td>F8 drops any pool task with a test task's exact set of root issues, under any persona, and the leak test checks it.</td></tr>
+        <tr><td><b>Long conversations:</b> a median of 15K tokens and a maximum of 26K in tau2-loop's runs</td><td>A 24K limit, Liger's fused loss and checkpointing; F10 counts what's cut. The 30B on A100s has more room.</td></tr>
+        <tr><td><b>Train and serve differ</b> in prompt bytes, the clock note, the tool-call format or sampling</td><td>M2 runs the untrained 4B through the exact serving path before any training. A test compares the trained system prompt with the served one.</td></tr>
+        <tr><td><b>Terms on the board files:</b> their customer turns are GPT-5.2 output</td><td>They are context only, with no loss on them. If S3 is ever run, it uses an open customer. Claude's output is never used.</td></tr>
+        <tr><td><b>The 30B is harder to run</b>: about 61 GB of weights, MoE LoRA, and a rented machine outside AWS</td><td>It comes last, after the 4B has proved everything. Checkpoint every epoch to the bucket, keep the same image, and stop the machine the moment a run ends.</td></tr>
+        <tr><td><b>Noise:</b> a single trial flipped 5 of 25 tasks between two runs of one airline agent</td><td>Use 4 trials, paired tests by task, and counts beside percentages.</td></tr>
+        <tr><td><b>Costs grow</b></td><td>Measure one conversation or step before any batch, set budget alarms in AWS and GCP, and stop instances after each run.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 12 DECIDE -->
+<section id="s-decide">
+  <div class="kicker">12 · Decide</div>
+  <h2>Seven choices before you create the repo: two settled, five open</h2>
+  <p class="lede">The plan above uses the recommended option in each case. Changing one updates this page. Choosing here creates, downloads and runs nothing.</p>
+  <form class="qcard" id="plan-form" data-lavish-question="s64-tau-telecom-sft-plan">
+    <div class="dsec">
+      <h3>D1 · Which split? <span class="rec-l">settled 17 Oct</span></h3>
+      <p class="dq">tau2-loop's telecom split v3, 74 train and 40 test: the split your Claude v2 agent was scored on. No tau2-loop split change is needed.</p>
+      <input type="hidden" name="D1" value="settled: tau2-loop telecom split v3 (74/40)">
+    </div>
+    <div class="dsec">
+      <h3>D2 · Where do the teacher conversations come from? <span class="rec-l">settled 16 Oct</span></h3>
+      <p class="dq">The board files, S1 and S2, for every result up to M6. GLM-5.1 runs (S3) only if M7's trigger fires.</p>
+      <input type="hidden" name="D2" value="settled: board files S1 and S2 now; GLM-5.1 (S3) only if M7's trigger fires">
+    </div>
+    <div class="dsec">
+      <h3>D3 · Which student?</h3>
+      <div class="opts">
+        <label><input type="radio" name="D3" value="Qwen3-4B first, then Qwen3-30B-A3B shadow" checked><span>Qwen3-4B-Instruct-2507 on the L4 first, then Qwen3-30B-A3B, the talk's model, on one 80 GB A100 <span class="rec-l">recommended</span></span></label>
+        <label><input type="radio" name="D3" value="Qwen3-30B-A3B only"><span>Qwen3-30B-A3B only: the shadow straight away, on an 80 GB A100 from the start</span></label>
+        <label><input type="radio" name="D3" value="Qwen3-4B only"><span>Qwen3-4B only: cheapest, on the L4, and not a like-for-like shadow</span></label>
+        <label><input type="radio" name="D3" value="Qwen3-4B first, then Gemma 4 E4B as a second family"><span>Qwen3-4B, then Gemma 4 E4B: two families on one L4, instead of the 30B</span></label>
+      </div>
+    </div>
+    <div class="dsec">
+      <h3>D4 · Where does training run?</h3>
+      <div class="opts">
+        <label><input type="radio" name="D4" value="EC2 L4 for the 4B, one RunPod A100 80 GB for the 30B" checked><span>EC2 L4 for the 4B: your quota covers it, at $1.27 an hour, on the enterprise path. One 80 GB A100 on RunPod for the 30B, at $1.79 an hour, with no quota request. <span class="rec-l">recommended</span></span></label>
+        <label><input type="radio" name="D4" value="Modal for both (per second, $30 monthly credit)"><span>Modal for both: an L4 at $0.80 an hour and an 80 GB A100 at $2.50, billed by the second. Its $30 monthly credit may cover the 4B entirely. It's the cheapest, but it's less like enterprise infrastructure.</span></label>
+        <label><input type="radio" name="D4" value="EC2 L4 for the 4B, GCP spot A100s for the 30B"><span>EC2 for the 4B, and GCP spot A100s for the 30B on your Vertex AI quota. Serving there needs a Compute Engine quota that I haven't checked.</span></label>
+        <label><input type="radio" name="D4" value="AWS only, request a P-instance quota for the 30B"><span>AWS only: request a GPU quota for an A100 or H100 instance for the 30B. It stays in one cloud, but waits on the quota.</span></label>
+        <label><input type="radio" name="D4" value="W&amp;B serverless training with a model it lists"><span>W&amp;B serverless training, as in the talk, with Gemma 4 26B-A4B or Llama 3.1 8B. It doesn't list Qwen3 30B.</span></label>
+      </div>
+    </div>
+    <div class="dsec">
+      <h3>D5 · Where is the student scored?</h3>
+      <div class="opts">
+        <label><input type="radio" name="D5" value="in tau2-loop, with its three changes" checked><span>In tau2-loop, with the three changes from §8: the same customer, rules, gate and viewer as your Claude agents <span class="rec-l">recommended</span></span></label>
+        <label><input type="radio" name="D5" value="inside tau-telecom-sft with tau2 directly"><span>Inside tau-telecom-sft, with tau2 directly. Self-contained, and you choose the customer model yourself.</span></label>
+      </div>
+    </div>
+    <div class="dsec">
+      <h3>D6 · Which tasks go into training?</h3>
+      <div class="opts">
+        <label><input type="radio" name="D6" value="the 74 training tasks only, as the talk" checked><span>The 74 training tasks only, as the talk did <span class="rec-l">recommended</span></span></label>
+        <label><input type="radio" name="D6" value="plus generated-pool tasks without test twins"><span>Add tasks from the 2,285-task generated pool, minus any test task's twin: more data, and a later comparison</span></label>
+      </div>
+    </div>
+    <div class="dsec">
+      <h3>D7 · Where is the student served for scoring?</h3>
+      <div class="opts">
+        <label><input type="radio" name="D7" value="vLLM on the GPU it trained on, port forward from the Mac" checked><span>vLLM on the GPU it trained on, reached from the Mac through a port forward <span class="rec-l">recommended</span></span></label>
+        <label><input type="radio" name="D7" value="mlx_lm.server on the Mac"><span>mlx_lm.server on your Mac at 4 bits: free, but 10+ hours a run and not the model you trained</span></label>
+        <label><input type="radio" name="D7" value="SageMaker real-time endpoint"><span>A SageMaker real-time endpoint: the most enterprise-like, but it needs an endpoint GPU quota</span></label>
+      </div>
+    </div>
+    <div class="dsec">
+      <h3>Next</h3>
+      <div class="opts">
+        <label><input type="radio" name="next" value="revise the plan"><span>Revise the plan first</span></label>
+        <label><input type="radio" name="next" value="plan settled, I will create the repo from it"><span>Plan settled: I'll create the repo from it</span></label>
+        <label><input type="radio" name="next" value="park it"><span>Park it</span></label>
+      </div>
+    </div>
+    <textarea name="note" placeholder="Changes to the plan, or anything to add"></textarea>
+    <button class="btn-solid" type="submit">Queue these decisions</button><span class="ack" id="ackPlan" role="status" aria-live="polite"></span>
+  </form>
+  <div class="copyrow">
+    <button type="button" class="btn-ghost" id="copyAll">Copy all answers</button>
+    <span class="ack" id="copyAllAck" role="status" aria-live="polite"></span>
+  </div>
+</section>
+</main>
+
+<footer class="wrap">
+  <h3>Sources, read on 15 and 16 Oct 2026</h3>
+  <ul>
+    <li><b>The talk:</b> Kai Wei Tan, "Fine-Tuning LLMs for Real-World Tool Calling: Lessons from tau2-bench", Toronto Machine Learning Society, uploaded 11 Aug 2026 (<a href="https://www.youtube.com/watch?v=R78NYFkWH10">YouTube</a>), read from its transcript. The collection details in §1 are the speaker's words: 74 tasks, 68 solved, 822 rollouts, 760 raw and 669 clean. That the test set was 40 tasks is my inference from the talk's percentages.</li>
+    <li><b>tau2-bench at <code>2174a60</code>:</b>
+      <ul>
+        <li><code>data/tau2/domains/telecom/split_tasks.json</code> (base 114, train 74, test 40, full 2,285);</li>
+        <li><code>tasks.json</code> (task IDs, grading by <code>ENV_ASSERTION</code>);</li>
+        <li><code>src/tau2/domains/telecom/tools.py</code> and <code>environment.py</code> (the main policy plus the tech-support manual);</li>
+        <li><code>src/tau2/agent/base_agent.py</code> (<code>is_valid_agent_history_message</code>);</li>
+        <li><code>web/leaderboard/public/submissions/*/submission.json</code> (GLM-5, Qwen3.5-397B, GPT-4.1 mini scores and file names);</li>
+        <li><code>LICENSE</code> (MIT).</li>
+      </ul>
+    </li>
+    <li><b>tau2-loop:</b>
+      <ul>
+        <li><code>data/tasks/telecom.json</code> (13 agent tools, 30 phone tools, a 3,715-word policy);</li>
+        <li><code>data/splits/telecom.json</code> (version 3, 74/40, drawn 16 Oct) and the v2 runs on it (train 45/74, test 24/40);</li>
+        <li><code>loop/telecom/registry.json</code>;</li>
+        <li>the telecom run folders (60 conversations, for the token and duration statistics; v1 test 19/20);</li>
+        <li><code>AGENTS.md</code>, <code>agent/factory.py</code> and the Makefile's <code>eval</code> target.</li>
+      </ul>
+    </li>
+    <li><b>Board files:</b> HEAD requests only, nothing downloaded, against <code>sierra-tau-bench-public</code>. GLM-5 telecom is 56,311,944 bytes and Qwen3.5-397B telecom is 71,968,908 bytes; both returned 200.</li>
+    <li><b>Model cards:</b>
+      <ul>
+        <li>Qwen3-4B-Instruct-2507 (TAU2-Telecom 13.2, with Qwen3-30B-A3B non-thinking at 18.4 in the same table);</li>
+        <li>Qwen3-30B-A3B-Instruct-2507 (12.3);</li>
+        <li>Qwen3.5-4B (TAU2-Bench 79.9);</li>
+        <li>Gemma 4 (tau2 average 42.2 for E4B);</li>
+        <li>NVIDIA Nemotron 3.5 Lightning, whose training data lists tau2 telecom trajectories.</li>
+      </ul>
+    </li>
+    <li><b>The talk's infrastructure:</b> CoreWeave's serverless-training docs, "available models", read 16 Oct 2026.</li>
+    <li><b>Prices:</b>
+      <ul>
+        <li>the OpenRouter models API on 15 Oct 2026;</li>
+        <li>AWS's public EC2 price list for Sydney on 16 Oct 2026;</li>
+        <li>Modal, RunPod and Tinker as checked for s63 §5 on 12 Oct 2026.</li>
+      </ul>
+    </li>
+    <li><b>Trainer popularity:</b> GitHub stars through the GitHub API on 16 Oct 2026. Hugging Face's TRL docs cover the tool-calling dataset format and <code>assistant_only_loss</code>.</li>
+  </ul>
+  <h3>Method notes</h3>
+  <ul>
+    <li><b>Token and duration statistics</b> come from tau2-loop's telecom runs: Haiku's tokenizer and tau2-loop's composed prompt. They're a guide to scale, not the student's exact lengths. M1 measures those.</li>
+    <li><b>Memory and speed for the L4</b> are my arithmetic from the model's shape and the GPU's specs, not a measured run.</li>
+    <li><b>v1's yield of 430 to 520</b> is a guess from the board's pass rates. 74 tasks × 4 trials × 2 models = 592 is a count.</li>
+    <li><b>History:</b> this plan was first written for airline on 15 Oct and pointed at telecom on 16 Oct at your request. The airline version is kept in the session scratchpad.</li>
+    <li><b>Design:</b> this page uses the nmp-dsci "Eval Report" styling, the project rule for HTML artifacts in ai-engineer-fit.</li>
+  </ul>
+</footer>
+
+<script type="text/plain" id="src-row">
+{
+  "messages": [
+    {"role": "system", "content": "<instructions>\nYou are a customer service agent that helps the user according to the <policy> provided below.\n...\n</instructions>\n<policy>\n... telecom main policy + tech support manual ...\n</policy>"},
+    {"role": "assistant", "content": "Hi! How can I help you today?"},
+    {"role": "user", "content": "My mobile data isn't working properly. It's either off or really slow."},
+    {"role": "assistant", "content": "I can help with that. What's the phone number on the line?"},
+    {"role": "user", "content": "It's 555-123-2002."},
+    {"role": "assistant", "content": "", "tool_calls": [{"id": "call_1", "type": "function",
+      "function": {"name": "get_customer_by_phone", "arguments": "{\"phone_number\": \"555-123-2002\"}"}}]},
+    {"role": "tool", "tool_call_id": "call_1", "content": "{\"customer_id\": \"...\", \"line_ids\": [\"...\"], ...}"},
+    {"role": "assistant", "content": "Thanks. Could you check your status bar and tell me whether airplane mode is on?"},
+    {"role": "user", "content": "Yes, the airplane icon is showing."},
+    "... the customer's own phone tool calls and their results are NOT here: tau2 never shows them to the agent ...",
+    {"role": "assistant", "content": "Please turn airplane mode off, then run a speed test and tell me the result."},
+    "... more turns: roaming is checked with get_details_by_id, then enable_roaming if the customer is abroad ..."
+  ],
+  "tools": ["... the 13 telecom agent tool schemas, exactly as tau2 defines them at 2174a60 ..."],
+  "meta": {"task_id": "[mobile_data_issue]...[PERSONA:None]", "symptom": "mobile_data_issue",
+           "source": "S1 board/glm-5", "trial": 2, "reward": 1.0, "agent_turns": 12,
+           "filters": "F1-F10 pass", "dataset": "v1"}
+}
+</script>
+
+<script type="text/plain" id="src-cfg">
+# configs/sft_a.yaml: step 1, the 4B on dataset v1 (board conversations only)
+run_name: sft_a
+student: Qwen/Qwen3-4B-Instruct-2507          # Apache-2.0, non-thinking
+dataset:
+  version: v1
+  train: s3://<bucket>/tau-telecom-sft/data/v1/<sha256>/train.jsonl
+  tasks: all 74 of tau2-loop split v3's train   # no dev holdout: same set as Claude v2
+max_length: 24576                             # M1 sets it; F10 counts what it drops
+loss: assistant_only                          # agent turns only; customer and tool turns are context
+packing: false
+lora: {r: 16, alpha: 32, dropout: 0.05, target_modules: all-linear}
+optim: {lr: 1.0e-4, scheduler: cosine, warmup_steps: 0.05, epochs: 3 (fixed), weight_decay: 0.0}
+batch: {per_device: 1, grad_accum: 16}
+precision: bf16
+gradient_checkpointing: true
+liger_kernel: true                            # fused loss: no 24k x 151,936 logits tensor
+save: every_epoch                             # kept for the record; the final epoch is the model
+logging_steps: 1                              # about 90 updates in all
+seed: 300
+tracking:
+  experiment: tau-telecom-sft/train           # id from make mlflow-init, never hardcoded
+  tags: {project: tau-telecom-sft, env: aws, billing: aws-ec2}
+  sink: s3://<bucket>/tau-telecom-sft/runs/   # metrics.jsonl; make sync-mlflow logs it from the Mac
+
+# configs/sft_shadow.yaml differs in: student Qwen/Qwen3-30B-A3B (non-thinking),
+# dataset v1, env runpod, 1 x A100 80 GB, max_length set at M6, sink s3://<bucket>/...
+</script>
+
+<script type="text/plain" id="src-serve">
+# serve/serve.sh: on the L4, after training has finished (sketch, untested)
+# vLLM's own image, pinned; bound to localhost on the instance, so nothing is public
+docker run --gpus all -p 127.0.0.1:8000:8000 \
+  -v /opt/adapters:/adapters \
+  -e VLLM_API_KEY \
+  vllm/vllm-openai:<pinned tag> \
+  --model Qwen/Qwen3-4B-Instruct-2507 \
+  --dtype bfloat16 \
+  --enable-lora --max-lora-rank 16 \
+  --lora-modules sft-a=/adapters/sft_a sft-b=/adapters/sft_b \
+  --enable-auto-tool-choice --tool-call-parser hermes \
+  --max-model-len 32768 --gpu-memory-utilization 0.90 \
+  --enable-prefix-caching \
+  --api-key "$VLLM_API_KEY"
+# R0 asks for model "Qwen/Qwen3-4B-Instruct-2507"; R1 asks for "sft-a"; "sft-b" is R4, if M7 runs.
+# Sampling comes from the student's tau2-loop version, per request.
+# The 30B (R2, R3) is the same command on the 80 GB A100 with --model Qwen/Qwen3-30B-A3B
+# (about 61 GB of weights leaves room for a few conversations' memory).
+
+# on the Mac: a private tunnel to the instance, no inbound port, no SSH key
+aws ssm start-session --target <instance-id> \
+  --document-name AWS-StartPortForwardingSession \
+  --parameters portNumber=8000,localPortNumber=8000
+# (RunPod: ssh -N -L 8000:localhost:8000 root@<pod-ip> -p <port>)
+# then tau2-loop plays the student at http://localhost:8000/v1
+</script>
+
+<script type="text/plain" id="src-tree">
+tau-telecom-sft/                     # its own repo, registered in nmp-central-ai
+├── CLAUDE.md  AGENTS.md             # the rules in §9; AGENTS.md is the source of truth
+├── README.md                        # status table per milestone + the results table (R0 to R5)
+├── ai_specs/
+│   └── s00_project_plan.md          # this plan's milestones as a checklist (M0)
+├── skills/  opensrc/                # from ai-project-template
+├── pyproject.toml  uv.lock          # tau2 (submodule, editable), trl, peft, transformers,
+│                                    # liger-kernel, datasets, mlflow>=3.12,<4
+├── vendor/tau2-bench/               # submodule at 2174a60, same pin as tau2-loop; never edited
+├── data/
+│   ├── splits/telecom.json          # copy of tau2-loop's split v3 (74/40) + sha256 (M0)
+│   ├── sources.json                 # every raw source: URL, sha256, bytes, date (M1, M7)
+│   └── sft/v1/card.md               # committed; train.jsonl is git-ignored, in S3
+├── raw/                             # git-ignored, immutable: board files, teacher runs
+├── src/tau_telecom_sft/
+│   ├── sources/board.py             # fetch S1/S2, keep the 74 training tasks only
+│   ├── sources/teacher.py           # M7, only if needed: GLM-5.1 + an open customer
+│   ├── build/agent_view.py          # tau2's is_valid_agent_history_message: drop phone calls
+│   ├── build/filters.py             # F1 to F10, pure functions, each returns keep or a reason
+│   ├── build/convert.py             # agent's view -> chat + tools JSONL, stock SYSTEM_PROMPT
+│   ├── build/card.py                # the dataset card, logged to tau-telecom-sft/data
+│   ├── train/sft.py                 # TRL SFTTrainer + PEFT LoRA, assistant-only loss
+│   ├── serve/vllm.py                # base + adapter, tool parser on, port 8000
+│   ├── score/loop.py                # calls tau2-loop's make eval, records the run id
+│   └── track.py                     # MLflow tags, bucket metrics sink, sync from the Mac
+├── configs/                         # sft_smoke.yaml, sft_a.yaml, sft_b.yaml, sft_shadow.yaml
+├── runs/<ts>_<kind>_<name>/         # immutable: config, metrics, adapter path, eval run ids
+├── Dockerfile                       # CUDA PyTorch base + uv sync --frozen; built amd64 in CI
+├── infra/terraform/                 # AWS: ECR, S3, IAM, budget alarm; GCP: bucket, budget alarm
+├── Makefile                         # the targets below
+└── tests/                           # formats, filters, agent view, converter, loss mask, no-leak, prompt bytes
+</script>
+
+<script type="text/plain" id="src-make">
+# --- data (Mac) ---
+data-fetch                 # S1 + S2 into raw/board/, sha256 into data/sources.json           M1
+data-build V=v1            # 74 training tasks -> agent view -> F1..F10 -> JSONL + card       M1
+data-check                 # leak test (ids + root-issue sets), counts add up, prompt bytes    M1
+data-push V=v1             # JSONL to S3 under its sha256; log the build to MLflow (data)       M1
+teacher-one                # ONE GLM-5.1 conversation, cost printed, nothing else               M7?
+teacher N=12               # the batch on the 74 training tasks, only after teacher-one        M7?
+
+# --- train ---
+train-smoke                # Mac: Qwen3-0.6B, 5 steps, 2k tokens, prints the loss mask          M3
+image                      # CI builds amd64, pushes to ECR (and GHCR, which RunPod can pull)    M4
+train CONFIG=sft_a         # on the L4: docker run --gpus all <image> --config configs/...      M4
+train CONFIG=sft_shadow    # on the 80 GB A100, the same image                                  M6
+
+# --- serve and score ---
+serve ADAPTER=<path>       # vLLM's own image on the GPU: base (+ adapter), tool parser on      M2
+tunnel                     # SSM (EC2) or SSH (RunPod) port forward: Mac localhost:8000 -> GPU M2
+score SPLIT=test|train TRIALS=4 AGENT=<student version>  # make -C ../tau2-loop eval ...         M2, M5, M6
+sync-mlflow                # bucket metrics and scored runs -> central MLflow, from the Mac    every run
+
+# --- housekeeping ---
+stop                       # stop the instance; run after every session
+test  lint                 # offline only: ruff, mypy strict, pytest
+</script>
+
+<script>
+(function(){
+  var tb=document.getElementById('themeBtn');
+  function lab(){tb.textContent=document.documentElement.getAttribute('data-theme')==='dark'?'light mode':'dark mode'}
+  lab();
+  tb.addEventListener('click',function(){
+    var n=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+    document.documentElement.setAttribute('data-theme',n);try{localStorage.setItem('theme',n)}catch(e){}lab();
+    window.dispatchEvent(new CustomEvent('lavish-theme',{detail:n}));
+  });
+  var KEYS=['D1','D2','D3','D4','D5','D6','D7','next'];
+  var form=document.getElementById('plan-form'),ack=document.getElementById('ackPlan');
+  form.addEventListener('submit',function(ev){
+    ev.preventDefault();
+    var fd=new FormData(form),d={};
+    KEYS.forEach(function(k){d[k]=fd.get(k)||''});
+    var note=(fd.get('note')||'').trim();
+    if(!d.next){ack.textContent='Pick a next step first.';return}
+    var msg='s64 tau-telecom-sft plan decisions: D1 split = '+d.D1+'; D2 teacher data = '+d.D2+'; D3 student = '+d.D3+
+      '; D4 training runs on = '+d.D4+'; D5 scoring = '+d.D5+'; D6 training tasks = '+d.D6+'; D7 serving = '+d.D7+'; next = '+d.next+'.'+
+      (note?' Note: '+note:'')+
+      ' Update the plan on this page to reflect these decisions and remove the options that are now settled. Plan only: do not create the repo, download, train or run anything.';
+    if(!window.lavish){ack.textContent='Not opened through Lavish: use Copy all answers below.';return}
+    window.lavish.queuePrompt(msg,{tag:'choice',text:'s64 plan: '+d.next,element:form,queueKey:'s64-plan',data:Object.assign({note:note},d)});
+    ack.textContent='Queued. Press Send to Agent.';
+  });
+  var ca=document.getElementById('copyAll'),caAck=document.getElementById('copyAllAck');
+  ca.addEventListener('click',function(){
+    var fd=new FormData(form),lines=['s64-tau-telecom-sft-plan:'];
+    KEYS.forEach(function(k){var v=fd.get(k);if(v)lines.push('  '+k+': '+v)});
+    var n=(fd.get('note')||'').trim();if(n)lines.push('  note: '+n);
+    copyText(lines.join('\n'),caAck,ca);
+  });
+  var cm=document.getElementById('copyMs'),cmAck=document.getElementById('copyMsAck');
+  cm.addEventListener('click',function(){
+    var t=function(el){return el.textContent.replace(/\s+/g,' ').trim()};
+    var out=['# tau-telecom-sft: milestones','','From s64 (ai-engineer-fit/.lavish/s64_tau-airline-sft-plan.html). Tick a box when its "done when" holds; add the date and the run or data hash.',''];
+    document.querySelectorAll('#ms-table tbody tr').forEach(function(tr){
+      var c=tr.querySelectorAll('td');
+      out.push('- [ ] **'+t(c[0])+'** '+t(c[1]));
+      out.push('  - Runs on: '+t(c[2]));
+      out.push('  - Done when: '+t(c[3]));
+      out.push('  - Evidence in: '+t(c[4]));
+      out.push('  - Date / evidence: ');
+    });
+    copyText(out.join('\n'),cmAck,cm);
+  });
+  function copyText(text,status,btn){
+    var done=function(){status.textContent='Copied.'};
+    var manual=function(){
+      var old=btn.parentElement.querySelector('textarea[data-manual]');if(old)old.remove();
+      var ta=document.createElement('textarea');ta.value=text;ta.readOnly=true;ta.rows=Math.min(14,text.split('\n').length);
+      ta.setAttribute('data-manual','');ta.setAttribute('aria-label','Text to copy manually');
+      btn.parentElement.appendChild(ta);ta.focus();ta.select();
+      status.textContent='Clipboard unavailable: copy the text below.';
+    };
+    try{
+      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,manual);return}
+    }catch(e){}
+    manual();
+  }
+})();
+</script>
+
+<script type="module">
+  const src = id => document.getElementById(id).textContent.replace(/^\n/, '');
+  const BLOCKS = [
+    ['#m-row', 'src-row', 'data/sft/v1/train.jsonl (one row, pretty-printed)'],
+    ['#m-cfg', 'src-cfg', 'configs/sft_a.yaml'],
+    ['#m-serve', 'src-serve', 'serve/serve.sh (sketch)'],
+    ['#m-tree', 'src-tree', 'tau-telecom-sft (proposed)'],
+    ['#m-make', 'src-make', 'Makefile (targets)'],
+  ];
+  const mount = sel => { const el = document.querySelector(sel); el.innerHTML = ''; return el; };
+  function fallback() {
+    for (const [sel, id] of BLOCKS) {
+      const pre = document.createElement('pre');
+      pre.textContent = src(id);
+      mount(sel).appendChild(pre);
+    }
+  }
+  fallback();
+  try {
+    const { File } = await import('https://esm.sh/@pierre/diffs@1.2.10?bundle');
+    const paint = themeType => {
+      const options = { theme: { light: 'vitesse-light', dark: 'vitesse-dark' }, themeType, overflow: 'wrap' };
+      for (const [sel, id, name] of BLOCKS) {
+        new File(options).render({ containerWrapper: mount(sel), file: { name, contents: src(id) } });
+      }
+    };
+    paint(document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+    window.addEventListener('lavish-theme', e => paint(e.detail));
+  } catch (err) {
+    console.warn('pierre/diffs unavailable, keeping plain text', err);
+  }
+</script>
+</body>
+</html>
