@@ -13,9 +13,15 @@ each of the 40 tasks is worth 2.5 points.
   - [x] tau2-loop's split v3 copied; sha256 `45d481019e630fba8a5a1e0b55f3fc789ba3118858300e8688c37b6c2fc4f90a`
         (tau2-loop commit `cfa1d4f`)
   - [x] AGENTS.md and the leak test (test ids and test root-issue sets)
-  - [x] Registered in nmp-central-ai as P10; smoke check added
+  - [x] Registered in nmp-central-ai as P10 (branch `feat/register-tau-telecom-sft`, commit
+        `161d946`); experiments tau-telecom-sft/data, /train, /eval created by `make mlflow-init`
+  - [x] Smoke check: `make -C ../nmp-central-ai check ARGS="--only P10"` PASS (smoke=0 runs=1);
+        run `0f37ee02c2394942a29f052685d7f06e` in tau-telecom-sft/data at code `0096417`,
+        17 fixture conversations, 8 kept
   - Done when: the platform's smoke check passes, the split's sha matches tau2-loop's split v3,
     and the leak test runs. Evidence: README status · git
+  - Open after M0: the registry branch needs merging (PR) like P9's; a house-UI hue (none is left
+    30° from the others); D3–D7 still stand at the plan's recommended options.
 - [ ] **M1 · Build dataset v1** (Mac). Download S1 and S2 (128 MB) and keep the 74 training
   tasks. Strip the customer's phone calls, run F1 to F10 and convert. Measure token lengths with
   the student's tokenizer and set the F10 limit. Load S1, S2 and one tau2-loop telecom run with
