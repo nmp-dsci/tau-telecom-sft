@@ -55,14 +55,16 @@ runs/<id>/
 | key | meaning |
 |---|---|
 | `run_id`, `kind` (`eval`), `label`, `purpose` | identity; `purpose` `smoke` for M2 |
+| `results_row` | `R0`…`R5` for a `purpose: result` run; the overview fills that row from it |
 | `model` | `{name, base_model, train_run (or null for an untrained base), adapter_sha256}` |
 | `serving` | `{server, precision, endpoint, sampling: {temperature, top_p, top_k}, max_tokens}` |
 | `tau2_loop_run`, `tau2_loop_version` | the run and agent version in tau2-loop |
 | `split`, `task_ids`, `trials` | what was played (`task_ids` only for train-split smoke runs) |
 | `scores` | `{n_tasks, trials, passed, pass_hat: {"1": …, "2": …}, by_task: {task: [0/1 per trial]}}` |
 | `prompt_bytes` | `{ok, system_prompt_sha256, tools_sha256, expected_system_prompt_sha256, expected_tools_sha256, requests}` |
-| `tool_calls` | `{ok, requests_with_tool_calls, text_tool_calls}`: served tool calls came back structured |
-| `vs` | the base it is compared with, and `{fixed, broke, same, p}` once both exist |
+| `tool_calls` | `{ok, requests_with_tool_calls, text_tool_calls, errors, calls, agent_tool_calls, phone_tool_calls, invented_tool_calls, agent_tool_share, most_called}`: served calls came back structured, and which tools they named |
+| `vs` | the base it is compared with: `{run_id, tasks, fixed, broke, same, p}`, paired by task, tau2-loop's one-sided sign test |
+| `customer`, `sim_rules`, `tau2_loop_mlflow_run_id` | who played the customer, tau2-loop's rules, and its MLflow run |
 | `mlflow_run_id`, `mlflow_experiment` | the link |
 
 `served.jsonl`: `{t, system_prompt_sha256, tools_sha256, n_messages, finish_reason,

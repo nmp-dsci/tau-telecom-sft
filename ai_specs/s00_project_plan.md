@@ -30,7 +30,16 @@ each of the 40 tasks is worth 2.5 points.
   conversations there and sign off.
   - Done when: the card's counts add up, the leak test passes, and the person has signed off on
     the sample in the viewer. Evidence: `data/sft/v1/card.md` · `review.jsonl` · MLflow data
-- [ ] **M2 · Prove the pipeline on the Mac, end to end** (Mac · tau2-loop). A proof of concept
+  - Built 2026-10-17, waiting only on the sign-off:
+    - [x] S1, S2 downloaded and pinned (sha256 `18e41808…`, `4038e532…`); `make sources-check` passes on
+          S1, S2 and tau2-loop's `20261016T124631Z_telecom_v2_train`
+    - [x] v1: 518 of 912 kept, 74/74 training tasks; F1 70 · F2 298 · F3 1 · F4 7 · F5 4 · F6 6 · F9 8;
+          counts add up; leak check passes; train.jsonl sha256 `75718a64…`; MLflow data `08d798c5`
+    - [x] F10 with Qwen3-4B-Instruct-2507's tokenizer and template: median 10,054, max 16,869; 24,576
+          drops none, so it stays
+    - [x] The viewer's data side: `/data/v1` (+ coverage), rows in chat, tokens and raw, `/data/v1/review`
+    - [ ] The person reads the 20-row sample and signs off at `/data/v1/review` (writes `review.jsonl`)
+- [x] **M2 · Prove the pipeline on the Mac, end to end** (Mac · tau2-loop). 2026-10-17. A proof of concept
   with Qwen3-0.6B before anything runs on EC2; its scores are not results. (Reordered on
   2026-10-17 at the person's request: this was M3's smoke-train, now extended to serve and score.)
   - Train: `make train-smoke` runs the same TRL code as the EC2 job (`train/sft.py`, LoRA,
@@ -46,6 +55,19 @@ each of the 40 tasks is worth 2.5 points.
     `tool_calls`; the prompt-bytes test passes; tau2-loop records both runs; the viewer shows the
     chain from the smoke dataset to both scored runs. Evidence: tests
     assert the mask and the prompt bytes · MLflow train and eval (kind=smoke) · tau2-loop run ids
+  - [x] Train: `runs/20261017T120150Z_train_smoke-0.6b`, 16 rows × 1 step, loss 1.469 → 0.872, 29 min,
+        21.2 GB peak; MLflow train `b52a4b02`; adapter sha256 `4666b94f…`. One measured step first
+        (`…-step1`: 2 rows, 272 s). Mask check 11/11 agent turns, 1,530 of 10,081 tokens.
+  - [x] Serve: PEFT merge → MLX bf16 → mlx_lm.server :8120 behind `serve/proxy.py` :8020 (:8000 is
+        another app's); `tausft serve-check` got a structured `tool_calls` reply
+  - [x] tau2-loop's three changes on branch `feat/open-student` (`d31e8db`, worktree
+        `../tau2-loop-student`): `core.STUDENTS`, versions `s1`/`s2`, `factory.student_route`; its
+        full suite passes. One measured conversation first (`20261017T121015Z_telecom_s1_custom`).
+  - [x] Score: s1 `20261017T123132Z_telecom_s1_custom` 0/3, s2 `20261017T123152Z_telecom_s2_custom`
+        0/3 (fixed 0, broke 0). Prompt bytes ok on 57 + 166 requests; 150 structured replies, 0
+        written as text; calls on the agent's own tools 36.6% → 94.5%. MLflow eval `24fceb79`,
+        `d307e9ff`. Not results: a 0.6B on 3 training tasks.
+  - [x] The viewer shows the chain: `/`, `/train/<run>`, `/eval/<run>?vs=` (s01 has screenshots)
 - [ ] **M3 · Serve the untrained 4B on EC2 and record the before row** (EC2 L4 · tau2-loop).
   Start vLLM on the L4 with vLLM's own image, point M2's tau2-loop student version at it through
   the port forward, and play the 40 test tasks × 4 trials.

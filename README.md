@@ -8,14 +8,16 @@ tasks. The student faces the same 40 test tasks as the Claude telecom v2 agent (
 - The plan: [`.lavish/s00_tau-airline-sft-plan.html`](.lavish/s00_tau-airline-sft-plan.html)
 - The rules and decisions: [`AGENTS.md`](AGENTS.md)
 - The checklist: [`ai_specs/s00_project_plan.md`](ai_specs/s00_project_plan.md)
+- The build of M1, M2 and the viewer, step by step: [`.lavish/s01_m1-m2-viewer-walkthrough.html`](.lavish/s01_m1-m2-viewer-walkthrough.html)
+- The run-folder contract: [`docs/run_folders.md`](docs/run_folders.md)
 
 ## Status
 
 | Milestone | Status | Date | Evidence |
 |---|---|---|---|
 | M0 · Create the repo and connect it | done | 2026-10-17 | split v3 sha256 `45d48101…` matches tau2-loop's; leak test runs; `make -C ../nmp-central-ai check ARGS="--only P10"` PASS |
-| M1 · Build dataset v1 | next | | |
-| M2 · Prove the pipeline on the Mac, end to end (0.6B) | | | |
+| M1 · Build dataset v1 | built; your sign-off pending | 2026-10-17 | 518 of 912 kept, 74/74 training tasks; `data/sft/v1/card.md`; train.jsonl sha256 `75718a64…`; MLflow data `08d798c5`; sample at `/data/v1/review` (0/20) |
+| M2 · Prove the pipeline on the Mac, end to end (0.6B) | done (smoke) | 2026-10-17 | mask 11/11 agent turns; loss 1.47 → 0.87 in 16 steps; prompt bytes ok on 223 served requests; 0/3 → 0/3 on training tasks; own-tool calls 37% → 95%; tau2-loop branch `feat/open-student` |
 | M3 · Serve the untrained 4B on EC2 (R0) | | | |
 | M4 · SFT the 4B on v1 | | | |
 | M5 · Score it on test (R1) | | | |
@@ -40,13 +42,29 @@ test against its own untrained base. Counts sit beside percentages: one task is 
 | ref | the talk: Qwen3 30B (a different 40; 17 shared) | n/a | 0 → 75 → 77.5% | n/a | n/a |
 | ref | GPT-4.1 mini on the board (all 114, tau2 0.1.3) | 48.9% | 31.2% | n/a | n/a |
 
+### The Mac proof of concept (M2): smoke runs, not results
+
+Qwen3-0.6B, 3 training tasks × 1 trial, scored in tau2-loop with the Haiku 5.5 customer.
+
+| Run | Model | Passed | Calls on its own 13 tools | Prompt bytes | Run folder |
+|---|---|---|---|---|---|
+| s1 | Qwen3-0.6B, untrained | 0/3 (all ended by tool errors) | 15 of 41 (36.6%) | ok, 57 requests | `runs/20261017T124445Z_eval_smoke-0.6b-base` |
+| s2 | + LoRA on 16 v1 rows | 0/3 (2 tool errors, 1 step cap) | 104 of 110 (94.5%) | ok, 166 requests | `runs/20261017T124447Z_eval_smoke-0.6b-tuned` |
+
 ## Quick start
 
 ```bash
-make setup                                  # tau2-bench submodule at 2174a60 + uv sync
+make setup                                  # submodule at 2174a60 + uv sync --all-extras + npm ci
 make check                                  # split, leak, tests, lint — offline
 make smoke                                  # fixture build logged to MLflow tau-telecom-sft/data
 make -C ../nmp-central-ai check ARGS="--only P10"
+
+make download && make data                  # M1: the board files → dataset v1 (+ MLflow data)
+make viewer                                 # the viewer on http://127.0.0.1:8085 (sign off /data/v1/review)
+make train-smoke                            # M2: LoRA SFT on the Mac (≈30 min) → runs/<id>/ + MLflow train
+uv run tausft serve --model <train run>     # M2: MLX behind the recording proxy on :8020
 ```
 
-The central MLflow must be up (`make platform-up`). There is no local store.
+The central MLflow must be up (`make platform-up`). There is no local store. Scoring runs in
+tau2-loop (branch `feat/open-student`): `STUDENT_URL=http://127.0.0.1:8020 make eval
+DOMAIN=telecom AGENT=s2 SPLIT=train TASKS="…"`, then `uv run tausft score-pull …`.

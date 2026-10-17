@@ -1,5 +1,5 @@
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { type EvalConversation, type EvalRun, type EvalSummary, api, useGet } from '../lib/api';
+import { type EvalConversation, type EvalRun, type EvalRunDoc, type EvalSummary, api, useGet } from '../lib/api';
 import { DASH, countOf, duration, num, pValue, pct, shortSha, when } from '../lib/format';
 import { Grid, KV, Loading, MlflowLink, NotYet, OkBadge, PassBadge, PurposeBadge, RawView, TaskCell } from '../lib/ui';
 import { evalConversationPath, evalRunPath, trainRunPath } from '../lib/url';
@@ -131,7 +131,7 @@ export function EvalRunPage() {
             <div key={k} className={`stat ${k === '3' ? 'accent' : ''}`}>
               <div className="n">{pct(data.pass_hat[k])}</div>
               <div className="l">
-                pass^{k}
+                pass^{k}{' '}
                 <span className="tag">over {data.grid.length} task(s)</span>
               </div>
             </div>
@@ -256,6 +256,9 @@ export function EvalRunPage() {
               ['expected (the dataset card)', shortSha((r.prompt_bytes as Record<string, string> | undefined)?.expected_system_prompt_sha256, 16)],
               ['replies with tool calls', String(data.served.with_tool_calls)],
               ['tool calls written as text', String(data.served.text_tool_calls)],
+              ['calls on its own 13 tools', toolShare(r.tool_calls)],
+              ["calls on the customer's phone tools", String(r.tool_calls?.phone_tool_calls ?? DASH)],
+              ['calls on tools that exist nowhere', String(r.tool_calls?.invented_tool_calls ?? DASH)],
               ['median latency', data.served.latency_s_median != null ? `${num(data.served.latency_s_median, 2)} s` : DASH],
               ['longest prompt', data.served.prompt_tokens_max != null ? `${data.served.prompt_tokens_max} tokens` : DASH],
             ]}
@@ -264,6 +267,13 @@ export function EvalRunPage() {
       </section>
     </>
   );
+}
+
+/** The share of a run's calls that named one of the agent's own tools (F4's trap, served). */
+function toolShare(tc: EvalRunDoc['tool_calls']): string {
+  const share = tc?.agent_tool_share;
+  if (typeof share !== 'number') return DASH;
+  return `${pct(share)} (${String(tc?.agent_tool_calls ?? DASH)} of ${String(tc?.calls ?? DASH)})`;
 }
 
 /** `/eval/:run/:task/:trial`: one scored conversation, every message, the customer's phone calls greyed. */
