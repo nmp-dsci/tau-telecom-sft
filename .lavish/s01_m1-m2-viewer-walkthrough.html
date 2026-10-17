@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en" data-lavish-annotate="on">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M1, M2 and the viewer</title>
+<link rel="stylesheet" href="house.css">
+<link rel="stylesheet" href="project.css">
+<style>
+  /* layout only: every colour is a house token */
+  .tablewrap td, .tablewrap th{ overflow-wrap:anywhere; }
+  td.n, th.n{ text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .nav{ display:flex; flex-wrap:wrap; gap:var(--s1) var(--s3); font-family:var(--mono); font-size:var(--t-2); margin-top:var(--s4); }
+  .nav a{ color:var(--muted); text-decoration:none; border-bottom:1px solid var(--line-2); }
+  .nav a:hover{ color:var(--accent); border-color:var(--accent); }
+  .verdict .stat .n{ font-size:var(--t3); }
+  header .verdict{ grid-template-columns:repeat(3, minmax(0,1fr)); }
+  @media (max-width: 820px){ header .verdict{ grid-template-columns:minmax(0,1fr); } }
+  #s-scope td:first-child, #s-scope th:first-child{ white-space:nowrap; }
+  svg.dg{ display:block; width:100%; height:auto; }
+  svg.dg .zone{ fill:var(--band); stroke:none; }
+  svg.dg .zl{ fill:var(--muted); font-family:var(--mono); font-size:12px; letter-spacing:.06em; }
+  svg.dg .nd rect{ fill:var(--panel); stroke:var(--line-2); stroke-width:1.2; }
+  svg.dg .nd.key rect{ stroke:var(--accent); stroke-width:2; }
+  svg.dg .nd.ext rect{ stroke-dasharray:5 4; }
+  svg.dg .t{ fill:var(--ink); font-family:var(--sans); font-size:14px; font-weight:600; }
+  svg.dg .s{ fill:var(--muted); font-family:var(--sans); font-size:12px; }
+  svg.dg .m{ fill:var(--muted); font-family:var(--mono); font-size:11px; }
+  svg.dg .e{ stroke:var(--line-3); stroke-width:1.6; fill:none; }
+  svg.dg .e.hot{ stroke:var(--accent); }
+  svg.dg .ah{ fill:var(--line-3); }
+  svg.dg .ah.hot{ fill:var(--accent); }
+  svg.dg .el{ fill:var(--muted); font-family:var(--mono); font-size:11px; }
+  svg.chart .grid{ stroke:var(--line); stroke-width:1; }
+  svg.chart .ax{ fill:var(--muted); font-family:var(--mono); font-size:11px; }
+  svg.chart .ln{ fill:none; stroke:var(--accent); stroke-width:2.2; }
+  svg.chart .ln2{ fill:none; stroke:var(--amber); stroke-width:1.6; stroke-dasharray:5 4; }
+  svg.chart .pt{ fill:var(--accent); }
+  .walk{ display:grid; gap:var(--s3); }
+  .wstep{ background:var(--panel); border:1px solid var(--line-2); border-radius:var(--r); padding:var(--s4); }
+  .wstep header{ display:flex; flex-wrap:wrap; gap:var(--s2); align-items:baseline; margin-bottom:var(--s2); }
+  .wstep header .tag{ margin-left:auto; }
+  .wstep h3{ margin:0; }
+  .ev{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:var(--s3); }
+  @media (max-width: 820px){ .ev{ grid-template-columns:minmax(0,1fr); } }
+  .ev > div{ min-width:0; overflow-wrap:anywhere; font-size:var(--t-1); }
+  .ev .label{ display:block; margin-bottom:var(--s1); color:var(--muted); }
+  .ev p{ margin:0 0 var(--s1); }
+  .shots{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:var(--s4); margin-top:var(--s3); }
+  @media (max-width: 820px){ .shots{ grid-template-columns:minmax(0,1fr); } }
+  .shot{ margin:0; min-width:0; }
+  .shot img{ display:block; width:100%; height:auto; border:1px solid var(--line-2); border-radius:var(--r-sm); }
+  .shot figcaption{ font-size:var(--t-1); color:var(--muted); margin-top:var(--s2); }
+  .codewrap{ margin-top:var(--s3); border:1px solid var(--line-2); border-radius:var(--r); overflow:hidden; min-width:0; }
+  .codehead{ font-family:var(--mono); font-size:var(--t-2); color:var(--muted); padding:var(--s2) var(--s3); background:var(--band); border-bottom:1px solid var(--line); }
+  .why{ font-size:var(--t-1); color:var(--ink-2); margin:var(--s2) 0 0; max-width:var(--measure); }
+  .three{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:var(--s3); }
+  @media (max-width: 900px){ .three{ grid-template-columns:minmax(0,1fr); } }
+  .three .card{ min-width:0; }
+  .decide{ border:1px solid var(--line-2); border-radius:var(--r); padding:var(--s4); background:var(--panel); margin-top:var(--s4); }
+  .decide fieldset{ border:0; padding:0; margin:var(--s3) 0 0; display:grid; gap:var(--s2); }
+  .decide label{ display:grid; grid-template-columns:auto minmax(0,1fr); gap:var(--s2); align-items:start; font-size:var(--t-1); cursor:pointer; }
+  .decide textarea{ width:100%; min-height:3.2em; font:inherit; font-size:var(--t-1); margin-top:var(--s3); }
+  .decide .row{ display:flex; gap:var(--s3); align-items:center; flex-wrap:wrap; margin-top:var(--s3); }
+  .decide .queued{ font-size:var(--t-1); color:var(--accent); }
+  ul.tight{ margin:var(--s1) 0 0; padding-left:var(--s4); }
+  ul.tight li{ margin:2px 0; }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="eyebrow">s01 · tau-telecom-sft · branch <code>init-sft</code> · 17 Oct 2026 · the build of M1, M2 and the viewer · everything that runs on the Mac · nothing paid, nothing on EC2</div>
+  <h1>The whole pipeline runs on the Mac now, <em>from a board conversation to a fine-tuned student scored in tau2-loop</em></h1>
+  <p class="lede">You asked for M1, M2 and the viewer: every milestone that can be done locally. All three are built and committed.
+    Dataset v1 keeps <b>518 of 912</b> board conversations and covers all <b>74</b> training tasks. One TRL script fine-tuned Qwen3-0.6B on the Mac, with the loss checked to land on exactly the agent's turns.
+    The tuned and untrained models were served behind a recording proxy and played by tau2-loop against its Haiku 5.5 customer. The served prompts were byte-identical to the training rows'.
+    The viewer shows the chain from dataset to scores. One thing in M1 is yours alone: reading the 20-row sample and signing it off.</p>
+  <div class="verdict" style="margin-top:var(--s5)">
+    <div class="stat accent"><div class="n">518 / 912</div><div class="l">conversations kept in v1, 74 of 74 training tasks covered, 0 test tasks</div></div>
+    <div class="stat accent"><div class="n">11 / 11</div><div class="l">agent turns carry the loss in the checked row, and nothing else does (1,530 of 10,081 tokens)</div></div>
+    <div class="stat accent"><div class="n">1.47 → 0.87</div><div class="l">smoke-run loss over 16 steps on 16 rows, 29 minutes on the M1 Pro</div></div>
+    <div class="stat accent"><div class="n">223 / 223</div><div class="l">served requests whose system prompt and tools hash to the dataset card's</div></div>
+    <div class="stat accent"><div class="n">36.6% → 94.5%</div><div class="l">of the 0.6B's tool calls named one of its own 13 tools, untrained → tuned. It passed 0/3 → 0/3 tasks: plumbing, not a result</div></div>
+    <div class="stat amber"><div class="n">0 / 20</div><div class="l">sample rows you have reviewed: M1's last "done when" is your sign-off</div></div>
+  </div>
+  <nav class="nav" aria-label="Sections">
+    <a href="#s-scope">01 scope</a><a href="#s-arch">02 architecture</a><a href="#s-walk">03 step by step</a>
+    <a href="#s-code">04 the fine-tuning code</a><a href="#s-perf">05 seeing performance</a><a href="#s-changes">06 changes from the plan</a>
+    <a href="#s-found">07 what the data said</a><a href="#s-ready">08 ready to go ahead?</a><a href="#s-cmds">09 commands</a>
+  </nav>
+</header>
+
+<!-- 01 SCOPE -->
+<section id="s-scope">
+  <span class="eyebrow">01 · what you asked for</span>
+  <h2>Each milestone's "done when", <em>against what was built</em></h2>
+  <p class="sub">The plan's own checks (s00 §11), row by row. "Done" means the check holds and its evidence is a committed file or a run id.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Milestone</th><th>The plan's "done when"</th><th>What was built</th><th>Status</th><th>Evidence</th></tr></thead>
+      <tbody>
+        <tr><td><b>M1</b> · data</td><td>The card's counts add up</td><td>912 in → 394 dropped across F1–F10 → 518 kept. The build refuses to finish if the counts don't sum.</td><td><span class="badge ok">done</span></td><td><code>data/sft/v1/card.md</code> · MLflow data <code>08d798c5</code></td></tr>
+        <tr><td></td><td>The leak test passes</td><td>No test id and no test twin in <code>data/sft/</code> or <code>configs/</code>. The 298 test-task conversations F2 dropped are written as <code>WITHHELD</code>.</td><td><span class="badge ok">done</span></td><td><code>make leak-check</code> · <code>tests/test_no_leak.py</code></td></tr>
+        <tr><td></td><td>Token lengths measured with the student's tokenizer, F10 set</td><td>Qwen3-4B-Instruct-2507's tokenizer and template: median 10,054, max 16,869. The prompt and tools alone are 7,134. F10 stays at 24,576 and drops none.</td><td><span class="badge ok">done</span></td><td>card · <code>build/tokens.py</code></td></tr>
+        <tr><td></td><td>S1, S2 and a tau2-loop run load with one loader and match</td><td>All three load with tau2's own <code>Results</code> at the pin, with the same roles, requestor split and structured calls.</td><td><span class="badge ok">done</span></td><td><code>make sources-check</code></td></tr>
+        <tr><td></td><td>The viewer's data side: <code>/data</code>, rows in chat and raw, <code>/data/v1/review</code></td><td>All built, plus the tokens lens and the coverage view</td><td><span class="badge ok">done</span></td><td><code>make viewer</code> → 127.0.0.1:8085</td></tr>
+        <tr><td></td><td>You've signed off on the sample in the viewer</td><td>10 kept and 10 dropped rows drawn with seed 300, one dropping rule at a time. 0 of 20 reviewed.</td><td><span class="badge warn">yours</span></td><td><code>data/sft/v1/review_sample.json</code></td></tr>
+        <tr><td><b>M2</b> · Mac proof</td><td>The tokens with loss are exactly the agent's turns</td><td>Before step 1 the trainer reads its own labels back for row 0 and checks them. 11 / 11 turns, 1,530 of 10,081 tokens. A failed check stops the job.</td><td><span class="badge ok">done</span></td><td><code>20261017T120150Z_train_smoke-0.6b/mask.json</code> · <code>tests/test_train.py</code></td></tr>
+        <tr><td></td><td>A served tool call comes back as <code>tool_calls</code></td><td>mlx_lm.server's parser returns structured calls. 150 of the scored requests came back with tool calls, and 0 were written as text.</td><td><span class="badge ok">done</span></td><td><code>tausft serve-check</code> · <code>served.jsonl</code></td></tr>
+        <tr><td></td><td>The prompt-bytes test passes</td><td>The proxy hashed every request tau2-loop sent. All 223 carry the card's system-prompt sha256 <code>b76554cc…</code> and tools sha256 <code>66b1aa33…</code>.</td><td><span class="badge ok">done</span></td><td>eval <code>run.json</code> → <code>prompt_bytes</code></td></tr>
+        <tr><td></td><td>tau2-loop records both runs</td><td>The three changes, made in tau2-loop on branch <code>feat/open-student</code>: <code>s1</code> untrained and <code>s2</code> smoke-tuned, 3 training tasks each, on the usual customer and rules</td><td><span class="badge ok">done</span></td><td><code>20261017T123132Z_telecom_s1_custom</code> · <code>20261017T123152Z_telecom_s2_custom</code></td></tr>
+        <tr><td></td><td>The viewer shows the chain: dataset → training run → adapter → both scored runs</td><td><code>/</code>, <code>/train/:run</code> and <code>/eval/:run</code> link each step, and every number comes from a run folder</td><td><span class="badge ok">done</span></td><td>§05 screenshots</td></tr>
+        <tr><td><b>Viewer</b> · §10</td><td>Inspect the training data, capture every fine-tuning experiment</td><td>All seven page groups from §10. The API is FastAPI and reads files only. React and Vite on the house UI, with tau2-loop's URL grammar.</td><td><span class="badge ok">done</span></td><td><code>src/tau_telecom_sft/serving/</code> · <code>frontend/</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="why">Also checked: <b>37</b> pytest tests, ruff and mypy strict are clean in this repo. The frontend's typecheck, design lint and 23 vitest route tests pass. tau2-loop's full suite passes with the student changes, 6 of its tests new.</p>
+</section>
+
+<!-- 02 ARCHITECTURE -->
+<section id="s-arch">
+  <span class="eyebrow">02 · architecture</span>
+  <h2>Four lanes on one Mac, <em>and two ledgers that read them</em></h2>
+  <p class="sub">Each box is a module or a folder. Solid arrows are the data's path; the green path is a student's turn being served. Every box writes something the next one reads, and nothing reads MLflow back.</p>
+  <div class="dia">
+    <svg class="dg" viewBox="0 0 1180 720" role="img" aria-labelledby="arch-t arch-d">
+      <title id="arch-t">tau-telecom-sft on the Mac</title>
+      <desc id="arch-d">Board files are built into dataset v1; the trainer fine-tunes a LoRA adapter on it; the adapter is merged, converted to MLX and served behind a recording proxy; tau2-loop plays the student and its run is pulled back into runs; MLflow and the viewer read every record.</desc>
+      <defs>
+        <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0 L10 5 L0 10 z"/></marker>
+        <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah hot" d="M0 0 L10 5 L0 10 z"/></marker>
+      </defs>
+      <rect class="zone" x="10" y="14" width="830" height="160" rx="12"/><text class="zl" x="26" y="36">M1 · DATA · tausft build</text>
+      <rect class="zone" x="10" y="190" width="830" height="160" rx="12"/><text class="zl" x="26" y="212">M2 · TRAIN · tausft train (MPS)</text>
+      <rect class="zone" x="10" y="366" width="830" height="160" rx="12"/><text class="zl" x="26" y="388">M2 · SERVE · tausft serve</text>
+      <rect class="zone" x="10" y="542" width="830" height="166" rx="12"/><text class="zl" x="26" y="564">M2 · SCORE · tau2-loop</text>
+
+      <g class="nd ext"><title>Sierra's published board files, downloaded once, pinned by size and sha256</title><rect x="30" y="50" width="240" height="108" rx="10"/><text class="t" x="46" y="78">Board files (S1, S2)</text><text class="s" x="46" y="100">GLM-5 · Qwen3.5-397B, 4 trials</text><text class="m" x="46" y="122">raw/board/ · 128 MB</text><text class="m" x="46" y="142">sources/board.py</text></g>
+      <g class="nd"><title>The agent's view, F1 to F10, the chat-and-tools rows, and F10 counted with the student's tokenizer</title><rect x="300" y="50" width="240" height="108" rx="10"/><text class="t" x="316" y="78">build/</text><text class="s" x="316" y="100">agent view → F1–F10 → rows</text><text class="m" x="316" y="122">tokens.py: student's template</text><text class="m" x="316" y="142">review.py: the 20-row sample</text></g>
+      <g class="nd key"><title>Dataset v1: the card, stats and drops are committed; train.jsonl is git-ignored</title><rect x="570" y="50" width="250" height="108" rx="10"/><text class="t" x="586" y="78">data/sft/v1/</text><text class="s" x="586" y="100">518 rows · train.jsonl</text><text class="m" x="586" y="122">card · stats · drops</text><text class="m" x="586" y="142">review_sample · review.jsonl</text></g>
+
+      <g class="nd"><title>The run's config: base, tokenizer, rows, LoRA and SFTConfig</title><rect x="30" y="226" width="240" height="108" rx="10"/><text class="t" x="46" y="254">configs/smoke.yaml</text><text class="s" x="46" y="276">Qwen3-0.6B + 2507 template</text><text class="m" x="46" y="298">LoRA r16 · lr 2e-4</text><text class="m" x="46" y="318">16 rows · 12K tokens</text></g>
+      <g class="nd key"><title>TRL's SFTTrainer with a PEFT LoRA adapter, the loss on the agent's turns; the mask is checked before step 1</title><rect x="300" y="226" width="240" height="108" rx="10"/><text class="t" x="316" y="254">train/sft.py</text><text class="s" x="316" y="276">TRL SFTTrainer + PEFT LoRA</text><text class="m" x="316" y="298">mask.py · attention.py</text><text class="m" x="316" y="318">callbacks.py → every step</text></g>
+      <g class="nd key"><title>The training run's folder: the record the viewer and MLflow read</title><rect x="570" y="226" width="250" height="108" rx="10"/><text class="t" x="586" y="254">runs/&lt;train&gt;/</text><text class="s" x="586" y="276">run.json · metrics.jsonl</text><text class="m" x="586" y="298">mask.json</text><text class="m" x="586" y="318">adapter/ (ignored, hashed)</text></g>
+
+      <g class="nd"><title>Merge the LoRA adapter into the base, convert to MLX in bf16 with the student's chat template</title><rect x="30" y="402" width="240" height="108" rx="10"/><text class="t" x="46" y="430">serve/mlx.py</text><text class="s" x="46" y="452">PEFT merge → MLX bf16</text><text class="m" x="46" y="474">outputs/mlx · runs/&lt;id&gt;/mlx</text><text class="m" x="46" y="494">serve.json records it</text></g>
+      <g class="nd"><title>mlx_lm.server with its tool-call parser and capped caches</title><rect x="300" y="402" width="240" height="108" rx="10"/><text class="t" x="316" y="430">mlx_lm.server :8120</text><text class="s" x="316" y="452">tool-call parser on</text><text class="m" x="316" y="474">mlx_server.py caps caches</text><text class="m" x="316" y="494">bf16, never quantized</text></g>
+      <g class="nd key"><title>Forwards every request unchanged and logs hashes of the system prompt and tools, and whether calls came back structured</title><rect x="570" y="402" width="250" height="108" rx="10"/><text class="t" x="586" y="430">serve/proxy.py :8020</text><text class="s" x="586" y="452">tau2-loop's STUDENT_URL</text><text class="m" x="586" y="474">logs prompt + tools sha256</text><text class="m" x="586" y="494">outputs/served/*.jsonl</text></g>
+
+      <g class="nd ext"><title>tau2-loop's harness: tau2's orchestrator, the phone, the grader and the Haiku 5.5 customer on the subscription; the student is the agent</title><rect x="30" y="578" width="240" height="116" rx="10"/><text class="t" x="46" y="606">tau2-loop · s1 / s2</text><text class="s" x="46" y="628">tau2 orchestrator + grader</text><text class="m" x="46" y="650">Haiku 5.5 customer (subscr.)</text><text class="m" x="46" y="670">stock prompt · native tools</text></g>
+      <g class="nd ext"><title>tau2-loop's own run folder, logged to its own MLflow experiment</title><rect x="300" y="578" width="240" height="116" rx="10"/><text class="t" x="316" y="606">tau2-loop runs/&lt;id&gt;/</text><text class="s" x="316" y="628">run.json · results.jsonl</text><text class="m" x="316" y="650">tau2_results.json</text><text class="m" x="316" y="670">MLflow: tau2-loop</text></g>
+      <g class="nd key"><title>A copy of the tau2-loop run plus the proxy's lines, with pass^k, the checks and the sign test</title><rect x="570" y="578" width="250" height="116" rx="10"/><text class="t" x="586" y="606">runs/&lt;eval&gt;/</text><text class="s" x="586" y="628">score/pull.py</text><text class="m" x="586" y="650">pass^k · prompt bytes</text><text class="m" x="586" y="670">tool_calls · sign test</text></g>
+
+      <g class="nd key"><title>The central MLflow from nmp-central-ai: three experiments, named not numbered</title><rect x="890" y="50" width="270" height="200" rx="10"/><text class="t" x="906" y="80">Central MLflow :5000</text><text class="s" x="906" y="104">nmp-central-ai, never local</text><text class="m" x="906" y="132">tau-telecom-sft/data</text><text class="m" x="906" y="152">  one run per build</text><text class="m" x="906" y="176">tau-telecom-sft/train</text><text class="m" x="906" y="196">  every step + system metrics</text><text class="m" x="906" y="220">tau-telecom-sft/eval</text><text class="m" x="906" y="240">  pass^k, checks, links</text></g>
+      <g class="nd key"><title>The viewer: FastAPI over the committed files, React on the house UI</title><rect x="890" y="290" width="270" height="404" rx="10"/><text class="t" x="906" y="320">Viewer :8085 (dev :5177)</text><text class="s" x="906" y="344">reads files only; MLflow is a link</text><text class="m" x="906" y="378">/              the chain + results</text><text class="m" x="906" y="402">/data/v1       funnel · lengths</text><text class="m" x="906" y="426">  ?view=coverage</text><text class="m" x="906" y="450">/data/v1/rows  chat · tokens · raw</text><text class="m" x="906" y="474">/data/v1/review  your sign-off</text><text class="m" x="906" y="498">/train/:run    loss · lr · mask</text><text class="m" x="906" y="522">  ?vs=           overlay two runs</text><text class="m" x="906" y="546">/eval/:run     pass^k · grid</text><text class="m" x="906" y="570">  ?vs=           fixed / broke / p</text><text class="m" x="906" y="594">/eval/…/:task/:trial  trace</text><text class="m" x="906" y="618">/method        recipe + curve</text></g>
+
+      <path class="e" d="M270 104 H294" marker-end="url(#a1)"/>
+      <path class="e" d="M540 104 H564" marker-end="url(#a1)"/>
+      <path class="e" d="M695 158 V190 H420 V220" marker-end="url(#a1)"/><text class="el" x="560" y="184">train.jsonl</text>
+      <path class="e" d="M270 280 H294" marker-end="url(#a1)"/>
+      <path class="e" d="M540 280 H564" marker-end="url(#a1)"/>
+      <path class="e" d="M695 334 V360 H250 V396" marker-end="url(#a1)"><title>the adapter, merged into the base</title></path><text class="el" x="430" y="354">adapter</text>
+      <path class="e" d="M270 456 H294" marker-end="url(#a1)"/>
+      <path class="e hot" d="M570 456 H546" marker-end="url(#a2)"><title>the proxy forwards every request unchanged</title></path>
+      <path class="e hot" d="M250 578 V540 H695 V516" marker-end="url(#a2)"><title>each agent turn goes to STUDENT_URL, the proxy</title></path><text class="el" x="300" y="534">each agent turn → STUDENT_URL (:8020)</text>
+      <path class="e" d="M270 636 H294" marker-end="url(#a1)"/>
+      <path class="e" d="M540 636 H564" marker-end="url(#a1)"/><text class="el" x="543" y="626">copy</text>
+      <path class="e" d="M820 470 H850 V630 H826" marker-end="url(#a1)"/><text class="el" x="826" y="560" transform="rotate(90 852 560)">served.jsonl</text>
+      <path class="e" d="M820 104 H884" marker-end="url(#a1)"/>
+      <path class="e" d="M820 280 H860 V200 H884" marker-end="url(#a1)"/>
+      <path class="e" d="M820 660 H870 V400 H884" marker-end="url(#a1)"/>
+    </svg>
+  </div>
+  <div class="split" style="margin-top:var(--s4)">
+    <div class="card"><h3>What runs where</h3><ul class="tight">
+      <li><b>This repo, the Mac:</b> the build, the trainer (PyTorch on MPS), MLX serving, the proxy, the scorer and the viewer.</li>
+      <li><b>tau2-loop:</b> its worktree <code>../tau2-loop-student</code> on branch <code>feat/open-student</code>. Your main checkout is untouched.</li>
+      <li><b>nmp-central-ai:</b> MLflow on :5000. Nothing else was started.</li>
+      <li><b>Ports:</b> 8020 proxy, 8120 MLX, 8085 viewer, 5177 dev UI. 8000 belongs to another app on this Mac.</li>
+    </ul></div>
+    <div class="card"><h3>The same code goes to EC2 at M3 and M4</h3><ul class="tight">
+      <li><code>train/sft.py</code> runs <code>configs/sft_a.yaml</code> on CUDA unchanged. Liger switches on and the Mac's block attention switches off.</li>
+      <li><code>serve/proxy.py</code> stays on the Mac in front of the port forward to vLLM. The prompt-bytes check works the same way.</li>
+      <li>tau2-loop's <code>s</code> versions point at whatever <code>STUDENT_URL</code> names.</li>
+      <li>One new thing at M3: <code>serve/vllm.py</code> and the student entries for the 4B.</li>
+    </ul></div>
+  </div>
+</section>
+
+<!-- 03 WALKTHROUGH -->
+<section id="s-walk">
+  <span class="eyebrow">03 · step by step</span>
+  <h2>Sixteen steps: <em>what was expected, what was done, and what came back</em></h2>
+  <p class="sub">In the order they ran. Where the result differed from the plan, the step says so and §06 collects the changes.</p>
+  <div class="walk">
+    <article class="wstep" id="w1"><header><span class="badge ok">done</span><h3>1 · Download the board files</h3><span class="tag">sources/board.py</span></header>
+      <div class="ev"><div><span class="label">expected</span><p>S1 and S2, 128 MB, from taubench.com's public bucket (§4)</p></div><div><span class="label">done</span><p><code>make download</code> fetched both into <code>raw/board/</code>. <code>sources/board.py</code> pins their sizes and sha256s, and refuses a file whose bytes differ.</p></div><div><span class="label">result</span><p>56,311,944 and 71,968,908 bytes, both HTTP 200: what the plan's HEAD requests saw. 456 conversations each (114 tasks × 4).</p></div></div></article>
+    <article class="wstep" id="w2"><header><span class="badge ok">done</span><h3>2 · One loader for three files</h3><span class="tag">sources/compare.py</span></header>
+      <div class="ev"><div><span class="label">expected</span><p>S1, S2 and a tau2-loop telecom run load with the same loader and match (§4)</p></div><div><span class="label">done</span><p>Loaded each with tau2's <code>Results</code> at the pin. Compared the parts, roles, requestor split and call shape (<code>make sources-check</code>).</p></div><div><span class="label">result</span><p>One shape. tau2-loop's file also has <code>simulation_index</code>, added to tau2 after February. It's reported and not needed. The agent view removed 6,975 and 8,890 phone-side messages.</p></div></div></article>
+    <article class="wstep" id="w3"><header><span class="badge ok">done</span><h3>3 · The agent's view, F1 to F10, the rows</h3><span class="tag">build/</span></header>
+      <div class="ev"><div><span class="label">expected</span><p>Strip the customer's phone calls, run F1–F10, convert (§5, §6)</p></div><div><span class="label">done</span><p>tau2's own <code>is_valid_agent_history_message</code>, the ten rules in order, then one chat-and-tools row per conversation</p></div><div><span class="label">result</span><p>912 in → <b>518 kept</b>. Dropped: F1 70, F2 298, F3 1, F4 7, F5 4, F6 6, F7 0, F8 0, F9 8, F10 0. All 74 training tasks keep at least one row.</p></div></div></article>
+    <article class="wstep" id="w4"><header><span class="badge ok">done</span><h3>4 · Measure lengths with the student's tokenizer and set F10</h3><span class="tag">card.md · histogram</span></header>
+      <div class="ev"><div><span class="label">expected</span><p>Count with the student's chat template, then set the limit (§7)</p></div><div><span class="label">done</span><p><code>build/tokens.py</code> renders each row with Qwen3-4B-Instruct-2507's template and tools</p></div><div><span class="label">result</span><p>Median 10,054, p99 12,437, max 16,869. The prompt and tools take 7,134. 24,576 drops none, so it stays.</p></div></div></article>
+    <article class="wstep" id="w5"><header><span class="badge ok">done</span><h3>5 · The card and the MLflow data run</h3><span class="tag">MLflow data 08d798c5</span></header>
+      <div class="ev"><div><span class="label">expected</span><p>data/sft/v1/card.md; counts add up; MLflow data</p></div><div><span class="label">done</span><p>The card adds §4's five source checks. The build was rebuilt at the committed code, with the same <code>train.jsonl</code> hash, and the first run was retired.</p></div><div><span class="label">result</span><p><code>train.jsonl</code> sha256 <code>75718a646d5d2d85…</code>. MLflow run <code>08d798c5</code> holds the card, stats, drops and rows. The leak check passes.</p></div></div></article>
+    <article class="wstep" id="w6"><header><span class="badge warn">yours</span><h3>6 · The sample you sign off</h3><span class="tag">review_sample.json</span></header>
+      <div class="ev"><div><span class="label">expected</span><p>Read 10 kept and 10 dropped in the viewer and sign off (M1)</p></div><div><span class="label">done</span><p>Drawn once with seed 300, the drops one rule at a time (F1, F3, F4, F5, F6, F9, then again). <code>/data/v1/review</code> writes verdicts to <code>review.jsonl</code> from this machine only.</p></div><div><span class="label">result</span><p>0 of 20 reviewed. A sign-off before every row has a verdict is refused.</p></div></div></article>
+    <article class="wstep" id="w7"><header><span class="badge ok">done</span><h3>7 · The trainer and its mask check</h3><span class="tag">train/mask.py</span></header>
+      <div class="ev"><div><span class="label">expected</span><p><code>train/sft.py</code>: LoRA, assistant-only loss; print the mask for one row (M2)</p></div><div><span class="label">done</span><p>TRL's <code>SFTTrainer</code> with a PEFT <code>LoraConfig</code>. TRL swaps in its training copy of the 2507 template. Before step 1 the trainer's own <code>labels</code> for row 0 are read back and checked.</p></div><div><span class="label">result</span><p>11/11 agent turns trained, 1,530 of 10,081 tokens. No header, customer turn, tool result or system text is trained.</p></div></div></article>
+    <article class="wstep" id="w8"><header><span class="badge warn">changed</span><h3>8 · One measured step, and a memory fix</h3><span class="tag">runs/…-step1</span></header>
+      <div class="ev"><div><span class="label">expected</span><p>A smoke run on the Mac at 12K tokens</p></div><div><span class="label">done</span><p>The first step ran at 33 GB on a 32 GB Mac. Measured MPS attention at 11 GB for 8K tokens, then added block attention (<code>train/attention.py</code>) and tested it against SDPA.</p></div><div><span class="label">result</span><p>One measured step: 2 rows in 270 s at 73 tokens/s and 20.4 GB. The smoke run was sized from it: 16 rows, one step each.</p></div></div></article>
+    <article class="wstep" id="w9"><header><span class="badge ok">done</span><h3>9 · The smoke fine-tune</h3><span class="tag">MLflow train b52a4b02</span></header>
+      <div class="ev"><div><span class="label">expected</span><p>A few steps of the same TRL code on v1's rows, logged to MLflow train</p></div><div><span class="label">done</span><p>16 rows (all under 12K whole), lr 2e-4 cosine, LoRA r16 α32 on all linear layers, bf16, on MPS</p></div><div><span class="label">result</span><p>16 steps in 29 min. Loss 1.47 → 0.87, peak 21.17 GB, 20–140 tokens/s. Adapter sha256 <code>4666b94fe05d…</code></p></div></div></article>
+    <article class="wstep" id="w10"><header><span class="badge ok">done</span><h3>10 · Merge, convert, serve</h3><span class="tag">serve/</span></header>
+      <div class="ev"><div><span class="label">expected</span><p>Merge the adapter, convert to MLX bf16, serve with tool calls parsed (§8 option B)</p></div><div><span class="label">done</span><p>PEFT <code>merge_and_unload</code> → <code>mlx_lm.convert</code> (bf16) → the student's tokenizer and template written in → <code>mlx_lm.server</code> on :8120, behind <code>serve/proxy.py</code> on :8020</p></div><div><span class="label">result</span><p>Both models served in bf16 with the same template (sha256 <code>64f85b19…</code>). :8000 was taken, so the student moved to :8020.</p></div></div></article>
+    <article class="wstep" id="w11"><header><span class="badge ok">done</span><h3>11 · A served tool call comes back structured</h3><span class="tag">served.jsonl</span></header>
+      <div class="ev"><div><span class="label">expected</span><p><code>tool_calls</code>, not text (M2)</p></div><div><span class="label">done</span><p><code>tausft serve-check</code>: a v1 row cut before the teacher's first call, sent with the 13 tools</p></div><div><span class="label">result</span><p>One structured call came back. The untrained 0.6B chose <code>check_apn_settings</code>, a customer phone tool that isn't in its list. The teacher had called <code>get_customer_by_phone</code>.</p></div></div></article>
+    <article class="wstep" id="w12"><header><span class="badge ok">done</span><h3>12 · The three tau2-loop changes</h3><span class="tag">tau2-loop d31e8db</span></header>
+      <div class="ev"><div><span class="label">expected</span><p>A model entry, a student version, and the agent off the subscription (§8, D5)</p></div><div><span class="label">done</span><p>On branch <code>feat/open-student</code>: <code>core.STUDENTS</code>; <code>agents/telecom/s1</code> and <code>s2</code> with the stock prompt, native tools and sampling 0.7/0.8/20; <code>factory.student_route</code>; no clock note</p></div><div><span class="label">result</span><p>6 new tests, and tau2-loop's whole suite passes. Claude versions keep their route, effort, clock note and bytes. <code>sN</code> isn't <code>vN</code>, so no loop reads it.</p></div></div></article>
+    <article class="wstep" id="w13"><header><span class="badge ok">done</span><h3>13 · One measured conversation</h3><span class="tag">tau2-loop 20261017T121015Z</span></header>
+      <div class="ev"><div><span class="label">expected</span><p>Measure one conversation before any batch (rule 8)</p></div><div><span class="label">done</span><p><code>s1</code> on one training task with the Haiku 5.5 customer</p></div><div><span class="label">result</span><p>250 s, 21 agent turns, failed for too many tool errors. tau2's customer-cost estimate was $0.0036, on the subscription.</p></div></div></article>
+    <article class="wstep" id="w14"><header><span class="badge ok">done</span><h3>14 · Score the untrained and the tuned 0.6B</h3><span class="tag">20261017T123132Z · 20261017T123152Z</span></header>
+      <div class="ev"><div><span class="label">expected</span><p>3 training tasks × 1 trial each, s1 and s2, the usual customer (M2)</p></div><div><span class="label">done</span><p>One task per symptom, from tasks the smoke run trained on, fewest agent turns first. Each model behind its own proxy.</p></div><div><span class="label">result</span><p>s1: 0/3 (mobile_data_issue: fail, 26 turns, 16 calls, too_many_errors; service_issue: fail, 18 turns, 13 calls, too_many_errors; mms_issue: fail, 16 turns, 12 calls, too_many_errors). s2: 0/3 (mobile_data_issue: fail, 43 turns, 42 calls, too_many_errors; service_issue: fail, 27 turns, 16 calls, too_many_errors; mms_issue: fail, 99 turns, 52 calls, max_steps). Calls on the agent's own tools: 36.6% → 94.5%.</p></div></div></article>
+    <article class="wstep" id="w15"><header><span class="badge ok">done</span><h3>15 · Record the scores</h3><span class="tag">MLflow eval d307e9ff</span></header>
+      <div class="ev"><div><span class="label">expected</span><p>MLflow eval (kind=smoke); the chain to the training run</p></div><div><span class="label">done</span><p><code>tausft score-pull</code> copied each tau2-loop run, took the proxy's lines, checked the prompt bytes and calls, and compared s2 with s1</p></div><div><span class="label">result</span><p>Prompt bytes pass on all 223 requests. 150 replies had structured calls and 0 wrote calls as text. s2 against s1: fixed 0, broke 0, p = 1.0.</p></div></div></article>
+    <article class="wstep" id="w16"><header><span class="badge ok">done</span><h3>16 · The viewer</h3><span class="tag">make viewer</span></header>
+      <div class="ev"><div><span class="label">expected</span><p>Inspect the data and every fine-tuning run (§10)</p></div><div><span class="label">done</span><p>FastAPI over the files, React on the house UI. The data, rows, review, train, eval and method pages, with tau2-loop's address grammar.</p></div><div><span class="label">result</span><p>Every page has data now: v1's funnel and lengths, the smoke run's curves and mask, both scored runs, and the chain between them</p></div></div></article>
+  </div>
+</section>
+
+<!-- 04 CODE -->
+<section id="s-code">
+  <span class="eyebrow">04 · the fine-tuning code</span>
+  <h2>One config, one trainer, one mask check, <em>and the callback that records every step</em></h2>
+  <p class="sub">Excerpts from the committed files, shown as they are. The trainer is plain TRL and PEFT. What this repo adds: the check that the loss lands where it should, the run folder, and the Mac's memory fix.</p>
+  <h3 style="margin-top:var(--s5)">configs/smoke.yaml <span class="tag">lines 1–41</span></h3>
+  <p class="why">The whole config. Every key under <code>sft:</code> is TRL's <code>SFTConfig</code> under its real name. <code>configs/sft_a.yaml</code>, M4's 4B run, has the same shape: 3 epochs, 24,576 tokens, Liger on.</p>
+  <div class="codewrap"><div id="code-cfg"></div></div>
+  <h3 style="margin-top:var(--s5)">src/tau_telecom_sft/train/sft.py <span class="tag">lines 166–210</span></h3>
+  <p class="why">The trainer. Load the base, build the dataset (tools as a JSON string, so Arrow never merges their schemas), hand TRL a LoRA config, then read the trainer's own labels for row 0 and check them before step 1.</p>
+  <div class="codewrap"><div id="code-sft"></div></div>
+  <h3 style="margin-top:var(--s5)">src/tau_telecom_sft/train/mask.py <span class="tag">lines 57–91</span></h3>
+  <p class="why">The check: one trained span per agent turn, each holding that turn's text and calls and ending with <code>&lt;|im_end|&gt;</code>, and no context text inside a trained span</p>
+  <div class="codewrap"><div id="code-mask"></div></div>
+  <h3 style="margin-top:var(--s5)">src/tau_telecom_sft/train/callbacks.py <span class="tag">lines 43–79</span></h3>
+  <p class="why">Every logged step goes to <code>metrics.jsonl</code> first and to MLflow second. A failed MLflow call is noted once and never stops the job. This is the EC2 tunnel question from earlier, answered in code.</p>
+  <div class="codewrap"><div id="code-cb"></div></div>
+  <h3 style="margin-top:var(--s5)">src/tau_telecom_sft/train/attention.py <span class="tag">lines 35–65</span></h3>
+  <p class="why">The Mac's memory fix: SDPA on 1,024 queries at a time, against only the keys each may see, each block recomputed in the backward pass. The smoke config alone selects it.</p>
+  <div class="codewrap"><div id="code-attn"></div></div>
+  <h3 style="margin-top:var(--s5)">tau2-loop: src/tau2_loop/agent/factory.py <span class="tag">lines 83–96</span></h3>
+  <p class="why">tau2-loop's side (D5): a student's route, which is its endpoint, its sampling and native tools, with no effort, service or key. The customer and the judge never take this route.</p>
+  <div class="codewrap"><div id="code-route"></div></div>
+</section>
+
+<!-- 05 PERFORMANCE -->
+<section id="s-perf">
+  <span class="eyebrow">05 · how you see fine-tuning performance</span>
+  <h2>Three questions, <em>each with its own screen</em></h2>
+  <div class="three">
+    <div class="card"><h3>1 · Did training behave?</h3><p class="why">The loss per step, learning rate, gradient norm, tokens per second and memory.</p><ul class="tight">
+      <li><b>Viewer:</b> <code>/train/20261017T120150Z_train_smoke-0.6b</code>; <code>?vs=</code> overlays another run</li>
+      <li><b>MLflow:</b> <code>tau-telecom-sft/train</code>, run <code>b52a4b02</code>: the same steps plus CPU, memory and, on EC2, GPU system metrics</li>
+      <li><b>File:</b> <code>runs/20261017T120150Z_train_smoke-0.6b/metrics.jsonl</code></li></ul></div>
+    <div class="card"><h3>2 · What did it learn from?</h3><p class="why">Exactly which tokens carried the loss, on a real row.</p><ul class="tight">
+      <li><b>Viewer:</b> any row's <code>?lens=tokens</code>, and the run's mask check on <code>/train/:run</code></li>
+      <li><b>CLI:</b> <code>make mask</code> prints it</li>
+      <li><b>File:</b> <code>runs/&lt;id&gt;/mask.json</code></li></ul></div>
+    <div class="card"><h3>3 · Did it help?</h3><p class="why">pass^k on tau2's grader, and fixed and broken tasks against the untrained base, with the sign test.</p><ul class="tight">
+      <li><b>Viewer:</b> <code>/eval/:run?vs=</code>, the task × trial grid, every conversation</li>
+      <li><b>MLflow:</b> <code>tau-telecom-sft/eval</code> and tau2-loop's own runs</li>
+      <li><b>File:</b> <code>runs/&lt;eval&gt;/run.json</code></li></ul></div>
+  </div>
+  <h3 style="margin-top:var(--s5)">The smoke run's loss, read from <code>metrics.jsonl</code></h3>
+  <div class="fig"><svg class="chart" viewBox="0 0 1100 300" role="img" aria-label="Training loss per step"><title>Loss per step, smoke run</title><line class="grid" x1="56" x2="1080" y1="260.0" y2="260.0"/><text class="ax" x="48" y="264.0" text-anchor="end">0.00</text><line class="grid" x1="56" x2="1080" y1="200.0" y2="200.0"/><text class="ax" x="48" y="204.0" text-anchor="end">0.43</text><line class="grid" x1="56" x2="1080" y1="140.0" y2="140.0"/><text class="ax" x="48" y="144.0" text-anchor="end">0.86</text><line class="grid" x1="56" x2="1080" y1="80.0" y2="80.0"/><text class="ax" x="48" y="84.0" text-anchor="end">1.29</text><line class="grid" x1="56" x2="1080" y1="20.0" y2="20.0"/><text class="ax" x="48" y="24.0" text-anchor="end">1.71</text><text class="ax" x="56.0" y="278" text-anchor="middle">1</text><text class="ax" x="124.3" y="278" text-anchor="middle">2</text><text class="ax" x="192.5" y="278" text-anchor="middle">3</text><text class="ax" x="260.8" y="278" text-anchor="middle">4</text><text class="ax" x="329.1" y="278" text-anchor="middle">5</text><text class="ax" x="397.3" y="278" text-anchor="middle">6</text><text class="ax" x="465.6" y="278" text-anchor="middle">7</text><text class="ax" x="533.9" y="278" text-anchor="middle">8</text><text class="ax" x="602.1" y="278" text-anchor="middle">9</text><text class="ax" x="670.4" y="278" text-anchor="middle">10</text><text class="ax" x="738.7" y="278" text-anchor="middle">11</text><text class="ax" x="806.9" y="278" text-anchor="middle">12</text><text class="ax" x="875.2" y="278" text-anchor="middle">13</text><text class="ax" x="943.5" y="278" text-anchor="middle">14</text><text class="ax" x="1011.7" y="278" text-anchor="middle">15</text><text class="ax" x="1080.0" y="278" text-anchor="middle">16</text><text class="ax" x="550.0" y="296" text-anchor="middle">optimiser step (one row each)</text><polyline class="ln2" points="56.0,120.8 124.3,41.8 192.5,72.3 260.8,166.0 329.1,43.9 397.3,170.1 465.6,161.2 533.9,178.3 602.1,166.3 670.4,182.7 738.7,188.0 806.9,182.3 875.2,167.3 943.5,191.2 1011.7,96.6 1080.0,188.4"><title>gradient norm (right scale, dashed)</title></polyline><polyline class="ln" points="56.0,54.2 124.3,75.9 192.5,86.0 260.8,103.6 329.1,96.2 397.3,79.0 465.6,116.3 533.9,121.2 602.1,140.8 670.4,137.2 738.7,132.9 806.9,137.1 875.2,158.5 943.5,128.6 1011.7,41.8 1080.0,137.8"/><circle class="pt" cx="56.0" cy="54.2" r="3.5"><title>step 1: loss 1.469</title></circle><circle class="pt" cx="124.3" cy="75.9" r="3.5"><title>step 2: loss 1.314</title></circle><circle class="pt" cx="192.5" cy="86.0" r="3.5"><title>step 3: loss 1.242</title></circle><circle class="pt" cx="260.8" cy="103.6" r="3.5"><title>step 4: loss 1.117</title></circle><circle class="pt" cx="329.1" cy="96.2" r="3.5"><title>step 5: loss 1.170</title></circle><circle class="pt" cx="397.3" cy="79.0" r="3.5"><title>step 6: loss 1.292</title></circle><circle class="pt" cx="465.6" cy="116.3" r="3.5"><title>step 7: loss 1.026</title></circle><circle class="pt" cx="533.9" cy="121.2" r="3.5"><title>step 8: loss 0.991</title></circle><circle class="pt" cx="602.1" cy="140.8" r="3.5"><title>step 9: loss 0.851</title></circle><circle class="pt" cx="670.4" cy="137.2" r="3.5"><title>step 10: loss 0.876</title></circle><circle class="pt" cx="738.7" cy="132.9" r="3.5"><title>step 11: loss 0.907</title></circle><circle class="pt" cx="806.9" cy="137.1" r="3.5"><title>step 12: loss 0.878</title></circle><circle class="pt" cx="875.2" cy="158.5" r="3.5"><title>step 13: loss 0.725</title></circle><circle class="pt" cx="943.5" cy="128.6" r="3.5"><title>step 14: loss 0.938</title></circle><circle class="pt" cx="1011.7" cy="41.8" r="3.5"><title>step 15: loss 1.558</title></circle><circle class="pt" cx="1080.0" cy="137.8" r="3.5"><title>step 16: loss 0.872</title></circle><text class="ax" x="1080" y="32" text-anchor="end">solid: loss · dashed: gradient norm (0–3.8)</text></svg></div>
+  <p class="why">16 steps, one row each, read from <code>runs/20261017T120150Z_train_smoke-0.6b/metrics.jsonl</code>. Loss 1.469 at step 1 and 0.872 at step 16. The learning rate warmed up to 2e-4 at step 2, then fell on a cosine. Each step is a different conversation, so the curve is noisy. Its trend is what matters, and it falls.</p>
+  <div class="callout warn" style="margin-top:var(--s4)"><p><b>How to read these numbers.</b> All 74 training tasks are trained on (D1), so no held-out loss exists. The training loss shows the job behaved, and only tau2's grader on the 40 test tasks measures the student (M5). The smoke run is 16 rows for one epoch on a 0.6B model, and its 3 scored tasks are training tasks. It proves the plumbing, not the method.</p></div>
+  <div class="shots">
+    <figure class="shot"><img src="s01/overview.png" alt="&lt;code&gt;/&lt;/code&gt;: the chain from dataset v1 to the training run, its adapter and both scored runs" loading="lazy"><figcaption><code>/</code>: the chain from dataset v1 to the training run, its adapter and both scored runs</figcaption></figure>
+    <figure class="shot"><img src="s01/data_v1.png" alt="&lt;code&gt;/data/v1&lt;/code&gt;: the F1 → F10 funnel and the length histogram against F10&#x27;s limit" loading="lazy"><figcaption><code>/data/v1</code>: the F1 → F10 funnel and the length histogram against F10's limit</figcaption></figure>
+    <figure class="shot"><img src="s01/train_run.png" alt="&lt;code&gt;/train/20261017T120150Z_train_smoke-0.6b&lt;/code&gt;: loss, learning rate, gradient norm, tokens per second, memory and the mask check" loading="lazy"><figcaption><code>/train/20261017T120150Z_train_smoke-0.6b</code>: loss, learning rate, gradient norm, tokens per second, memory and the mask check</figcaption></figure>
+    <figure class="shot"><img src="s01/eval_run.png" alt="&lt;code&gt;/eval/20261017T124447Z_eval_smoke-0.6b-tuned&lt;/code&gt;: pass^k, the task grid, and the comparison with the untrained base" loading="lazy"><figcaption><code>/eval/20261017T124447Z_eval_smoke-0.6b-tuned</code>: pass^k, the task grid, and the comparison with the untrained base</figcaption></figure>
+  </div>
+</section>
+
+<!-- 06 CHANGES -->
+<section id="s-changes">
+  <span class="eyebrow">06 · changes from the plan</span>
+  <h2>Seven places where the build <em>differs from what the plan said</em></h2>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Where</th><th>The plan said</th><th>What was done</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Mac attention</td><td>The same TRL code as EC2</td><td>Still the same code. The smoke config alone adds <code>attn_implementation: chunked_sdpa</code>, 1,024-query blocks with checkpointing.</td><td>MPS's SDPA builds the whole table: 11 GB at 8K tokens. The first step reached 33 GB and swapped. The block version is tested against SDPA for outputs and gradients.</td></tr>
+        <tr><td>Smoke size</td><td>"a few steps on v1's rows", 48 rows in the first draft of the config</td><td>16 rows that fit 12K whole, one step each, lr 2e-4</td><td>One measured step of 2 rows took 272 s. 16 steps is half an hour, and 2e-4, the top of LoRA's usual range, makes the curve move in 16 steps.</td></tr>
+        <tr><td>The smoke's template</td><td>Qwen3-0.6B</td><td>The 0.6B's weights with Qwen3-4B-Instruct-2507's tokenizer and template</td><td>Identical vocabulary. The Mac proves the exact text format, mask and tool-call parsing M4 will use.</td></tr>
+        <tr><td>Ports</td><td>mlx_lm.server on localhost:8000</td><td>Proxy on :8020, mlx_lm.server on :8120</td><td>Another app on this Mac holds :8000. The proxy also makes the prompt-bytes test a record of real traffic.</td></tr>
+        <tr><td>MLX memory</td><td>(not covered)</td><td><code>serve/mlx_server.py</code> caps MLX's buffer cache at 2 GB and the KV caches at 4. Scoring waits for training to finish.</td><td>Left alone, the server held 22 GB beside the trainer's 21 GB, and swap hit 39 GB</td></tr>
+        <tr><td>Storage</td><td>train.jsonl to S3 under its hash</td><td>Kept on the Mac and logged as an MLflow artifact of the data run. S3 comes with M4's bucket.</td><td>No bucket exists before M4's Terraform</td></tr>
+        <tr><td>tau2-loop scoring</td><td>"make the three tau2-loop changes"</td><td>Made in a worktree on branch <code>feat/open-student</code>, committed (<code>d31e8db</code>), not merged or pushed</td><td>Your main checkout stays as it was, and the merge is your call</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 07 FINDINGS -->
+<section id="s-found">
+  <span class="eyebrow">07 · what the data said</span>
+  <h2>Eleven things the build found <em>that the plan could only guess</em></h2>
+  <div class="split">
+    <div class="card"><h3>The board data</h3><ul class="tight">
+      <li><b>518 kept</b>, the top of the plan's 430–520 guess. S2 (Qwen3.5-397B) gave 273 and S1 (GLM-5) 245. By symptom: MMS 212, data 165, service 141.</li>
+      <li><b>F4 dropped 7 passes that called the customer's phone tools</b>, such as <code>check_apn_settings</code> and <code>grant_app_permission</code>. Telecom's trap, in the teachers' own data.</li>
+      <li><b>GLM-5 ran at temperature 0.0</b> according to its own file, not the 1.0 its submission notes say. Qwen3.5 ran at 1.0 with top_p 0.95.</li>
+      <li><b>52 GLM-5 conversations were infrastructure errors</b> with no reward. F1 dropped them.</li>
+      <li><b>1,204 teacher turns hold text and a tool call together</b>, though the stock prompt asks for one or the other. They're kept as tau2 stored them, so the student learns to narrate before a call.</li>
+      <li><b>Shorter than feared:</b> median 10,054 tokens and max 16,869, against the 15K and 26K estimated from Haiku's runs. The L4 only has to fit 17K.</li>
+    </ul></div>
+    <div class="card"><h3>The pipeline</h3><ul class="tight">
+      <li><b>The trained text includes the newline after <code>&lt;|im_end|&gt;</code></b>, because TRL's training template puts it inside the generation block. The plan's §6 said the turn ends at <code>&lt;|im_end|&gt;</code>. It's harmless, but now you know.</li>
+      <li><b>The untrained 0.6B calls phone tools it doesn't have.</b> In the measured conversation it called <code>check_apn_settings</code> and then <code>run_speed_test</code> and <code>check_speed</code>. tau2 ended it for too many errors after 21 turns. That's exactly what F4 keeps out of the training rows.</li>
+      <li><b>The policy in the board files matches the pin's policy byte for byte</b>, so rebuilding the prompt at the pin is exact.</li>
+      <li><b>16 rows moved one behaviour, not the score.</b> The untrained 0.6B named its own tools in 36.6% of its calls (24 calls went to phone tools, 2 to tools that exist nowhere). After 16 rows it did in 94.5% (6 phone, 0 invented). But it then looped: <code>get_details_by_id</code> 74 times, and one conversation hit tau2's 200-step cap. Both models passed 0 of 3.</li>
+      <li><b>Mac speed:</b> about 75–130 tokens a second training the 0.6B at 10K tokens, and 5–15 s per served agent turn. That's fine for plumbing and nothing more, which is why M3 onwards uses the L4.</li>
+    </ul></div>
+  </div>
+</section>
+
+<!-- 08 READY -->
+<section id="s-ready">
+  <span class="eyebrow">08 · ready to go ahead?</span>
+  <h2>Yes, once you've done <em>four things only you can do</em></h2>
+  <div class="steps">
+    <div class="step"><b>Sign off the sample (M1's last check)</b>Open <code>make viewer</code> → <a href="http://127.0.0.1:8085/data/v1/review">127.0.0.1:8085/data/v1/review</a>. Read the 10 kept and 10 dropped rows, mark each good, bad or note, then sign off. It's saved to <code>data/sft/v1/review.jsonl</code>; commit it.<span class="tag">about 30 minutes · no cost</span></div>
+    <div class="step"><b>Merge the tau2-loop branch</b><code>feat/open-student</code> in <code>../tau2-loop-student</code>: 1 commit with 6 new tests, and the full suite passes. Push it and open a PR, as P9's registry branch was. The <code>s1</code> run folders come with it once committed there.<span class="tag">your call: it changes tau2-loop</span></div>
+    <div class="step"><b>Decide D8 (colour) and merge the registry branch</b>The viewer uses hue 228 provisionally in <code>.lavish/project.css</code>. It becomes official once nmp-central-ai lowers its separation to 25° and P10 gets <code>ui: {hue: 228}</code>.<span class="tag">nmp-central-ai</span></div>
+    <div class="step"><b>Say go for M3, which spends money</b>M3 starts an EC2 g6.2xlarge (L4, US$1.27/h) with vLLM's image and plays the untrained 4B on the 40 test tasks × 4 trials: about 3–4 hours, about $5. It needs <code>aws sso login</code> (the session expired last time) and your go-ahead, and it measures one conversation first (rule 8).<span class="tag">paid · only when asked</span></div>
+  </div>
+  <p class="why">Still open with the plan's defaults: D3–D10. Also unanswered from earlier: a dev set drawn from the generated pool (it would be D11), and training and serving on two separate g6.xlarge instances. Neither blocks M3.</p>
+  <form class="decide" data-lavish-question="next" onsubmit="event.preventDefault(); const f=new FormData(event.currentTarget); const c=f.get('next'); const n=(f.get('note')||'').toString().trim(); if(!c) return; window.lavish && window.lavish.queuePrompt('Next step for tau-telecom-sft: ' + c + (n ? ' — note: ' + n : ''), { tag:'choice', text:'Next: ' + c, element:event.currentTarget, data:{ question:'next', answer:c, note:n } }); event.currentTarget.querySelector('.queued').textContent='Queued: ' + c;">
+    <h3>What next?</h3>
+    <fieldset>
+      <label><input type="radio" name="next" value="I have signed off the sample; prepare M3 (vLLM on EC2) but measure one conversation before the batch"> <span><b>Prepare M3.</b> I've signed off the sample. Write <code>serve/vllm.py</code>, the 4B's tau2-loop student and the EC2 runbook, then measure one conversation before the batch.</span></label>
+      <label><input type="radio" name="next" value="Merge and push the tau2-loop branch and open a PR"> <span><b>Ship the branches.</b> Push <code>init-sft</code> and <code>feat/open-student</code> and open PRs.</span></label>
+      <label><input type="radio" name="next" value="Change something in M1, M2 or the viewer first (see note)"> <span><b>Change something first</b>, described in the note</span></label>
+    </fieldset>
+    <textarea name="note" placeholder="Anything to add (optional)"></textarea>
+    <div class="row"><button class="btn" type="submit">Queue this answer</button><span class="queued"></span></div>
+  </form>
+</section>
+
+<!-- 09 COMMANDS -->
+<section id="s-cmds">
+  <span class="eyebrow">09 · commands</span>
+  <h2>Everything above, <em>from the shell</em></h2>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>What</th><th>Command</th><th>Writes</th></tr></thead>
+      <tbody>
+        <tr><td>Fetch S1, S2 once</td><td><code>make download</code></td><td><code>raw/board/</code></td></tr>
+        <tr><td>One loader, one shape</td><td><code>make sources-check</code></td><td>nothing</td></tr>
+        <tr><td>Build dataset v1</td><td><code>make data</code></td><td><code>data/sft/v1/</code> · MLflow data</td></tr>
+        <tr><td>One row's loss mask</td><td><code>make mask</code></td><td>nothing</td></tr>
+        <tr><td>Fine-tune on the Mac</td><td><code>make train-smoke</code></td><td><code>runs/&lt;train&gt;/</code> · MLflow train</td></tr>
+        <tr><td>Merge and convert</td><td><code>uv run tausft serve-prepare --model base|&lt;train run&gt;</code></td><td><code>outputs/mlx/</code> or <code>runs/&lt;id&gt;/mlx/</code></td></tr>
+        <tr><td>Serve behind the proxy</td><td><code>uv run tausft serve --model &lt;…&gt; [--port 8020]</code></td><td><code>outputs/served/&lt;model&gt;.jsonl</code></td></tr>
+        <tr><td>A served tool call</td><td><code>uv run tausft serve-check</code></td><td>one proxy line</td></tr>
+        <tr><td>Score, in tau2-loop</td><td><code>STUDENT_URL=http://127.0.0.1:8020 make eval DOMAIN=telecom AGENT=s2 SPLIT=train TASKS="…"</code></td><td>tau2-loop <code>runs/</code> · MLflow tau2-loop</td></tr>
+        <tr><td>Record the score</td><td><code>uv run tausft score-pull --loop-run &lt;dir&gt; --model &lt;…&gt; --label &lt;…&gt; [--vs &lt;eval&gt;]</code></td><td><code>runs/&lt;eval&gt;/</code> · MLflow eval</td></tr>
+        <tr><td>The viewer</td><td><code>make viewer</code> (or <code>make dev</code> + <code>cd frontend &amp;&amp; npm run dev</code>)</td><td><code>review.jsonl</code> on sign-off only</td></tr>
+        <tr><td>Everything offline</td><td><code>make check</code></td><td>nothing</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="why">Design: the house UI (<code>house.css</code>, with this project's provisional hue 228), as the platform requires for <code>.lavish/</code> artifacts. Code is rendered with @pierre/diffs. Every number on this page was filled in from the committed run folders and the dataset's <code>stats.json</code> by a script, not typed.</p>
+</section>
+
+</main>
+<script type="application/json" id="code-data">[{"id": "code-cfg", "name": "configs/smoke.yaml", "contents": "# M2: the Mac proof of concept (plan \u00a711). The same train/sft.py as the EC2 job, for a few\n# steps on Qwen3-0.6B. Its scores are not results.\nlabel: smoke-0.6b\npurpose: smoke\nbase_model: Qwen/Qwen3-0.6B\n# Step 1's student's tokenizer and chat template: the same vocabulary as the 0.6B, so the Mac\n# trains, masks and serves exactly the text format M4's Qwen3-4B-Instruct-2507 will.\ntokenizer: Qwen/Qwen3-4B-Instruct-2507\ndataset: v1\nrows:\n  # rows that fit whole at 12K tokens (the system prompt and tools alone take 7,134). 16 of\n  # them: one measured step of 2 rows took 272 s on the M1 Pro (73 tokens/s), so 16 steps of one\n  # row each is about 36 minutes.\n  max_tokens: 12288\n  limit: 16\n  seed: 300\n# PyTorch's SDPA on the Mac's GPU builds the whole attention table (23 GB at 10K tokens);\n# train/attention.py runs it in 1,024-query blocks. The GPU configs keep CUDA's own sdpa.\nmodel_init:\n  attn_implementation: chunked_sdpa\nlora:\n  r: 16\n  lora_alpha: 32\n  lora_dropout: 0.05\n  target_modules: all-linear\nsft:\n  max_length: 12288\n  assistant_only_loss: true\n  packing: false\n  # the top of LoRA's usual 1e-4 to 2e-4 (plan \u00a77), so 16 steps show the loss move\n  learning_rate: 2.0e-4\n  lr_scheduler_type: cosine\n  warmup_steps: 0.05\n  num_train_epochs: 1\n  per_device_train_batch_size: 1\n  gradient_accumulation_steps: 1\n  gradient_checkpointing: true\n  bf16: true\n  logging_steps: 1\n  save_strategy: \"no\"\n  seed: 300\n"}, {"id": "code-sft", "name": "src/tau_telecom_sft/train/sft.py", "contents": "    tokenizer = AutoTokenizer.from_pretrained(cfg[\"tokenizer\"])\n    dtype = torch.bfloat16 if sft_kwargs.get(\"bf16\") else torch.float32\n    model_init = dict(cfg.get(\"model_init\") or {})\n    if model_init.get(\"attn_implementation\") == attention.NAME:\n        attention.register()\n    model = AutoModelForCausalLM.from_pretrained(cfg[\"base_model\"], dtype=dtype, **model_init)\n    dataset = Dataset.from_list(\n        [{\"messages\": r[\"messages\"], \"tools\": json.dumps(r[\"tools\"])} for r in rows]\n    )\n    args = SFTConfig(output_dir=str(run_dir / \"checkpoints\"), report_to=\"none\", **sft_kwargs)\n    folder = RunFolder(run_dir, device)\n    trainer = SFTTrainer(\n        model=model,\n        args=args,\n        train_dataset=dataset,\n        processing_class=tokenizer,\n        peft_config=LoraConfig(task_type=\"CAUSAL_LM\", **cfg[\"lora\"]),\n        callbacks=[folder],\n    )\n\n    # the trainer's own tokenized first row, read back: its labels are what the loss sees (-100\n    # is ignored), so the mask check runs on exactly that, before any step\n    ex = trainer.train_dataset[0]\n    trained = [int(label != -100) for label in ex[\"labels\"]]\n    segs = mask_mod.segments(tokenizer, ex[\"input_ids\"], trained)\n    chk = mask_mod.check(rows[0], segs)\n    write_json(\n        run_dir / \"mask.json\",\n        {\n            \"row_sim_id\": rows[0][\"meta\"][\"sim_id\"],\n            \"task_id\": rows[0][\"meta\"][\"task_id\"],\n            \"n_tokens\": len(ex[\"input_ids\"]),\n            \"n_trained\": sum(trained),\n            \"chat_template\": \"trl qwen3_instruct_2507_training.jinja (TRL's training copy)\",\n            \"segments\": segs,\n            \"check\": chk,\n        },\n    )\n    meta[\"mask_check\"] = {\"row_sim_id\": rows[0][\"meta\"][\"sim_id\"], **chk}\n    print_mask(segs, chk, say)\n    if not chk[\"ok\"]:\n        meta[\"status\"] = \"failed\"\n        write_json(run_dir / \"run.json\", meta)\n        raise RuntimeError(f\"loss-mask check failed: {chk['problems']}\")\n\n"}, {"id": "code-mask", "name": "src/tau_telecom_sft/train/mask.py", "contents": "def check(row: dict[str, Any], segs: list[dict[str, Any]]) -> dict[str, Any]:\n    \"\"\"True only if every agent turn is trained, whole, and nothing else is.\"\"\"\n    problems: list[str] = []\n    turns = [m for m in row[\"messages\"] if m[\"role\"] == \"assistant\"]\n    trained = [s for s in segs if s[\"trained\"]]\n    if len(trained) != len(turns):\n        problems.append(f\"{len(trained)} trained spans for {len(turns)} agent turns\")\n    for k, (span, turn) in enumerate(zip(trained, turns, strict=False)):\n        text = span[\"text\"]\n        if not text.rstrip(\"\\n\").endswith(END):\n            problems.append(f\"turn {k}: the trained span does not end the turn with {END}\")\n        if \"<|im_start|>\" in text or \"<tool_response>\" in text:\n            problems.append(f\"turn {k}: a header or a tool result is trained\")\n        body = text.rstrip(\"\\n\").removesuffix(END)\n        if turn.get(\"content\") and turn[\"content\"].strip() not in body:\n            problems.append(f\"turn {k}: the agent's text is not all trained\")\n        for tc in turn.get(\"tool_calls\") or []:\n            if _call_text(tc) not in body:\n                problems.append(f\"turn {k}: tool call {tc['function']['name']} is not all trained\")\n    for i, s in enumerate(segs):\n        if s[\"trained\"] and (i == 0 or not segs[i - 1][\"text\"].endswith(HEADER)):\n            problems.append(f\"segment {i}: a trained span does not follow an assistant header\")\n    context = [m[\"content\"] for m in row[\"messages\"] if m[\"role\"] in (\"system\", \"user\", \"tool\")]\n    for text in (s[\"text\"] for s in trained):\n        if any(len(c) > 24 and c in text for c in context):\n            problems.append(\"a customer turn, tool result or the system prompt is trained\")\n            break\n    return {\n        \"ok\": not problems,\n        \"assistant_turns\": len(turns),\n        \"trained_turns\": len(trained),\n        \"trained_tokens\": sum(s[\"tokens\"] for s in trained),\n        \"total_tokens\": sum(s[\"tokens\"] for s in segs),\n        \"problems\": problems,\n    }\n"}, {"id": "code-cb", "name": "src/tau_telecom_sft/train/callbacks.py", "contents": "    def on_log(self, args: Any, state: Any, control: Any, logs: Any = None, **kwargs: Any) -> None:\n        logs = dict(logs or {})\n        if \"loss\" not in logs:\n            return  # the end-of-training summary line, not a step\n        now = time.time()\n        tokens = int(logs.get(\"num_tokens\") or state.num_input_tokens_seen or 0)\n        rate = (tokens - self.last_tokens) / max(now - self.last_t, 1e-6) if tokens else None\n        mem = _mem_gb(self.device)\n        self.peak_mem_gb = max(m for m in (mem, self.peak_mem_gb) if m is not None) if mem else None\n        row: dict[str, Any] = {\n            \"step\": int(state.global_step),\n            **{k: logs.get(k) for k in STEP_KEYS},\n            \"tokens\": tokens or None,\n            \"tokens_per_s\": round(rate, 1) if rate else None,\n            \"mem_gb\": mem,\n            \"elapsed_s\": round(now - self.t0, 1),\n        }\n        self.last_t, self.last_tokens, self.tokens = now, tokens, tokens\n        self.last_loss = logs.get(\"loss\")\n        with self.path.open(\"a\") as f:\n            f.write(json.dumps(row) + \"\\n\")\n        self._mlflow(row)\n\n    def _mlflow(self, row: dict[str, Any]) -> None:\n        if self.mlflow_run_id is None or self.mlflow_failed:\n            return\n        try:\n            from mlflow import MlflowClient\n\n            client = MlflowClient()\n            ts = int(time.time() * 1000)\n            for k, v in row.items():\n                if k != \"step\" and isinstance(v, int | float):\n                    client.log_metric(self.mlflow_run_id, k, float(v), ts, row[\"step\"])\n        except Exception as e:  # noqa: BLE001 - tracking never stops a job\n            self.mlflow_failed = True\n            print(f\"MLflow unreachable ({e}); steps stay in {self.path}, sync them later\")\n"}, {"id": "code-attn", "name": "src/tau_telecom_sft/train/attention.py", "contents": "def chunked_sdpa(\n    module: Any,\n    query: Any,\n    key: Any,\n    value: Any,\n    attention_mask: Any,\n    dropout: float = 0.0,\n    scaling: float | None = None,\n    **kwargs: Any,\n) -> tuple[Any, None]:\n    \"\"\"transformers' attention-function signature: q [B, H, T, D], k and v [B, Hkv, T, D];\n    returns [B, T, H, D]. Causal; a 4-D mask, when given, is sliced per block.\"\"\"\n    import torch\n    from torch.utils.checkpoint import checkpoint\n\n    n_rep = query.shape[1] // key.shape[1]\n    key, value = _repeat_kv(key, n_rep), _repeat_kv(value, n_rep)\n    t = query.shape[2]\n    out = []\n    for s in range(0, t, BLOCK):\n        e = min(s + BLOCK, t)\n        if attention_mask is not None and attention_mask.dim() == 4:\n            mask = attention_mask[:, :, s:e, :e]\n        else:\n            mask = torch.ones(e - s, e, dtype=torch.bool, device=query.device).tril(diagonal=s)\n        q, k, v = query[:, :, s:e], key[:, :, :e], value[:, :, :e]\n        if torch.is_grad_enabled():\n            out.append(checkpoint(_block, q, k, v, mask, scaling, use_reentrant=False))\n        else:\n            out.append(_block(q, k, v, mask, scaling))\n    return torch.cat(out, dim=2).transpose(1, 2).contiguous(), None\n"}, {"id": "code-route", "name": "tau2-loop: src/tau2_loop/agent/factory.py", "contents": "def student_route(config: AgentConfig) -> tuple[str, dict[str, Any]]:\n    \"\"\"An open-weights student's litellm model string and arguments (D5): its endpoint, its\n    sampling and its tools natively in the API's tools field; no effort, no tool-mode switch.\n    Written into tau2's results file, so nothing here is a secret.\"\"\"\n    args: dict[str, Any] = {\n        \"api_base\": f\"{settings().student_url}/v1\",\n        \"timeout\": STUDENT_TIMEOUT_S,\n    }\n    for k in (\"temperature\", \"top_p\"):\n        if getattr(config, k) is not None:\n            args[k] = getattr(config, k)\n    if config.top_k is not None:\n        args[\"extra_body\"] = {\"top_k\": config.top_k}  # not an OpenAI field; vLLM and mlx take it\n    return SERVICE_PREFIX + config.model, args\n"}]</script>
+<script type="module">
+  import { File } from "https://esm.sh/@pierre/diffs@1.2.10?bundle";
+  const data = JSON.parse(document.getElementById("code-data").textContent);
+  const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+  const options = { theme: { light: "github-light", dark: "github-dark" }, themeType: dark ? "dark" : "light", overflow: "wrap" };
+  for (const item of data) {
+    const el = document.getElementById(item.id);
+    if (!el) continue;
+    try { new File(options).render({ containerWrapper: el, file: { name: item.name, contents: item.contents } }); }
+    catch (e) { const pre = document.createElement("pre"); pre.textContent = item.contents; el.appendChild(pre); }
+  }
+</script>
+</body>
+</html>
