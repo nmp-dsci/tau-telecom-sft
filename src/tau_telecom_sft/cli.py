@@ -262,8 +262,9 @@ def serve_prepare(
 def serve(
     model: str = typer.Option("base", help="`base`, or a train run id"),
     port: int = typer.Option(STUDENT_PORT, help="where tau2-loop calls (its STUDENT_URL)"),
+    upstream: int = typer.Option(0, help="mlx_lm.server's port (default: port + 100)"),
 ) -> None:
-    """mlx_lm.server on :8120 behind the recording proxy on :8020, until Ctrl-C."""
+    """mlx_lm.server on :8120 behind the recording proxy on :8020 (by default), until stopped."""
     import signal
     import subprocess
     import time
@@ -275,7 +276,8 @@ def serve(
 
     mlx.prepare(model)
     log = SERVED_LOGS / f"{model}.jsonl"
-    server = subprocess.Popen(mlx.server_command(model))
+    upstream = upstream or port + 100
+    server = subprocess.Popen(mlx.server_command(model, upstream))
 
     def stop(signum: int, frame: object) -> None:
         raise KeyboardInterrupt  # so `finally` stops the server on a kill, not only on Ctrl-C
@@ -284,16 +286,14 @@ def serve(
     try:
         for _ in range(120):
             try:
-                urllib.request.urlopen(f"http://127.0.0.1:{mlx.UPSTREAM_PORT}/v1/models", timeout=2)  # noqa: S310
+                urllib.request.urlopen(f"http://127.0.0.1:{upstream}/v1/models", timeout=2)  # noqa: S310
                 break
             except OSError:
                 time.sleep(1)
         console.print(
             f"serving {model} on 127.0.0.1:{port} (recording to {log.relative_to(config.ROOT)})"
         )
-        app_ = proxy.make_app(
-            f"http://127.0.0.1:{mlx.UPSTREAM_PORT}", log, rewrite_model="default_model"
-        )
+        app_ = proxy.make_app(f"http://127.0.0.1:{upstream}", log, rewrite_model="default_model")
         uvicorn.run(app_, host="127.0.0.1", port=port, log_level="warning")
     finally:
         server.terminate()

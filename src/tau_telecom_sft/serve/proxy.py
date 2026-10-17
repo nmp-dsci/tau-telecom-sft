@@ -17,6 +17,7 @@ import hashlib
 import json
 import re
 import time
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -97,8 +98,14 @@ def make_app(upstream: str, log: Path, rewrite_model: str | None = None) -> Fast
     return app
 
 
-def summarise(lines: list[dict[str, Any]], expected: dict[str, str]) -> dict[str, Any]:
-    """The prompt-bytes and tool-call checks over a run's requests."""
+def summarise(
+    lines: list[dict[str, Any]],
+    expected: dict[str, str],
+    agent_tools: frozenset[str] = frozenset(),
+    phone_tools: frozenset[str] = frozenset(),
+) -> dict[str, Any]:
+    """The prompt-bytes and tool-call checks over a run's requests, and which tools the calls
+    named: the agent's own 13, the customer's phone tools (F4's trap), or none of them."""
     sys_shas = sorted({x["system_prompt_sha256"] for x in lines if x.get("system_prompt_sha256")})
     tool_shas = sorted({x["tools_sha256"] for x in lines if x.get("tools_sha256")})
     with_calls = sum(1 for x in lines if x.get("tool_calls"))
@@ -119,5 +126,22 @@ def summarise(lines: list[dict[str, Any]], expected: dict[str, str]) -> dict[str
             "requests_with_tool_calls": with_calls,
             "text_tool_calls": text_calls,
             "errors": sum(1 for x in lines if x.get("error")),
+            **_names(lines, agent_tools, phone_tools),
         },
+    }
+
+
+def _names(
+    lines: list[dict[str, Any]], agent_tools: frozenset[str], phone_tools: frozenset[str]
+) -> dict[str, Any]:
+    names = [n for x in lines for n in x.get("tool_call_names") or []]
+    agent = sum(1 for n in names if n in agent_tools)
+    phone = sum(1 for n in names if n in phone_tools)
+    return {
+        "calls": len(names),
+        "agent_tool_calls": agent,
+        "phone_tool_calls": phone,
+        "invented_tool_calls": len(names) - agent - phone,
+        "agent_tool_share": round(agent / len(names), 3) if names else None,
+        "most_called": dict(Counter(names).most_common(5)),
     }

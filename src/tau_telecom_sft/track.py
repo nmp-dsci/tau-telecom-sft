@@ -212,7 +212,10 @@ def log_eval(record: dict[str, Any]) -> str | None:
             "served_requests": record["prompt_bytes"]["requests"],
             "requests_with_tool_calls": record["tool_calls"]["requests_with_tool_calls"],
             "text_tool_calls": record["tool_calls"]["text_tool_calls"],
+            "phone_tool_calls": record["tool_calls"].get("phone_tool_calls", 0),
         }
+        if record["tool_calls"].get("agent_tool_share") is not None:
+            metrics["agent_tool_share"] = record["tool_calls"]["agent_tool_share"]
         if record.get("vs"):
             metrics |= {f"vs_{k}": float(record["vs"][k]) for k in ("fixed", "broke", "same", "p")}
         mlflow.log_metrics(metrics)

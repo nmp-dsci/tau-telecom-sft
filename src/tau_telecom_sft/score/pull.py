@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any
 
 from tau_telecom_sft import config, track
+from tau_telecom_sft.build.convert import agent_tool_names, phone_tool_names
 from tau_telecom_sft.serve import proxy
 
 RUNS_DIR = config.ROOT / "runs"
@@ -90,7 +91,7 @@ def pull(
                 lines.append(rec)
         (out / "served.jsonl").write_text("".join(json.dumps(x) + "\n" for x in lines))
     stats = json.loads((config.SFT_DIR / "v1" / "stats.json").read_text())
-    checks = proxy.summarise(lines, stats)
+    checks = proxy.summarise(lines, stats, agent_tool_names(), phone_tool_names())
 
     by_task: dict[str, list[int]] = defaultdict(list)
     for r in sorted(rows, key=lambda r: (r["task_id"], r.get("trial", 1))):
