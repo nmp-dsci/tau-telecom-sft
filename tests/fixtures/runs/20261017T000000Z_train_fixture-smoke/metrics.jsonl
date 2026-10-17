@@ -1,0 +1,6 @@
+{"step": 1, "epoch": 0.333, "loss": 1.9, "grad_norm": 2.0, "learning_rate": 0.0001, "tokens": 400, "tokens_per_s": 900.0, "mem_gb": 9.0, "elapsed_s": 60.0}
+{"step": 2, "epoch": 0.667, "loss": 1.5, "grad_norm": 1.8, "learning_rate": 8.333333333333334e-05, "tokens": 800, "tokens_per_s": 901.0, "mem_gb": 9.1, "elapsed_s": 120.0}
+{"step": 3, "epoch": 1.0, "loss": 1.2, "grad_norm": 1.6, "learning_rate": 6.666666666666668e-05, "tokens": 1200, "tokens_per_s": 902.0, "mem_gb": 9.2, "elapsed_s": 180.0}
+{"step": 4, "epoch": 1.333, "loss": 0.9, "grad_norm": 1.4, "learning_rate": 5e-05, "tokens": 1600, "tokens_per_s": 903.0, "mem_gb": 9.3, "elapsed_s": 240.0}
+{"step": 5, "epoch": 1.667, "loss": 0.75, "grad_norm": 1.2, "learning_rate": 3.333333333333334e-05, "tokens": 2000, "tokens_per_s": 904.0, "mem_gb": 9.4, "elapsed_s": 300.0}
+{"step": 6, "epoch": 2.0, "loss": 0.61, "grad_norm": 1.0, "learning_rate": 1.6666666666666664e-05, "tokens": 2400, "tokens_per_s": 905.0, "mem_gb": 9.5, "elapsed_s": 360.0}

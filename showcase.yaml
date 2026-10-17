@@ -1,0 +1,25 @@
+# The portfolio site's contract (nmp-central-ai .lavish/s06_portfolio-app-plan.html): what a
+# frozen showcase build of this viewer would crawl. Not published: D9 keeps the viewer on this Mac
+# (127.0.0.1) until the board files' licence is clear. The build sets SHOWCASE_BASE=/p/<slug>/.
+slug: tau-telecom-sft
+api: [/api, /healthz]
+# list routes whose ids open detail routes
+expand:
+  - list: /api/data
+    ids: versions[].version
+    detail: [/api/data/{id}, /api/data/{id}/coverage, /api/data/{id}/review]
+  - list: /api/train
+    ids: runs[].run_id
+    detail: [/api/train/{id}]
+  - list: /api/eval
+    ids: runs[].run_id
+    detail: [/api/eval/{id}]
+# D9's recommended option: cards, training runs and scores could be public; rows could not. The
+# rows pages republish board conversations (no stated licence) and GPT-5.2 customer turns.
+private:
+  - /api/data/{v}/rows
+  - /api/data/{v}/rows/{id}
+  - /api/data/{v}/review
+  - /api/eval/{run}/{task}/{trial}
+# The one write route; never frozen.
+write: [POST /api/data/{v}/review]

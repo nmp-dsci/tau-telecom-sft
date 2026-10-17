@@ -1,0 +1,7 @@
+/* P10 tau-telecom-sft — house UI v1.
+   PROVISIONAL, written by hand: P10 has no `ui:` block in registry/projects.yaml yet, because no
+   hue is left 30° from the other ten (plan §13, D8). 228 is D8's recommendation (28° from
+   dabstep-loop's 200, 27° from convfinqa's 255); it needs the platform's separation lowered to
+   25°. Once D8 is decided and the registry carries the hue, `make install-house-ui` replaces
+   this file. Load after house.css. The hue is the only thing this project owns. */
+:root{ --hue:228; }

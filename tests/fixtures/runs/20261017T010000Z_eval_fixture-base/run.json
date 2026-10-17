@@ -1,0 +1,68 @@
+{
+ "run_id": "20261017T010000Z_eval_fixture-base",
+ "kind": "eval",
+ "label": "fixture base 0.6B",
+ "purpose": "smoke",
+ "created": "2026-10-17T01:00:00Z",
+ "model": {
+  "name": "Qwen3-0.6B",
+  "base_model": "Qwen/Qwen3-0.6B",
+  "train_run": null,
+  "adapter_sha256": null
+ },
+ "serving": {
+  "server": "mlx_lm.server",
+  "precision": "bf16",
+  "endpoint": "http://127.0.0.1:8000/v1",
+  "sampling": {
+   "temperature": 0.7,
+   "top_p": 0.8,
+   "top_k": 20
+  },
+  "max_tokens": 32768
+ },
+ "tau2_loop_run": "20261017T010000Z_telecom_student-0.6b_custom",
+ "tau2_loop_version": "telecom/student-0.6b",
+ "split": "train",
+ "task_ids": [
+  "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+  "[mms_issue]bad_wifi_calling|break_apn_mms_setting|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+  "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]"
+ ],
+ "trials": 1,
+ "scores": {
+  "n_tasks": 3,
+  "trials": 1,
+  "passed": 1,
+  "pass_hat": {
+   "1": 0.3333333333333333
+  },
+  "by_task": {
+   "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]": [
+    1
+   ],
+   "[mms_issue]bad_wifi_calling|break_apn_mms_setting|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Easy]": [
+    0
+   ],
+   "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]": [
+    0
+   ]
+  }
+ },
+ "prompt_bytes": {
+  "ok": true,
+  "system_prompt_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "tools_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "expected_system_prompt_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "expected_tools_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "requests": 4
+ },
+ "tool_calls": {
+  "ok": true,
+  "requests_with_tool_calls": 2,
+  "text_tool_calls": 0
+ },
+ "vs": null,
+ "mlflow_run_id": null,
+ "mlflow_experiment": "tau-telecom-sft/eval"
+}
