@@ -29,7 +29,7 @@ runs/<id>/
 | `config_file`, `config` | the YAML the job read, and its parsed values (SFTConfig + LoRA) |
 | `base_model`, `tokenizer` | Hugging Face ids |
 | `dataset`, `train_sha256`, `n_rows`, `rows_selected` | the version, its hash, how many rows trained, and how they were chosen |
-| `device`, `instance`, `cost_usd` | `mps` or `cuda`; e.g. `MacBook Pro M1 Pro 32 GB`, `g6.2xlarge`; dollars (0 on the Mac) |
+| `device`, `instance`, `cost_usd` | `mps` or `cuda`; e.g. `MacBook Pro M1 Pro 32 GB`, `Modal L4`; dollars (0 on the Mac) |
 | `steps`, `epochs`, `final_loss`, `peak_mem_gb`, `tokens_trained` | totals |
 | `adapter` | `{path, sha256, bytes}` |
 | `mask_check` | `{ok, row_sim_id, assistant_turns, trained_turns, problems: []}` |
@@ -57,7 +57,7 @@ runs/<id>/
 | `run_id`, `kind` (`eval`), `label`, `purpose` | identity; `purpose` `smoke` for M2 |
 | `results_row` | `R0`…`R5` for a `purpose: result` run; the overview fills that row from it |
 | `model` | `{name, base_model, train_run (or null for an untrained base), adapter_sha256}` |
-| `serving` | `{server, precision, endpoint, sampling: {temperature, top_p, top_k}, max_tokens}` |
+| `serving` | `{server, precision, endpoint, sampling: {temperature, top_p, top_k}, chat_template_sha256, max_tokens}`; `server` is e.g. `mlx_lm.server` or `vllm 0.21.0 on Modal L4` |
 | `tau2_loop_run`, `tau2_loop_version` | the run and agent version in tau2-loop |
 | `split`, `task_ids`, `trials` | what was played (`task_ids` only for train-split smoke runs) |
 | `scores` | `{n_tasks, trials, passed, pass_hat: {"1": …, "2": …}, by_task: {task: [0/1 per trial]}}` |
@@ -65,7 +65,10 @@ runs/<id>/
 | `tool_calls` | `{ok, requests_with_tool_calls, text_tool_calls, errors, calls, agent_tool_calls, phone_tool_calls, invented_tool_calls, agent_tool_share, most_called}`: served calls came back structured, and which tools they named |
 | `vs` | the base it is compared with: `{run_id, tasks, fixed, broke, same, p}`, paired by task, tau2-loop's one-sided sign test |
 | `customer`, `sim_rules`, `tau2_loop_mlflow_run_id` | who played the customer, tau2-loop's rules, and its MLflow run |
+| `duration_s`, `cost_usd`, `cost_basis` | the tau2-loop run's wall time; the GPU's estimated cost, and how it was estimated (on Modal: the L4's list price × the wall time) |
 | `mlflow_run_id`, `mlflow_experiment` | the link |
 
-`served.jsonl`: `{t, system_prompt_sha256, tools_sha256, n_messages, finish_reason,
-tool_calls, text_tool_call, prompt_tokens, completion_tokens, latency_s}`.
+`served.jsonl`: `{t, model, system_prompt_sha256, tools_sha256, n_tools, n_messages, sampling,
+finish_reason, tool_calls, tool_call_names, text_tool_call, prompt_tokens, completion_tokens,
+latency_s, error, retries}`. `retries` (Modal, s02) counts the 503s and 429s the proxy waited out
+before the answer: a cold start or a preempted container, never a conversation the student lost.

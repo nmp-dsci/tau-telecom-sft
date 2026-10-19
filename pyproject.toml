@@ -41,6 +41,11 @@ train = [
 mac = [
   "mlx-lm>=0.28; sys_platform == 'darwin' and platform_machine == 'arm64'",
 ]
+# M3 to M5 on Modal (s02): the GPU serving and training. Pinned to the version of the Modal skill in
+# .claude/skills/modal (its metadata.version); `modal skills update --claude` when this moves.
+cloud = [
+  "modal==1.6.2",
+]
 
 [project.scripts]
 tausft = "tau_telecom_sft.cli:app"

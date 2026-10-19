@@ -1,18 +1,24 @@
 """A recording proxy in front of the student's server: what was served is what was trained on.
 
 tau2-loop calls this on :8020 as it would call the model. Each chat completion is forwarded
-unchanged to the server behind it (mlx_lm.server on :8120 on the Mac; on EC2, the port forward
-to vLLM), and one line is appended to the log: the sha256 of the system prompt and of the tools
-the scorer sent, how many messages, and whether the reply's tool calls came back structured
-(`tool_calls`) or written into the text. The prompt-bytes check (M2, M3) compares those hashes
-with the dataset card's. Nothing in a line is conversation text.
+unchanged to the server behind it (mlx_lm.server on :8120 on the Mac; on Modal, vLLM's HTTPS
+endpoint, with the proxy token as headers), and one line is appended to the log: the sha256 of
+the system prompt and of the tools the scorer sent, how many messages, whether the reply's tool
+calls came back structured (`tool_calls`) or written into the text, and how many retries it
+took. The prompt-bytes check (M2, M3) compares those hashes with the dataset card's. Nothing in
+a line is conversation text.
 
 mlx_lm.server treats the request's `model` as a path to load unless it is `default_model`, so
 on the Mac the proxy asks for that (`rewrite_model`) and logs the name tau2-loop asked for.
+
+Modal answers 503 while no Student container is up (a cold start, or one preempted) and 429
+when one is at its limit. The proxy waits those out, up to RETRY_FOR_S, rather than end a
+conversation over a container the student never had.
 """
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import json
 import re
@@ -26,6 +32,8 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, Response
 
 TEXT_TOOL_CALL = re.compile(r"</?tool_call>|\{\s*\"name\"\s*:\s*\"[^\"]+\"\s*,\s*\"arguments\"\s*:")
+RETRY = frozenset({429, 502, 503})
+RETRY_FOR_S = 900.0
 
 
 def sha256_json(obj: Any) -> str:
@@ -59,11 +67,23 @@ def record(body: dict[str, Any], reply: dict[str, Any] | None, latency: float) -
     }
 
 
-def make_app(upstream: str, log: Path, rewrite_model: str | None = None) -> FastAPI:
+def make_app(
+    upstream: str,
+    log: Path,
+    rewrite_model: str | None = None,
+    headers: dict[str, str] | None = None,
+    retry_for_s: float = RETRY_FOR_S,
+    transport: Any = None,
+) -> FastAPI:
     import httpx
 
     app = FastAPI(title="tau-telecom-sft recording proxy")
-    client = httpx.AsyncClient(base_url=upstream, timeout=httpx.Timeout(1800.0))
+    client = httpx.AsyncClient(
+        base_url=upstream,
+        headers=headers or {},
+        timeout=httpx.Timeout(1800.0),
+        transport=transport,  # tests pass httpx.MockTransport
+    )
     log.parent.mkdir(parents=True, exist_ok=True)
 
     @app.post("/v1/chat/completions")
@@ -74,22 +94,34 @@ def make_app(upstream: str, log: Path, rewrite_model: str | None = None) -> Fast
             sent["model"] = rewrite_model
         t0 = time.time()
         reply: dict[str, Any] | None = None
-        try:
-            r = await client.post("/v1/chat/completions", json=sent)
-            status = r.status_code
-            content = r.content
-            if status == 200:
-                reply = r.json()
-        except httpx.HTTPError as e:
-            status, content = 502, json.dumps({"error": str(e)}).encode()
+        retries = 0
+        while True:
+            try:
+                r = await client.post("/v1/chat/completions", json=sent)
+                status, content = r.status_code, r.content
+            except httpx.HTTPError as e:
+                status, content = 502, json.dumps({"error": str(e)}).encode()
+            if status not in RETRY or time.time() - t0 > retry_for_s:
+                break
+            retries += 1
+            await asyncio.sleep(min(30.0, 2.0**retries))
+        if status == 200:
+            reply = json.loads(content)
         with log.open("a") as f:
-            f.write(json.dumps(record(body, reply, time.time() - t0)) + "\n")
+            line = {**record(body, reply, time.time() - t0), "retries": retries}
+            f.write(json.dumps(line) + "\n")
         return Response(content=content, status_code=status, media_type="application/json")
 
     @app.get("/v1/models")
     async def models() -> Response:
         r = await client.get("/v1/models")
         return Response(content=r.content, status_code=r.status_code, media_type="application/json")
+
+    @app.get("/metrics")
+    async def metrics() -> Response:
+        """vLLM's Prometheus counters (cache use, requests running and waiting), for the ramp."""
+        r = await client.get("/metrics")
+        return Response(content=r.content, status_code=r.status_code, media_type="text/plain")
 
     @app.get("/health")
     async def health() -> JSONResponse:

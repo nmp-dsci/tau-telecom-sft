@@ -72,6 +72,7 @@ def pull(
     purpose: str = "smoke",
     vs: str | None = None,
     results_row: str | None = None,
+    cost: tuple[float, str] | None = None,
     use_mlflow: bool = True,
 ) -> Path:
     meta = json.loads((loop_run / "run.json").read_text())
@@ -125,7 +126,8 @@ def pull(
         "duration_s": round(_parse_ts(meta["finished_at"]) - _parse_ts(meta["started_at"]), 1)
         if meta.get("finished_at")
         else None,
-        "cost_usd": 0.0,
+        "cost_usd": cost[0] if cost else 0.0,
+        "cost_basis": cost[1] if cost else "the Mac: no charge",
     }
     if vs:
         base = json.loads((RUNS_DIR / vs / "run.json").read_text())

@@ -260,11 +260,15 @@ def serve_prepare(
 
 @app.command()
 def serve(
-    model: str = typer.Option("base", help="`base`, or a train run id"),
+    model: str = typer.Option("base", help="`base`, or a train run id (MLX on the Mac)"),
+    remote: str = typer.Option(
+        None, help="a name the Student on Modal serves, e.g. student-qwen3-4b (s02)"
+    ),
     port: int = typer.Option(STUDENT_PORT, help="where tau2-loop calls (its STUDENT_URL)"),
     upstream: int = typer.Option(0, help="mlx_lm.server's port (default: port + 100)"),
 ) -> None:
-    """mlx_lm.server on :8120 behind the recording proxy on :8020 (by default), until stopped."""
+    """mlx_lm.server on :8120 behind the recording proxy on :8020 (by default), until stopped.
+    With --remote, nothing runs locally but the proxy: it forwards to the Student on Modal."""
     import signal
     import subprocess
     import time
@@ -274,6 +278,9 @@ def serve(
 
     from tau_telecom_sft.serve import mlx, proxy
 
+    if remote:
+        _serve_remote(remote, port)
+        return
     mlx.prepare(model)
     log = SERVED_LOGS / f"{model}.jsonl"
     upstream = upstream or port + 100
@@ -300,8 +307,61 @@ def serve(
         server.wait(timeout=30)
 
 
+def _serve_remote(name: str, port: int) -> None:
+    """The recording proxy on :8020 in front of the Student on Modal, once it answers: the first
+    request starts a container (Modal's 503 until vLLM listens), so this waits for /v1/models."""
+    import time
+
+    import httpx
+    import uvicorn
+
+    from tau_telecom_sft.serve import proxy, remote
+
+    headers = config.modal_proxy_headers()
+    if not headers:
+        console.print("[red]MODAL_PROXY_TOKEN_ID and MODAL_PROXY_TOKEN_SECRET are not set[/red]")
+        raise typer.Exit(1)
+    remote.describe(name)  # refuses a name the Student does not serve
+    base = remote.url()
+    console.print(f"waiting for the Student at {base} (a cold start loads the weights)")
+    t0 = time.time()
+    served: list[str] = []
+    while not served:
+        try:
+            r = httpx.get(f"{base}/v1/models", headers=headers, timeout=60)
+            if r.status_code == 200:
+                served = [m["id"] for m in r.json()["data"]]
+                break
+            if r.status_code in (401, 403):
+                console.print(f"[red]Modal's proxy refused the token ({r.status_code})[/red]")
+                raise typer.Exit(1)
+        except httpx.HTTPError:
+            pass
+        if time.time() - t0 > 1800:
+            console.print("[red]the Student did not answer within 30 minutes[/red]")
+            raise typer.Exit(1)
+        time.sleep(10)
+    if name not in served:
+        console.print(
+            f"[red]the Student serves {served}, not {name}: redeploy (make modal-serve)[/red]"
+        )
+        raise typer.Exit(1)
+    log = SERVED_LOGS / f"{name}.jsonl"
+    console.print(
+        f"serving {name} from Modal on 127.0.0.1:{port} after {time.time() - t0:.0f} s "
+        f"(recording to {log.relative_to(config.ROOT)})"
+    )
+    app_ = proxy.make_app(base, log, headers=headers)
+    uvicorn.run(app_, host="127.0.0.1", port=port, log_level="warning")
+
+
 @app.command("serve-check")
-def serve_check(port: int = typer.Option(STUDENT_PORT)) -> None:
+def serve_check(
+    port: int = typer.Option(STUDENT_PORT),
+    name: str = typer.Option(
+        "serve-check", help="the model to ask for: on Modal, a served name (student-qwen3-4b)"
+    ),
+) -> None:
     """One request through the proxy: a v1 row cut before its first tool call, with the 13 tools.
     The reply's calls must come back structured, as `tool_calls`."""
     import httpx
@@ -312,7 +372,7 @@ def serve_check(port: int = typer.Option(STUDENT_PORT)) -> None:
         i for i, m in enumerate(row["messages"]) if m["role"] == "assistant" and m.get("tool_calls")
     )
     body = {
-        "model": "serve-check",
+        "model": name,
         "messages": row["messages"][:cut],
         "tools": row["tools"],
         "temperature": 0.0,
@@ -334,8 +394,11 @@ def serve_check(port: int = typer.Option(STUDENT_PORT)) -> None:
 @app.command("score-pull")
 def score_pull(
     loop_run: Path = typer.Option(..., help="the tau2-loop run folder"),  # noqa: B008
-    model: str = typer.Option(..., help="`base` or the train run id that was served"),
-    label: str = typer.Option(..., help="e.g. smoke-0.6b-base"),
+    model: str = typer.Option(None, help="MLX on the Mac: `base` or the train run id served"),
+    served_name: str = typer.Option(None, help="Modal: the name the Student served (s02)"),
+    label: str = typer.Option(..., help="e.g. smoke-0.6b-base, r0-4b-test"),
+    purpose: str = typer.Option("smoke", help="smoke, or result for a results-table row"),
+    results_row: str = typer.Option(None, help="R0 to R5, for a purpose=result run"),
     vs: str = typer.Option(None, help="the eval run of its untrained base"),
     no_mlflow: bool = typer.Option(False),
 ) -> None:
@@ -343,15 +406,36 @@ def score_pull(
     from tau_telecom_sft.score.pull import pull
     from tau_telecom_sft.serve import mlx
 
-    served = json.loads((mlx.served_dir(model) / "serve.json").read_text())
+    if bool(model) == bool(served_name):
+        console.print("[red]give --model (MLX on the Mac) or --served-name (Modal)[/red]")
+        raise typer.Exit(1)
     loop_meta = json.loads((loop_run / "run.json").read_text())
+    cost: tuple[float, str] | None = None
+    if served_name:
+        from tau_telecom_sft.cloud import modal_app
+        from tau_telecom_sft.serve import remote
+
+        served = remote.describe(served_name)
+        log_name = served_name
+        if loop_meta.get("finished_at") and loop_meta.get("started_at"):
+            from tau_telecom_sft.score.pull import _parse_ts
+
+            wall = _parse_ts(loop_meta["finished_at"]) - _parse_ts(loop_meta["started_at"])
+            cost = (
+                round(wall * modal_app.GPU_USD_PER_S, 2),
+                f"{modal_app.GPU} list price x the run's wall time; CPU, memory, start-up "
+                "and idle scale-down not included",
+            )
+    else:
+        served = json.loads((mlx.served_dir(model) / "serve.json").read_text())
+        log_name = model
     sampling = dict(
         kv.split("=", 1) for kv in str(loop_meta.get("sampling", "")).split() if "=" in kv
     )
     out = pull(
         loop_run,
         label=label,
-        served_log=SERVED_LOGS / f"{model}.jsonl",
+        served_log=SERVED_LOGS / f"{log_name}.jsonl",
         model={
             "name": loop_meta["model"],
             "base_model": served["base_model"],
@@ -366,7 +450,10 @@ def score_pull(
             "chat_template_sha256": served["chat_template_sha256"],
             "max_tokens": 2048,
         },
+        purpose=purpose,
+        results_row=results_row,
         vs=vs,
+        cost=cost,
         use_mlflow=not no_mlflow,
     )
     rec = json.loads((out / "run.json").read_text())

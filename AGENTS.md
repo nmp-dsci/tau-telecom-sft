@@ -48,10 +48,10 @@ The plan's §12 decisions:
 | D1 | Split | settled 17 Oct | tau2-loop's telecom split v3: 74 train, 40 test, seed 300. All 74 are trained on, none held out for dev; the epoch count is fixed in advance. |
 | D2 | Teacher data | settled 16 Oct | The board files S1 (GLM-5) and S2 (Qwen3.5-397B), 4 trials each: 592 conversations on the 74 tasks. GLM-5.1 runs (S3) only if M7's trigger fires. |
 | D3 | Student | open; plan default | Qwen3-4B-Instruct-2507 on one L4, then Qwen3-30B-A3B (the talk's model) on one 80 GB A100 |
-| D4 | Where training runs | open; plan default | EC2 g6.2xlarge (L4) for the 4B; RunPod 80 GB A100 for the 30B |
+| D4 | Where training runs | settled 19 Oct (s02) | Modal, one L4, for the 4B (M4); the 30B (M6) decided at M6. EC2 was the plan's default; s02 is the comparison. |
 | D5 | Where the student is scored | open; plan default | tau2-loop, with three changes made there |
 | D6 | Which tasks are trained on | open; plan default | The 74 training tasks only (`allow_pool=False`) |
-| D7 | Where the student is served | open; plan default | vLLM on the training GPU, reached through a port forward |
+| D7 | Where the student is served | settled 19 Oct (s02) | vLLM on one Modal L4 (`cloud/modal_app.py`, the `Student` server), behind Modal's proxy token; the recording proxy on the Mac forwards to it |
 | D8 | The viewer's hue | open; plan default | lower the platform's 30° separation to 25° and take 228 (needs a change in nmp-central-ai) |
 | D9 | Who can open the viewer | open; plan default | the Mac only (127.0.0.1), built to the portfolio site's contract (nmp-central-ai s06) so it can join later |
 | D10 | Where sign-offs live | open; plan default | `data/sft/vN/review.jsonl`, append-only and committed |
@@ -116,6 +116,8 @@ src/tau_telecom_sft/
   train/sft.py · mask.py             TRL LoRA SFT; the loss-mask check before step 1
   train/callbacks.py · attention.py  steps to the run folder and MLflow; the Mac's block attention
   serve/mlx.py · proxy.py            merge + MLX convert + mlx_lm.server; the recording proxy
+  serve/remote.py                    the Student on Modal: its served names, its record, its URL
+  cloud/modal_app.py                 Modal: vLLM on one L4 (M3, M5); the trainer joins at M4
   score/pull.py                      a tau2-loop run → runs/<id>/ with pass^k, checks, sign test
   serving/                           the viewer's API (FastAPI): app · store · views
   track.py                           central MLflow: data, train and eval runs
@@ -124,8 +126,9 @@ frontend/                            the viewer (React 18, Vite, TS, react-route
 tests/                               split, leak, build, train, score, api; fixtures/ (board_mini, runs)
 ```
 
-Still to come: `serve/vllm.py` (M3), the `Dockerfile` and `infra/terraform/` (M4), `make sync-runs`
-and `make data-pull` (M4, with the bucket), and `sources/teacher.py` (M7, only if needed).
+Still to come: the Modal trainer and its Volumes' `make modal-data` and `make sync-runs` (M4),
+and `sources/teacher.py` (M7, only if needed). EC2's Dockerfile and Terraform are not needed (s02).
+`.claude/skills/modal/` is Modal's own agent skill (v1.6.2, the `cloud` extra's pin).
 
 ## 5 · Commands
 
@@ -145,11 +148,17 @@ uv run tausft serve-prepare --model base|<train run>          (M2) merge + MLX b
 uv run tausft serve --model base|<train run>                  (M2) mlx_lm.server behind the proxy, :8020
 uv run tausft serve-check                                     (M2) a served call comes back as tool_calls
 uv run tausft score-pull --loop-run <tau2-loop run> --model … --label … [--vs <eval run>]   (M2)
+make modal-serve    deploy the Student: vLLM on one Modal L4  (M3, M5) scales to zero after 15 min
+make serve-modal    the proxy on :8020 in front of it (NAME=student-qwen3-4b) (M3, M5)
+uv run tausft serve-check --name student-qwen3-4b             (M3) vLLM returns tool_calls
+uv run tausft score-pull --loop-run … --served-name student-qwen3-4b --label … --purpose result --results-row R0
+make modal-stop     stop the Modal app now; the Volumes stay
 make dev · viewer   the viewer on 127.0.0.1:8085 (dev UI :5177)
 ```
 
 Scoring runs in tau2-loop (branch `feat/open-student` until merged):
-`STUDENT_URL=http://127.0.0.1:8020 make eval DOMAIN=telecom AGENT=s1 SPLIT=train TASKS="…"`.
+`STUDENT_URL=http://127.0.0.1:8020 make eval DOMAIN=telecom AGENT=s3 SPLIT=test TRIALS=4`.
+`s3` is the untrained 4B (M3); its tuned twin is added at M5 under the adapter's served name.
 
 Platform: `make -C ../nmp-central-ai check ARGS="--only P10"` runs `make smoke` and confirms
 the run reached `tau-telecom-sft/data`.

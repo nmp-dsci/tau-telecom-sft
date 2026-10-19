@@ -91,3 +91,12 @@ def settings() -> Settings:
         env=os.environ.get("TAUSFT_ENV", "local"),
         code_sha=os.environ.get("GIT_SHA") or _git_sha(),
     )
+
+
+def modal_proxy_headers() -> dict[str, str]:
+    """The proxy token a request needs to reach the Student on Modal (s02), from ~/.env; never
+    logged. Empty when unset, and Modal's proxy then answers 401."""
+    settings()  # loads ~/.env and .env
+    key = os.environ.get("MODAL_PROXY_TOKEN_ID")
+    secret = os.environ.get("MODAL_PROXY_TOKEN_SECRET")
+    return {"Modal-Key": key, "Modal-Secret": secret} if key and secret else {}

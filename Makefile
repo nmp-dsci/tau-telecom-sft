@@ -62,6 +62,15 @@ api-fixtures: ## rewrite tests/fixtures/runs/ and frontend/src/test/api.json
 fixtures: ## rewrite tests/fixtures/board_mini.json (only when the fixture script changes)
 	uv run python tests/fixtures/make_fixtures.py
 
+modal-serve: ## M3, M5: deploy the Student (vLLM, one Modal L4); it scales to zero 15 min after its last request
+	uv run modal deploy -m tau_telecom_sft.cloud.modal_app
+
+serve-modal: ## the recording proxy on :8020 in front of the Student on Modal (NAME=student-qwen3-4b)
+	uv run tausft serve --remote $(or $(NAME),student-qwen3-4b)
+
+modal-stop: ## stop the Modal app now; its Volumes (weights, runs) stay
+	uv run modal app stop tau-telecom-sft
+
 test: ## pytest, offline: split, leak, agent view, filters, converter, card
 	uv run pytest
 
@@ -75,4 +84,5 @@ fmt: ## ruff format + fix
 check: split-check leak-check test lint ## everything M0 promises, offline
 
 .PHONY: help setup platform-up platform-status smoke split-check leak-check fixtures test lint fmt check \
-	download sources-check data mask train-smoke dev viewer ui-lint api-fixtures
+	download sources-check data mask train-smoke dev viewer ui-lint api-fixtures \
+	modal-serve serve-modal modal-stop
