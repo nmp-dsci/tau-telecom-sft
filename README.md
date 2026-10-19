@@ -16,7 +16,7 @@ tasks. The student faces the same 40 test tasks as the Claude telecom v2 agent (
 | Milestone | Status | Date | Evidence |
 |---|---|---|---|
 | M0 · Create the repo and connect it | done | 2026-10-17 | split v3 sha256 `45d48101…` matches tau2-loop's; leak test runs; `make -C ../nmp-central-ai check ARGS="--only P10"` PASS |
-| M1 · Build dataset v1 | built; your sign-off pending | 2026-10-17 | 518 of 912 kept, 74/74 training tasks; `data/sft/v1/card.md`; train.jsonl sha256 `75718a64…`; MLflow data `08d798c5`; sample at `/data/v1/review` (0/20) |
+| M1 · Build dataset v1 | done | 2026-10-19 | 518 of 912 kept, all reward 1.0; 74/74 training tasks with 4–8 each; all 19 test root issues in training; `data/sft/v1/card.md`; train.jsonl sha256 `75718a64…`; MLflow data `08d798c5`; signed off on the summary in `review.jsonl` (sample not read, 0/20) |
 | M2 · Prove the pipeline on the Mac, end to end (0.6B) | done (smoke) | 2026-10-17 | mask 11/11 agent turns; loss 1.47 → 0.87 in 16 steps; prompt bytes ok on 223 served requests; 0/3 → 0/3 on training tasks; own-tool calls 37% → 95%; tau2-loop branch `feat/open-student` |
 | M3 · Serve the untrained 4B on EC2 (R0) | | | |
 | M4 · SFT the 4B on v1 | | | |

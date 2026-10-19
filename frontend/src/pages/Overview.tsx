@@ -51,7 +51,11 @@ export function Overview() {
             sample rows read{' '}
             {ds && (
               <span className="tag">
-                {ds.review.signed_off ? `signed off ${ds.review.signed_off.at}` : <Link to={reviewPath(ds.version)}>not signed off: read them →</Link>}
+                {ds.review.signed_off ? (
+                  `signed off ${ds.review.signed_off.at}${ds.review.signed_off.unread ? ', without reading them' : ''}`
+                ) : (
+                  <Link to={reviewPath(ds.version)}>not signed off: read them →</Link>
+                )}
               </span>
             )}
           </div>

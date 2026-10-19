@@ -4,9 +4,12 @@ from __future__ import annotations
 
 import json
 from dataclasses import replace
+from pathlib import Path
+
+import pytest
 
 from tau_telecom_sft import split
-from tau_telecom_sft.build import filters
+from tau_telecom_sft.build import filters, review
 from tau_telecom_sft.build.agent_view import agent_view
 from tau_telecom_sft.build.convert import (
     agent_tool_names,
@@ -126,3 +129,18 @@ def test_the_card_adds_up(fixture_build: Built) -> None:
     rows = (fixture_build.out_dir / "train.jsonl").read_text().splitlines()
     assert len(rows) == st["n_kept"]
     assert all(json.loads(r)["meta"]["reward"] == 1.0 for r in rows)
+
+
+def test_a_sign_off_without_every_verdict_says_so(tmp_path: Path) -> None:
+    rows = [{"meta": {"sim_id": f"k{i}"}} for i in range(3)]
+    (tmp_path / "train.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
+    (tmp_path / "drops.jsonl").write_text(json.dumps({"rule": "F1", "sim_id": "d0"}) + "\n")
+    sample = review.draw(tmp_path, n=2)
+    review.append(tmp_path, {"sim_id": sample["kept"][0], "verdict": "good"})
+    with pytest.raises(ValueError, match="no verdict yet"):
+        review.append(tmp_path, {"kind": "sign-off"})
+    with pytest.raises(ValueError, match="needs a note"):
+        review.append(tmp_path, {"kind": "sign-off"}, unread_ok=True)
+    rec = review.append(tmp_path, {"kind": "sign-off", "note": "on the summary"}, unread_ok=True)
+    assert rec["unread"] == 2  # one kept and one dropped row had no verdict
+    assert review.status(tmp_path)["signed_off"] == rec

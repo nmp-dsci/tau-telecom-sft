@@ -45,6 +45,7 @@ export function Review() {
         <div className="callout" role="status">
           <p>
             <span className="badge ok">✓ signed off</span> {when(data.signed_off.at)}
+            {data.signed_off.unread ? ` · ${data.signed_off.unread} of ${data.total} rows not read` : ''}
             {data.signed_off.note ? ` · “${data.signed_off.note}”` : ''}
           </p>
         </div>

@@ -5,6 +5,10 @@ The sample is drawn once per dataset version with a fixed seed and committed as
 training-task conversation is read at least once. A test task's drop is never drawn: it is
 WITHHELD in drops.jsonl. The viewer's one write route appends to `review.jsonl`
 (append-only, committed; D10): a verdict per row, then one sign-off.
+
+A person may also sign off without reading every row, on other evidence. That sign-off is
+written from here, never from the viewer, with `unread_ok`, and it records how many sampled
+rows had no verdict, so the log never claims a read that did not happen.
 """
 
 from __future__ import annotations
@@ -63,11 +67,13 @@ def log(out_dir: Path) -> list[dict[str, Any]]:
     return _rows(out_dir / LOG)
 
 
-def append(out_dir: Path, record: dict[str, Any]) -> dict[str, Any]:
-    """One verdict on a sampled row, or the sign-off once every row has one."""
+def append(out_dir: Path, record: dict[str, Any], unread_ok: bool = False) -> dict[str, Any]:
+    """One verdict on a sampled row, or the sign-off once every row has one (or, with
+    `unread_ok`, a sign-off that records how many rows were not read)."""
     sample = draw(out_dir)
     sampled = set(sample["kept"]) | set(sample["dropped"])
     kind = record.get("kind", "verdict")
+    missing: set[str] = set()
     if kind == "verdict":
         if record.get("sim_id") not in sampled:
             raise ValueError("only a sampled row can be reviewed")
@@ -75,8 +81,10 @@ def append(out_dir: Path, record: dict[str, Any]) -> dict[str, Any]:
             raise ValueError(f"verdict must be one of {VERDICTS}")
     elif kind == "sign-off":
         missing = sampled - {r["sim_id"] for r in log(out_dir) if r.get("kind") == "verdict"}
-        if missing:
+        if missing and not unread_ok:
             raise ValueError(f"{len(missing)} sampled row(s) have no verdict yet")
+        if not str(record.get("note") or "").strip() and missing:
+            raise ValueError("a sign-off without every verdict needs a note saying why")
     else:
         raise ValueError("kind must be verdict or sign-off")
     rec = {
@@ -86,6 +94,8 @@ def append(out_dir: Path, record: dict[str, Any]) -> dict[str, Any]:
         "note": str(record.get("note") or "")[:2000],
         "at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
+    if kind == "sign-off":
+        rec["unread"] = len(missing)
     with (out_dir / LOG).open("a") as f:
         f.write(json.dumps(rec, ensure_ascii=False) + "\n")
     return rec

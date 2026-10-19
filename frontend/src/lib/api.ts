@@ -135,7 +135,15 @@ export type RowDetail = {
 };
 
 export type Verdict = 'good' | 'bad' | 'note';
-export type ReviewRecord = { kind: 'verdict' | 'sign-off'; sim_id: string | null; verdict: Verdict | null; note: string; at: string };
+export type ReviewRecord = {
+  kind: 'verdict' | 'sign-off';
+  sim_id: string | null;
+  verdict: Verdict | null;
+  note: string;
+  at: string;
+  /** on a sign-off: how many sampled rows had no verdict when it was given */
+  unread?: number;
+};
 export type ReviewItem = {
   sim_id: string;
   status: RowStatus;

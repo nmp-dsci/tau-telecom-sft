@@ -22,7 +22,7 @@ each of the 40 tasks is worth 2.5 points.
     and the leak test runs. Evidence: README status · git
   - Open after M0: the registry branch needs merging (PR) like P9's; a house-UI hue (none is left
     30° from the others); D3–D7 still stand at the plan's recommended options.
-- [ ] **M1 · Build dataset v1** (Mac). Download S1 and S2 (128 MB) and keep the 74 training
+- [x] **M1 · Build dataset v1** (Mac). 2026-10-19. Download S1 and S2 (128 MB) and keep the 74 training
   tasks. Strip the customer's phone calls, run F1 to F10 and convert. Measure token lengths with
   the student's tokenizer and set the F10 limit. Load S1, S2 and one tau2-loop telecom run with
   the same loader and test that they match. Start the viewer's data side (plan §10): `/data`,
@@ -30,7 +30,7 @@ each of the 40 tasks is worth 2.5 points.
   conversations there and sign off.
   - Done when: the card's counts add up, the leak test passes, and the person has signed off on
     the sample in the viewer. Evidence: `data/sft/v1/card.md` · `review.jsonl` · MLflow data
-  - Built 2026-10-17, waiting only on the sign-off:
+  - Built 2026-10-17, signed off 2026-10-19:
     - [x] S1, S2 downloaded and pinned (sha256 `18e41808…`, `4038e532…`); `make sources-check` passes on
           S1, S2 and tau2-loop's `20261016T124631Z_telecom_v2_train`
     - [x] v1: 518 of 912 kept, 74/74 training tasks; F1 70 · F2 298 · F3 1 · F4 7 · F5 4 · F6 6 · F9 8;
@@ -38,7 +38,11 @@ each of the 40 tasks is worth 2.5 points.
     - [x] F10 with Qwen3-4B-Instruct-2507's tokenizer and template: median 10,054, max 16,869; 24,576
           drops none, so it stays
     - [x] The viewer's data side: `/data/v1` (+ coverage), rows in chat, tokens and raw, `/data/v1/review`
-    - [ ] The person reads the 20-row sample and signs off at `/data/v1/review` (writes `review.jsonl`)
+    - [x] Signed off 2026-10-19, in chat, on the pass and coverage summary instead of the 20-row read
+          (`review.jsonl`, `unread: 20`): all 518 kept scored reward 1.0 on the board; all 74 training
+          tasks keep 4 to 8 (Easy 25 tasks / 183, Hard 23 / 160, None 26 / 175); all 19 root issues in
+          test appear in training. The sample stays at `/data/v1/review` and can still be read.
+    - Not done, and offered: re-score the 518 at the pin `2174a60` (the board's tau2 commit is unknown)
 - [x] **M2 · Prove the pipeline on the Mac, end to end** (Mac · tau2-loop). 2026-10-17. A proof of concept
   with Qwen3-0.6B before anything runs on EC2; its scores are not results. (Reordered on
   2026-10-17 at the person's request: this was M3's smoke-train, now extended to serve and score.)
