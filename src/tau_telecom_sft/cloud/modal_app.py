@@ -15,8 +15,10 @@ grades. Modal may preempt the container; the proxy retries until a new one is up
 src/ and configs/ from the repo: no tau2, no raw/, no test task (rule 1). It reads dataset v1
 from the data Volume and the weights from the hf Volume the Student filled at M3, and writes
 its run folder (checkpoints, adapter) to the runs Volume, where the Student finds the adapter
-at M5 and `tausft sync-runs` copies the folder home. Modal can preempt it too: a retry gets the
-same arguments, so the same run id, and the trainer resumes from its newest checkpoint.
+at M5 and `tausft sync-runs` copies the folder home. Modal can preempt it too, and re-runs an
+input cut short by a preemption or an OOM on its own with the same arguments, so the same run
+id, and the trainer resumes from its newest checkpoint. No `retries`: they would add re-runs of
+the job's own exceptions (the data check, the mask check, a bug), and those fail again.
 Nothing here reaches MLflow; sync-runs logs the folder from the Mac.
 
     uv run modal deploy -m tau_telecom_sft.cloud.modal_app                    # make modal-serve
@@ -68,7 +70,7 @@ TRAIN_CPU = 4
 TRAIN_MEMORY_GIB = 16
 # list prices, 19 Oct (s02): the GPU, then per core and per GiB, each per second
 TRAIN_USD_PER_S = GPU_USD_PER_S + TRAIN_CPU * 0.0000131 + TRAIN_MEMORY_GIB * 0.00000222
-TRAIN_HOURS = 8  # per attempt; the estimate is 3 to 4 hours, and a retry starts a new clock
+TRAIN_HOURS = 8  # per attempt; the estimate is 3 to 4 hours, and a re-run starts a new clock
 REPO = "/repo"  # config.ROOT inside the trainer
 LOCAL_ROOT = Path(__file__).resolve().parents[3]
 
@@ -166,7 +168,6 @@ class Student:
         f"{REPO}/runs": runs,
     },
     timeout=TRAIN_HOURS * 60 * MINUTES,
-    retries=modal.Retries(initial_delay=0.0, max_retries=3),
 )
 def train(
     config_file: str,
@@ -175,8 +176,8 @@ def train(
     max_steps: int | None = None,
     longest: int | None = None,
 ) -> dict[str, Any]:
-    """train/sft.py on one L4, into the runs Volume. A retry after a preemption gets the same
-    arguments, so the same folder, and resumes from its newest checkpoint."""
+    """train/sft.py on one L4, into the runs Volume. Modal's re-run after a preemption gets the
+    same arguments, so the same folder, and resumes from its newest checkpoint."""
     import os
     import time
 
@@ -204,7 +205,7 @@ def train(
 
 @app.local_entrypoint()
 def train_job(config: str = "configs/sft_a.yaml", max_steps: int = 0, longest: int = 0) -> None:
-    """`make modal-train`: the run id is minted here, so every retry of the job writes one folder;
+    """`make modal-train`: the run id is minted here, so every re-run of the job writes one folder;
     with `modal run --detach` the job carries on if the Mac sleeps."""
     from tau_telecom_sft import config as cfg
     from tau_telecom_sft.train.sft import load_config, new_run_id, run_label

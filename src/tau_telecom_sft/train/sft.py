@@ -7,8 +7,8 @@ SFTConfig, under their real names (plan §7's table).
 
 Before the model loads, the version's train.jsonl is checked against its card's sha256, so a
 copy on another machine (Modal's data Volume) is the data that was signed off. Before the
-first step the trainer's own tokenized first row is read back and checked (`train.mask`): one
-trained span per agent turn and nothing else. A failed check stops the job before it costs
+first step every row the trainer tokenized is read back and checked (`train.mask`): one trained
+span per agent turn and nothing else. A failed check on any row stops the job before it costs
 anything. Every run writes its folder under `runs/` (docs/run_folders.md): run.json,
 metrics.jsonl at every logged step, mask.json, the checkpoints and the adapter. The same
 callback logs each step to the central MLflow when it can be reached and carries on when it
@@ -258,12 +258,22 @@ def train(
         callbacks=[folder],
     )
 
-    # the trainer's own tokenized first row, read back: its labels are what the loss sees (-100
-    # is ignored), so the mask check runs on exactly that, before any step
-    ex = trainer.train_dataset[0]
-    trained = [int(label != -100) for label in ex["labels"]]
-    segs = mask_mod.segments(tokenizer, ex["input_ids"], trained)
-    chk = mask_mod.check(rows[0], segs)
+    # the trainer's own tokenized rows, read back: their labels are what the loss sees (-100 is
+    # ignored), so the mask check runs on exactly that, on every row, before any step (one row
+    # was not enough: M4's first measured step failed on the 273 rows M2's first row hid)
+    if len(trainer.train_dataset) != len(rows):
+        raise RuntimeError(f"TRL kept {len(trainer.train_dataset)} of {len(rows)} rows")
+    failed: list[dict[str, Any]] = []
+    for i, row in enumerate(rows):
+        ex = trainer.train_dataset[i]
+        trained = [int(label != -100) for label in ex["labels"]]
+        segs = mask_mod.segments(tokenizer, ex["input_ids"], trained)
+        chk = mask_mod.check(row, segs)
+        if i == 0:
+            first = {"ex": ex, "trained": trained, "segs": segs, "chk": chk}
+        if not chk["ok"]:
+            failed.append({"sim_id": row["meta"]["sim_id"], "problems": chk["problems"][:3]})
+    ex, trained, segs, chk = first["ex"], first["trained"], first["segs"], first["chk"]
     write_json(
         run_dir / "mask.json",
         {
@@ -274,14 +284,26 @@ def train(
             "chat_template": "trl qwen3_instruct_2507_training.jinja (TRL's training copy)",
             "segments": segs,
             "check": chk,
+            "rows_checked": len(rows),
+            "rows_failed": failed,
         },
     )
-    meta["mask_check"] = {"row_sim_id": rows[0]["meta"]["sim_id"], **chk}
+    meta["mask_check"] = {
+        "row_sim_id": rows[0]["meta"]["sim_id"],
+        **chk,
+        "ok": not failed,
+        "rows_checked": len(rows),
+        "rows_failed": len(failed),
+    }
     print_mask(segs, chk, say)
-    if not chk["ok"]:
+    say(f"every row's mask: {len(rows) - len(failed)} of {len(rows)} ok")
+    if failed:
         meta["status"] = "failed"
         write_json(run_dir / "run.json", meta)
-        raise RuntimeError(f"loss-mask check failed: {chk['problems']}")
+        raise RuntimeError(
+            f"loss-mask check failed on {len(failed)} of {len(rows)} rows, the first "
+            f"{failed[0]['sim_id']}: {failed[0]['problems']}"
+        )
 
     mlflow_run = track.start_train(meta) if use_mlflow else None
     folder.mlflow_run_id = mlflow_run

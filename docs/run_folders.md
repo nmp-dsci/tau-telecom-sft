@@ -13,7 +13,7 @@ Run ids: `<UTC yyyymmddThhmmssZ>_<kind>_<label>`, e.g. `20261017T120000Z_train_s
 runs/<id>/
   run.json        the job: config, data, where it ran, how long, cost, the adapter's hash
   metrics.jsonl   one line per logged optimiser step
-  mask.json       the loss-mask check on one row, and that row rendered for the tokens lens
+  mask.json       the loss-mask check on every row, and the first row rendered for the tokens lens
   adapter/        the LoRA adapter (git-ignored)
   checkpoints/    every 11 steps and at each epoch's end (git-ignored; on Modal they stay on the Volume)
 ```
@@ -41,7 +41,8 @@ runs/<id>/
 
 `metrics.jsonl`: `{step, epoch, loss, grad_norm, learning_rate, tokens, tokens_per_s, mem_gb, elapsed_s}`.
 
-`mask.json`: `{row_sim_id, task_id, n_tokens, n_trained, segments: [{text, trained}], check}`.
+`mask.json`: `{row_sim_id, task_id, n_tokens, n_trained, segments: [{text, trained}], check,
+rows_checked, rows_failed: [{sim_id, problems}]}`: the first row in full, then every row's verdict.
 Segments are the rendered row cut where the mask changes, so the tokens lens shows trained
 text exactly as the trainer saw it.
 
