@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en" data-lavish-annotate="on">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modal instead of EC2</title>
+<link rel="stylesheet" href="house.css">
+<link rel="stylesheet" href="project.css">
+<style>
+  /* layout only: every colour is a house token */
+  .tablewrap td, .tablewrap th{ overflow-wrap:anywhere; }
+  td.n, th.n{ text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .nav{ display:flex; flex-wrap:wrap; gap:var(--s1) var(--s3); font-family:var(--mono); font-size:var(--t-2); margin-top:var(--s4); }
+  .nav a{ color:var(--muted); text-decoration:none; border-bottom:1px solid var(--line-2); }
+  .nav a:hover{ color:var(--accent); border-color:var(--accent); }
+  .verdict .stat .n{ font-size:var(--t3); }
+  header .verdict{ grid-template-columns:repeat(3, minmax(0,1fr)); }
+  @media (max-width: 820px){ header .verdict{ grid-template-columns:minmax(0,1fr); } }
+  .first-nowrap td:first-child, .first-nowrap th:first-child{ white-space:nowrap; }
+  @media (max-width: 640px){ .first-nowrap td:first-child, .first-nowrap th:first-child{ white-space:normal; } }
+  svg.dg{ display:block; width:100%; height:auto; }
+  svg.dg .zone{ fill:var(--band); stroke:none; }
+  svg.dg .zone.cloud{ fill:var(--accent-soft); }
+  svg.dg .zl{ fill:var(--muted); font-family:var(--mono); font-size:12px; letter-spacing:.06em; }
+  svg.dg .nd rect{ fill:var(--panel); stroke:var(--line-2); stroke-width:1.2; }
+  svg.dg .nd.key rect{ stroke:var(--accent); stroke-width:2; }
+  svg.dg .nd.ext rect{ stroke-dasharray:5 4; }
+  svg.dg .t{ fill:var(--ink); font-family:var(--sans); font-size:14px; font-weight:600; }
+  svg.dg .s{ fill:var(--muted); font-family:var(--sans); font-size:12px; }
+  svg.dg .m{ fill:var(--muted); font-family:var(--mono); font-size:11px; }
+  svg.dg .e{ stroke:var(--line-3); stroke-width:1.6; fill:none; }
+  svg.dg .e.hot{ stroke:var(--accent); }
+  svg.dg .ah{ fill:var(--line-3); }
+  svg.dg .ah.hot{ fill:var(--accent); }
+  svg.dg .el{ fill:var(--muted); font-family:var(--mono); font-size:11px; }
+  .walk{ display:grid; gap:var(--s3); }
+  .wstep{ background:var(--panel); border:1px solid var(--line-2); border-radius:var(--r); padding:var(--s4); }
+  .wstep header{ display:flex; flex-wrap:wrap; gap:var(--s2); align-items:baseline; margin-bottom:var(--s2); }
+  .wstep header .tag{ margin-left:auto; }
+  .wstep h3{ margin:0; }
+  .ev{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:var(--s3); }
+  @media (max-width: 820px){ .ev{ grid-template-columns:minmax(0,1fr); } }
+  .ev > div{ min-width:0; overflow-wrap:anywhere; font-size:var(--t-1); }
+  .ev .label{ display:block; margin-bottom:var(--s1); color:var(--muted); }
+  .ev p{ margin:0 0 var(--s1); }
+  .codewrap{ margin-top:var(--s3); border:1px solid var(--line-2); border-radius:var(--r); overflow:hidden; min-width:0; }
+  .why{ font-size:var(--t-1); color:var(--ink-2); margin:var(--s2) 0 0; max-width:var(--measure); }
+  .three{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:var(--s3); }
+  @media (max-width: 900px){ .three{ grid-template-columns:minmax(0,1fr); } }
+  .three .card, .split .card{ min-width:0; }
+  .decide{ border:1px solid var(--line-2); border-radius:var(--r); padding:var(--s4); background:var(--panel); margin-top:var(--s4); }
+  .decide fieldset{ border:0; padding:0; margin:var(--s3) 0 0; display:grid; gap:var(--s2); }
+  .decide label{ display:grid; grid-template-columns:auto minmax(0,1fr); gap:var(--s2); align-items:start; font-size:var(--t-1); cursor:pointer; }
+  .decide textarea{ width:100%; min-height:3.2em; font:inherit; font-size:var(--t-1); margin-top:var(--s3); }
+  .decide .row{ display:flex; gap:var(--s3); align-items:center; flex-wrap:wrap; margin-top:var(--s3); }
+  .decide .queued{ font-size:var(--t-1); color:var(--accent); }
+  ul.tight{ margin:var(--s1) 0 0; padding-left:var(--s4); }
+  ul.tight li{ margin:2px 0; }
+  .callout code{ overflow-wrap:anywhere; }
+  td.ec2, td.mod{ width:40%; }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="eyebrow">s02 · tau-telecom-sft · 19 Oct 2026 · feasibility study · M3 to M5 on Modal instead of EC2 · s01's layout with EC2 swapped out · nothing built, nothing spent</div>
+  <h1>Modal can run M3 to M5 instead of EC2, <em>with one new file and nothing to build in AWS</em></h1>
+  <p class="lede">You asked whether <a href="https://modal.com">Modal</a> could serve and fine-tune the 4B instead of EC2, and what s01 would look like with EC2 swapped out.
+    It can. The trainer and the vLLM command don't change, tau2-loop doesn't change, and nothing new is needed in AWS: no Terraform, no Dockerfile, no S3 bucket, no SSH tunnel.
+    One file is new, <code>cloud/modal_app.py</code>, and six get small edits.
+    At list prices M3 to M5 cost about <b>$7–13 on Modal against $9–16 on EC2</b>, and Modal's $30 monthly credit on its free plan probably covers it.
+    What you take on is new: Modal can preempt any GPU container and that can't be turned off, so the trainer has to resume and the proxy has to retry.
+    You also give up some of the enterprise story the plan chose EC2 for.</p>
+  <div class="verdict" style="margin-top:var(--s5)">
+    <div class="stat accent"><div class="n">feasible</div><div class="l">M3, M4 and M5: the same <code>train/sft.py</code>, the same <code>vllm serve</code> flags, and an unchanged tau2-loop</div></div>
+    <div class="stat accent"><div class="n">1 new file</div><div class="l"><code>cloud/modal_app.py</code>, plus small edits to the proxy, the trainer and its callback, the CLI, the config and the Makefile</div></div>
+    <div class="stat accent"><div class="n">$7–13</div><div class="l">M3–M5 at Modal's list prices (L4 + 2 cores + 16 GiB), against $9–16 on EC2's g6.2xlarge; probably inside the $30 monthly credit</div></div>
+    <div class="stat accent"><div class="n">0 to build</div><div class="l">no Terraform, Dockerfile, ECR, S3 bucket, SSH tunnel or <code>aws sso login</code>; the server scales to zero 15 min after its last request</div></div>
+    <div class="stat amber"><div class="n">2 new risks</div><div class="l">any GPU container can be preempted, and nothing answers until a container is up (503). Both are handled in §04's code, untested.</div></div>
+    <div class="stat accent"><div class="n">skill installed</div><div class="l">Modal's own skill is in <code>.claude/skills/modal/</code>: v1.6.2, with 220 docs pages as references. Installed 19 Oct at your request; not committed yet.</div></div>
+  </div>
+  <nav class="nav" aria-label="Sections">
+    <a href="#s-verdict">01 the verdict, piece by piece</a><a href="#s-arch">02 architecture</a><a href="#s-walk">03 step by step</a>
+    <a href="#s-code">04 the code</a><a href="#s-perf">05 seeing performance</a><a href="#s-vs">06 EC2 or Modal</a>
+    <a href="#s-risks">07 risks</a><a href="#s-ready">08 ready to go ahead?</a><a href="#s-cmds">09 commands</a><a href="#s-src">10 sources</a>
+  </nav>
+</header>
+
+<!-- 01 VERDICT -->
+<section id="s-verdict">
+  <span class="eyebrow">01 · the verdict, piece by piece</span>
+  <h2>Everything the EC2 plan does has a Modal equivalent, <em>and two jobs stay exactly as they are</em></h2>
+  <p class="sub">Each row is one job from M3 to M5. The EC2 column is the plan as written in s00 §11 and s01 §02. "Feasible" means Modal's own docs show the building block, not that I've run it.</p>
+  <div class="tablewrap">
+    <table class="first-nowrap">
+      <thead><tr><th>Job</th><th>EC2 plan</th><th>On Modal</th><th>Feasible?</th><th>The catch</th></tr></thead>
+      <tbody>
+        <tr><td><b>Train the 4B</b> · M4</td><td><code>docker run</code> on a g6.2xlarge, with the image built from a Dockerfile and pushed to ECR</td><td>A GPU function, <code>gpu="L4"</code>, started with <code>modal run --detach</code>. It runs the same <code>train/sft.py</code> and <code>configs/sft_a.yaml</code>.</td><td><span class="badge ok">yes</span></td><td>Modal can preempt it. The job then restarts on the same input, so it has to resume from a checkpoint (§04).</td></tr>
+        <tr><td><b>Serve the 4B + adapter</b> · M3, M5</td><td>vLLM's own image on the instance, bound to localhost and reached through an SSH port forward</td><td>An <code>@app.server</code> class running the same <code>vllm serve</code> command on one L4. Its HTTPS URL sits behind Modal's proxy, which requires a token by default.</td><td><span class="badge ok">yes</span></td><td>It returns 503 while no container is up. Loading the adapter from a storage-volume path is my inference; Modal's LoRA example loads adapters inside its own Python code instead.</td></tr>
+        <tr><td><b>The recording proxy</b></td><td><code>serve/proxy.py</code> on :8020, forwarding to the port forward</td><td>The same proxy, forwarding to the Modal URL. It adds the <code>Modal-Key</code> and <code>Modal-Secret</code> headers and retries a 503, 429 or 502.</td><td><span class="badge ok">yes</span></td><td>About 25 lines change. The prompt-bytes check doesn't.</td></tr>
+        <tr><td><b>Score</b> · tau2-loop</td><td>On the Mac, <code>STUDENT_URL=http://127.0.0.1:8020</code></td><td>Unchanged. tau2-loop on the Mac plays the customer (Haiku 5.5 on your Claude subscription), runs every tool call, and grades. Only the agent's replies come from Modal.</td><td><span class="badge ok">unchanged</span></td><td>The 4B's student versions are needed on either path</td></tr>
+        <tr><td><b>Record the runs</b></td><td>The job writes its folder to S3, and <code>make sync-runs</code> copies it into <code>runs/</code></td><td>The job writes its folder to a Modal storage volume (a "Volume"), and <code>make sync-runs</code> copies it into <code>runs/</code></td><td><span class="badge ok">yes</span></td><td><code>sync-runs</code> was planned for M4 anyway; only its source changes</td></tr>
+        <tr><td><b>Track</b> · MLflow</td><td>Logged from the Mac after the sync, since the instance can't reach <code>localhost:5000</code></td><td>The same. A Modal container can't reach the Mac either.</td><td><span class="badge ok">unchanged</span></td><td>For a live curve, sync every minute (§05)</td></tr>
+        <tr><td><b>The 30B</b> · M6</td><td>RunPod, 80 GB A100 at $1.79/h</td><td>Modal, 80 GB A100 at $2.50/h, plus CPU and memory</td><td><span class="badge warn">yes, dearer</span></td><td>About 40% more per GPU hour than RunPod; it can be decided at M6</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout" style="margin-top:var(--s4)">
+    <p><b>Is there a skill for this?</b> Yes, Modal's own, and it's now installed in this project. <code>uvx --from modal modal skills install --claude</code> (client 1.6.2) wrote one skill to <code>.claude/skills/modal/</code>. It has a <code>SKILL.md</code> on using Modal's docs and CLI, plus 220 reference pages: the SDK's API, 101 guides and 68 examples. I read <code>SKILL.md</code> and scanned the references; there's nothing beyond Modal's own docs.</p>
+    <p>The skill asks for two things that shape step 1. Inside a Python project, run the CLI as <code>uv run modal</code> from a project dependency, with <code>uvx</code> only for one-off use outside a project. And keep the skill's version equal to the client's: pin <code>modal==1.6.2</code> in the <code>cloud</code> extra, and run <code>modal skills update --claude</code> whenever the pin moves.
+      Modal also serves <a href="https://modal.com/llms.txt">llms.txt</a> and a <code>.md</code> copy of every docs page. I didn't find an official Modal MCP server. Not yet set up here: a Modal account and its token in <code>~/.modal.toml</code>.</p>
+  </div>
+</section>
+
+<!-- 02 ARCHITECTURE -->
+<section id="s-arch">
+  <span class="eyebrow">02 · architecture</span>
+  <h2>The Mac keeps every lane but one, <em>and Modal takes the GPU's place</em></h2>
+  <p class="sub">s01's picture from M3 on. The accent outline marks what's new or changed from the EC2 plan, and the highlighted path is one agent turn being served. Nothing on Modal reads or writes MLflow.</p>
+  <div class="callout" style="margin-bottom:var(--s4)"><p><b>Only the agent is on Modal.</b> The 4B on Modal answers as the agent, the base model for R0 and base plus adapter for R1, and nothing else. On the Mac, tau2-loop does the rest:</p><ul class="tight"><li><b>the customer:</b> Haiku 5.5 at high effort on your Claude subscription, as in every other row of the results table;</li><li><b>every tool call:</b> the agent's 13 tools and the customer's phone;</li><li><b>the grade.</b></li></ul><p>Each agent turn goes from tau2-loop to the proxy on :8020, then to Modal. A reply or a tool call comes back, and tau2-loop runs that call itself on the Mac. So the GPU works only while the agent writes. The customer's thinking and phone calls happen on your side, which is why the customer, not the L4, limits how many conversations can run at once (M-10).</p></div>
+  <div class="dia">
+    <svg class="dg" viewBox="0 0 1180 650" role="img" aria-labelledby="arch-t arch-d">
+      <title id="arch-t">tau-telecom-sft with Modal in place of EC2</title>
+      <desc id="arch-d">On the Mac: dataset v1, the make targets, tau2-loop, the recording proxy, the run folders, MLflow and the viewer. On Modal: the control plane, a Student server running vLLM on one L4, a train function on one L4, three Volumes, and per-second billing. The proxy forwards each agent turn to the Student over HTTPS with a token; sync-runs copies run folders from the runs Volume into runs/.</desc>
+      <defs>
+        <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0 L10 5 L0 10 z"/></marker>
+        <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah hot" d="M0 0 L10 5 L0 10 z"/></marker>
+      </defs>
+      <rect class="zone" x="10" y="14" width="570" height="622" rx="12"/><text class="zl" x="26" y="36">YOUR MAC · UNCHANGED BUT THE PROXY</text>
+      <rect class="zone cloud" x="600" y="14" width="570" height="622" rx="12"/><text class="zl" x="616" y="36">MODAL · IN PLACE OF EC2 · PER SECOND</text>
+
+      <g class="nd" id="n-data"><title>Dataset v1, built and signed off at M1: 518 rows, train.jsonl git-ignored, its sha256 on the card</title><rect x="30" y="50" width="250" height="100" rx="10"/><text class="t" x="46" y="78">data/sft/v1/</text><text class="s" x="46" y="100">518 rows · train.jsonl</text><text class="m" x="46" y="120">card sha256 75718a64…</text></g>
+      <g class="nd key" id="n-make"><title>New make targets: modal-data, modal-train, modal-serve, modal-stop; and sync-runs reading from the runs Volume</title><rect x="310" y="50" width="250" height="100" rx="10"/><text class="t" x="326" y="78">make modal-*</text><text class="s" x="326" y="100">data · train · serve · stop</text><text class="m" x="326" y="120">tausft sync-runs</text></g>
+
+      <g class="nd ext" id="n-loop"><title>tau2-loop on the Mac, unchanged: the customer on your subscription, the phone and the grader; the student is the agent</title><rect x="30" y="200" width="250" height="100" rx="10"/><text class="t" x="46" y="228">tau2-loop · 4B versions</text><text class="s" x="46" y="250">Haiku 5.5 customer · grader</text><text class="m" x="46" y="270">STUDENT_URL = :8020</text></g>
+      <g class="nd key" id="n-proxy"><title>The recording proxy: forwards each request to the Modal URL with the proxy token, retries 503/429/502, and logs the prompt and tools sha256 as before</title><rect x="310" y="200" width="250" height="100" rx="10"/><text class="t" x="326" y="228">serve/proxy.py :8020</text><text class="s" x="326" y="250">adds Modal-Key / Modal-Secret</text><text class="m" x="326" y="270">retries 503 · logs sha256</text></g>
+
+      <g class="nd" id="n-eval"><title>A scored run: a copy of the tau2-loop run plus the proxy's lines, pass^k, the checks and the sign test; unchanged</title><rect x="30" y="350" width="250" height="100" rx="10"/><text class="t" x="46" y="378">runs/&lt;eval&gt;/</text><text class="s" x="46" y="400">score/pull.py</text><text class="m" x="46" y="420">pass^k · bytes · sign test</text></g>
+      <g class="nd key" id="n-trun"><title>A training run's folder, copied from the runs Volume by sync-runs; the adapter is git-ignored and hashed</title><rect x="310" y="350" width="250" height="100" rx="10"/><text class="t" x="326" y="378">runs/&lt;train&gt;/</text><text class="s" x="326" y="400">copied from the runs Volume</text><text class="m" x="326" y="420">run.json · metrics · adapter/</text></g>
+
+      <g class="nd" id="n-mlflow"><title>The central MLflow from nmp-central-ai; logged from the Mac only, as on the EC2 path</title><rect x="30" y="500" width="250" height="100" rx="10"/><text class="t" x="46" y="528">Central MLflow :5000</text><text class="s" x="46" y="550">logged from the Mac only</text><text class="m" x="46" y="570">data · train · eval</text></g>
+      <g class="nd" id="n-viewer"><title>The viewer: reads the run folders; unchanged</title><rect x="310" y="500" width="250" height="100" rx="10"/><text class="t" x="326" y="528">Viewer :8085</text><text class="s" x="326" y="550">reads runs/ files only</text><text class="m" x="326" y="570">/train/:run · /eval/:run</text></g>
+
+      <g class="nd key" id="n-ctl"><title>Modal's control plane: builds and caches the images, deploys the app, runs the detached job, streams logs, shows GPU metrics</title><rect x="620" y="50" width="530" height="100" rx="10"/><text class="t" x="636" y="78">Modal: images · logs · dashboard</text><text class="s" x="636" y="100">modal deploy · modal run --detach · modal app logs -f</text><text class="m" x="636" y="120">GPU utilisation and memory per container</text></g>
+      <g class="nd key" id="n-student"><title>Student: an @app.server class that starts vllm serve with the plan's flags on one L4, bf16, prefix caching, LoRA modules from the runs Volume</title><rect x="620" y="200" width="255" height="100" rx="10"/><text class="t" x="636" y="228">Student · @app.server</text><text class="s" x="636" y="250">vllm serve on one L4, bf16</text><text class="m" x="636" y="270">base + LoRA · token required</text></g>
+      <g class="nd key" id="n-trainfn"><title>train: a GPU function that runs train/sft.py on one L4, with retries; a restart after preemption resumes the same run id</title><rect x="895" y="200" width="255" height="100" rx="10"/><text class="t" x="911" y="228">train · @app.function</text><text class="s" x="911" y="250">train/sft.py on one L4</text><text class="m" x="911" y="270">retries · resumes its run id</text></g>
+      <g class="nd key" id="n-vol"><title>Three Volumes that persist when containers stop: data (v1), runs (run folders, checkpoints, adapters), hf (the model weights)</title><rect x="620" y="350" width="530" height="100" rx="10"/><text class="t" x="636" y="378">Volumes: they outlive every container</text><text class="m" x="636" y="400">tau-telecom-sft-data   v1: train.jsonl + stats.json</text><text class="m" x="636" y="418">tau-telecom-sft-runs   run folders · checkpoints · adapters</text><text class="m" x="636" y="436">tau-telecom-sft-hf     Qwen3-4B weights, downloaded once</text></g>
+      <g class="nd ext" id="n-bill"><title>What Modal bills: per second, only while a container runs; GPU, CPU cores and memory are separate lines</title><rect x="620" y="500" width="530" height="100" rx="10"/><text class="t" x="636" y="528">Billed per second, only while a container runs</text><text class="m" x="636" y="550">L4 $0.80/h + $0.047 per core-h + $0.008 per GiB-h</text><text class="m" x="636" y="570">Student scales to zero 15 min after its last request</text></g>
+
+      <path class="e" d="M280 100 H304" marker-end="url(#a1)"><title>train.jsonl and stats.json, uploaded by make modal-data</title></path>
+      <path class="e" d="M560 100 H614" marker-end="url(#a1)"><title>modal volume put, modal deploy, modal run --detach</title></path><text class="el" x="566" y="92">modal</text>
+      <path class="e" d="M747 150 V194" marker-end="url(#a1)"/><text class="el" x="755" y="178">deploy</text>
+      <path class="e" d="M1022 150 V194" marker-end="url(#a1)"/><text class="el" x="1030" y="178">run --detach</text>
+      <path class="e hot" d="M280 250 H304" marker-end="url(#a2)"><title>each agent turn goes to STUDENT_URL, the proxy</title></path>
+      <path class="e hot" d="M560 250 H614" marker-end="url(#a2)"><title>HTTPS to the Student's Modal URL, with the proxy token</title></path><text class="el" x="566" y="242">HTTPS</text>
+      <path class="e" d="M747 350 V306" marker-end="url(#a1)"><title>the weights and adapters, read from the Volumes</title></path><text class="el" x="755" y="332">weights, adapters</text>
+      <path class="e" d="M1022 300 V344" marker-end="url(#a1)"><title>reads v1, writes runs/&lt;id&gt; with checkpoints and the adapter</title></path><text class="el" x="1030" y="332">v1 in · runs out</text>
+      <path class="e" d="M620 400 H566" marker-end="url(#a1)"><title>make sync-runs: modal volume get, then log to MLflow from the Mac</title></path><text class="el" x="568" y="392">sync</text>
+      <path class="e" d="M155 300 V344" marker-end="url(#a1)"/><text class="el" x="163" y="328">copy</text>
+      <path class="e" d="M370 300 V322 H220 V344" marker-end="url(#a1)"/><text class="el" x="378" y="318">served.jsonl</text>
+      <path class="e" d="M155 450 V494" marker-end="url(#a1)"/>
+      <path class="e" d="M330 450 V472 H230 V494" marker-end="url(#a1)"/>
+      <path class="e" d="M435 450 V494" marker-end="url(#a1)"/>
+    </svg>
+  </div>
+  <div class="split" style="margin-top:var(--s4)">
+    <div class="card"><h3>What changes from the EC2 plan</h3><ul class="tight">
+      <li><b>Port forward → HTTPS with a token.</b> The proxy is the only Mac code that knows where the model is.</li>
+      <li><b>S3 → three storage volumes</b> (Modal calls them Volumes). <code>sync-runs</code> reads from the runs volume instead of a bucket.</li>
+      <li><b>Dockerfile + Terraform → <code>cloud/modal_app.py</code>.</b> The images, the GPU, the storage and the server are defined in one Python file.</li>
+      <li><b>Stopping the instance → scaling to zero.</b> 15 minutes after the last request, nothing is billed.</li>
+      <li><b>New:</b> the trainer resumes after a preemption, and the proxy retries until a container is up.</li>
+    </ul></div>
+    <div class="card"><h3>What stays exactly as it is</h3><ul class="tight">
+      <li>Dataset v1, its card and the sign-off; the leak test on <code>data/sft/</code> and <code>configs/</code></li>
+      <li><code>train/sft.py</code>'s recipe, <code>configs/sft_a.yaml</code>, and the loss-mask check before step 1</li>
+      <li>The <code>vllm serve</code> flags the plan wrote for EC2: bf16, prefix caching, the hermes tool-call parser, LoRA rank 16</li>
+      <li>tau2-loop, its customer and its rules; <code>score-pull</code>, the sign test, MLflow and the viewer</li>
+      <li>The rule: one measured conversation or step before any paid batch</li>
+    </ul></div>
+  </div>
+</section>
+
+<!-- 03 WALKTHROUGH -->
+<section id="s-walk">
+  <span class="eyebrow">03 · step by step</span>
+  <h2>Twelve steps from an empty account to R1: <em>the EC2 plan, the Modal version, and what checks each</em></h2>
+  <p class="sub">s01 laid out each step as expected → done → result. Nothing here has run yet, so this page lays out EC2 plan → on Modal → checked by. The steps marked paid (6, 7, 8, 9 and 12) spend money and run only when you ask.</p>
+  <div class="walk">
+    <article class="wstep" id="w1"><header><span class="badge info">setup</span><h3>1 · An account and the CLI</h3><span class="tag">yours: a browser login</span></header>
+      <div class="ev"><div><span class="label">EC2 plan</span><p><code>aws sso login</code> (it had expired), the L4 quota you have, and Terraform for the instance, IAM and the security group</p></div><div><span class="label">on Modal</span><p>Add <code>modal</code> as a pinned dependency in a <code>cloud</code> extra, then run <code>modal setup</code> once: a browser login that writes the token to <code>~/.modal.toml</code>, outside the repo. The free plan (Starter) gives $30 of credit a month and up to 10 GPUs at once.</p></div><div><span class="label">checked by</span><p><code>modal app list</code> answers. <code>modal --version</code> matches the skill's <code>metadata.version</code>, 1.6.2.</p></div></div></article>
+    <article class="wstep" id="w2"><header><span class="badge info">setup</span><h3>2 · Storage for the data, the runs and the weights</h3><span class="tag">make modal-data</span></header>
+      <div class="ev"><div><span class="label">EC2 plan</span><p>An S3 bucket from Terraform, <code>make data-pull</code>, and the instance's disk</p></div><div><span class="label">on Modal</span><p>Three Volumes. <code>-data</code> holds v1's <code>train.jsonl</code> and <code>stats.json</code>, 22 MB. <code>-runs</code> holds run folders, checkpoints and adapters. <code>-hf</code> holds the Hugging Face cache, so the 8 GB of weights download once. <code>raw/</code> never leaves the Mac: the board files hold the test tasks.</p></div><div><span class="label">checked by</span><p>Before the model loads, the job hashes its copy of <code>train.jsonl</code>. It refuses to start unless the sha256 is the card's, <code>75718a64…</code>.</p></div></div></article>
+    <article class="wstep" id="w3"><header><span class="badge info">setup</span><h3>3 · Two images</h3><span class="tag">cloud/modal_app.py</span></header>
+      <div class="ev"><div><span class="label">EC2 plan</span><p>A Dockerfile for the trainer, pushed to ECR, plus vLLM's own image</p></div><div><span class="label">on Modal</span><p>Both images are defined in Python, and Modal builds and caches them. The trainer uses uv.lock's pins (<code>uv export --extra train</code>, plus Liger), tau2 at <code>2174a60</code>, <code>src/</code> and <code>configs/</code>. The server uses Modal's vLLM example's CUDA base, with vLLM pinned.</p></div><div><span class="label">checked by</span><p>A CPU-only <code>modal run</code> prints the torch, TRL, PEFT and vLLM versions next to uv.lock's. No GPU is started.</p></div></div></article>
+    <article class="wstep" id="w4"><header><span class="badge info">M3</span><h3>4 · Serve the untrained 4B</h3><span class="tag">make modal-serve</span></header>
+      <div class="ev"><div><span class="label">EC2 plan</span><p><code>docker run vllm/vllm-openai</code> on the instance, bound to 127.0.0.1 and reached through <code>ssh -L</code></p></div><div><span class="label">on Modal</span><p><code>modal deploy</code> creates <code>Student</code>, an <code>@app.server</code> whose <code>@modal.enter()</code> starts <code>vllm serve</code> with the plan's flags. It has one container and no autoscaling, so one prefix cache serves every conversation. It requires a token, Modal's default.</p></div><div><span class="label">checked by</span><p><code>/v1/models</code> lists the base, and <code>tausft serve-check</code> gets a tool call back as <code>tool_calls</code> from vLLM (M3's done-when).</p></div></div></article>
+    <article class="wstep" id="w5"><header><span class="badge info">M3</span><h3>5 · The proxy points at Modal</h3><span class="tag">serve/proxy.py · cli.py</span></header>
+      <div class="ev"><div><span class="label">EC2 plan</span><p>Unchanged, forwarding to the port forward</p></div><div><span class="label">on Modal</span><p><code>tausft serve --remote &lt;URL&gt;</code> runs the same proxy on :8020 without starting a local server. It adds <code>Modal-Key</code> and <code>Modal-Secret</code>, read from <code>~/.env</code> and never logged. It retries a 503, 429 or 502 for up to 15 minutes and records the count in <code>served.jsonl</code>.</p></div><div><span class="label">checked by</span><p>The prompt-bytes test, unchanged. Every served request must carry the card's prompt sha256 <code>b76554cc…</code> and tools sha256 <code>66b1aa33…</code>.</p></div></div></article>
+    <article class="wstep" id="w6"><header><span class="badge warn">paid</span><h3>6 · One measured conversation</h3><span class="tag">rule 8 · on a training task</span></header>
+      <div class="ev"><div><span class="label">EC2 plan</span><p>The same, on the instance</p></div><div><span class="label">on Modal</span><p>One training task × 1 trial through tau2-loop. It measures the cold start, the student's seconds per turn and per conversation, and the dollars, on a training task so the test tasks stay untouched.</p></div><div><span class="label">checked by</span><p>The measured seconds replace the 289 s estimate, which came from Claude, not the 4B, and set step 7's hours and cost. A few cents, inside the credit.</p></div></div></article>
+    <article class="wstep" id="w7"><header><span class="badge warn">paid</span><h3>7 · 160 conversations: R0</h3><span class="tag">tau2-loop · score-pull</span></header>
+      <div class="ev"><div><span class="label">EC2 plan</span><p>40 test tasks × 4 trials at concurrency 3, about 3–4 h and $4–5</p></div><div><span class="label">on Modal</span><p>The same 160. Raise the concurrency in steps, 3 then 6 then 8, watching vLLM's <code>/metrics</code> through the URL (memory in use, requests waiting) and the customer's errors. Afterwards the Student scales to zero by itself, or <code>make modal-stop</code> stops it at once.</p></div><div><span class="label">checked by</span><p>R0 filled in, <code>tool_calls</code> structured, prompt bytes OK on all 160 conversations' requests. <code>score-pull</code> is unchanged.</p></div></div></article>
+    <article class="wstep" id="w8"><header><span class="badge warn">paid</span><h3>8 · M4's one measured step</h3><span class="tag">make modal-train MAX_STEPS=1</span></header>
+      <div class="ev"><div><span class="label">EC2 plan</span><p>The same, on the instance</p></div><div><span class="label">on Modal</span><p>The mask check runs before step 1, as on the Mac. The step measures seconds per step, tokens per second and peak GPU memory at 24,576 tokens. That last one is the untested part of the plan's §7 fit on 24 GB.</p></div><div><span class="label">checked by</span><p><code>mask.json</code> shows every agent turn trained; <code>metrics.jsonl</code> has one line. The projected 3-epoch hours and dollars go in the step's <code>run.json</code>.</p></div></div></article>
+    <article class="wstep" id="w9"><header><span class="badge warn">paid</span><h3>9 · The full fine-tune, detached</h3><span class="tag">make modal-train</span></header>
+      <div class="ev"><div><span class="label">EC2 plan</span><p>3 epochs on the instance, about 3 h. On-demand EC2 is never preempted.</p></div><div><span class="label">on Modal</span><p><code>modal run --detach</code> keeps going if the Mac sleeps. With <code>retries=3</code>, a preempted job restarts on the same input: the same run id, resumed from its last checkpoint. That means saving every 10 steps (about 20 minutes of work) as well as at each epoch.</p></div><div><span class="label">checked by</span><p><code>run.json</code>: <code>status: finished</code>, about 99 steps for 3 epochs of 518 rows at 16 rows per step, and <code>resumed_from</code> null or a checkpoint name.</p></div></div></article>
+    <article class="wstep" id="w10"><header><span class="badge info">M4</span><h3>10 · Watch it train</h3><span class="tag">modal app logs -f · sync-runs</span></header>
+      <div class="ev"><div><span class="label">EC2 plan</span><p>SSH and <code>nvidia-smi</code>; the folder synced from S3 at the end</p></div><div><span class="label">on Modal</span><p><code>modal app logs -f</code> streams the trainer's lines. Modal's dashboard shows GPU utilisation and memory. <code>make sync-runs WATCH=60</code> copies the folder every minute and logs new steps to MLflow.</p></div><div><span class="label">checked by</span><p><code>/train/:run</code> and MLflow's <code>tau-telecom-sft/train</code> show the loss curve less than a minute behind. The Starter plan keeps Modal's logs for only 1 day; the run folder is the record.</p></div></div></article>
+    <article class="wstep" id="w11"><header><span class="badge info">M4</span><h3>11 · The adapter</h3><span class="tag">done-when changes</span></header>
+      <div class="ev"><div><span class="label">EC2 plan</span><p>"The final adapter is in S3, with its config, data hash and image tag logged"</p></div><div><span class="label">on Modal</span><p>In the runs Volume, and copied by <code>sync-runs</code> to <code>runs/&lt;id&gt;/adapter/</code>, which is git-ignored, with its sha256 in <code>run.json</code>. Modal's image id takes the image tag's place.</p></div><div><span class="label">checked by</span><p>The local copy's sha256 equals the one recorded on Modal, so the adapter served at M5 is the one trained.</p></div></div></article>
+    <article class="wstep" id="w12"><header><span class="badge warn">paid</span><h3>12 · Score the tuned 4B: R1</h3><span class="tag">M5</span></header>
+      <div class="ev"><div><span class="label">EC2 plan</span><p>vLLM with <code>--lora-modules sft-a=…</code> on the same instance; the same 160; a sign test against R0</p></div><div><span class="label">on Modal</span><p>Set <code>ADAPTERS = {"sft-a": "&lt;M4's run&gt;"}</code> and redeploy. The tuned student version asks for the model <code>sft-a</code>. Everything else is step 7.</p></div><div><span class="label">checked by</span><p>One request first, to confirm the adapter loads from the Volume path, which no Modal example shows. Then R1 with its counts and <code>vs</code> R0.</p></div></div></article>
+  </div>
+</section>
+
+<!-- 04 CODE -->
+<section id="s-code">
+  <span class="eyebrow">04 · the code</span>
+  <h2>One new file and two small diffs, <em>written to Modal's current docs but not yet run</em></h2>
+  <p class="sub">These are proposals, not committed code. They follow Modal's guides as of today: <code>@app.server</code> for vLLM (the current example), Volumes, retries for preemption, and proxy tokens. The trainer's diff is the only change to <code>train/sft.py</code>.</p>
+  <h3 style="margin-top:var(--s5)">src/tau_telecom_sft/cloud/modal_app.py <span class="tag">new · proposed</span></h3>
+  <p class="why">The whole Modal side: two images, three Volumes, the training function and the server. The <code>vllm serve</code> flags are the ones the plan wrote for EC2's <code>docker run</code>. One extra check: the job refuses to start unless its copy of <code>train.jsonl</code> is the card's.</p>
+  <div class="codewrap"><div id="code-app"></div></div>
+  <h3 style="margin-top:var(--s5)">src/tau_telecom_sft/serve/proxy.py <span class="tag">lines 62–87 · proposed diff</span></h3>
+  <p class="why">Two changes. The proxy sends the token headers it's given (from <code>~/.env</code>; Servers require a token by default). And it waits out a 503, 429 or 502 instead of ending a conversation over a container that hadn't started. Each line in <code>served.jsonl</code> gains a <code>retries</code> count.</p>
+  <div class="codewrap"><div id="code-proxy"></div></div>
+  <h3 style="margin-top:var(--s5)">src/tau_telecom_sft/train/sft.py <span class="tag">train() · proposed diff</span></h3>
+  <p class="why">Resume after preemption. The caller passes the run id, so Modal's restart of the same input finds the same folder, and TRL resumes from the newest checkpoint. <code>callbacks.py</code> also drops <code>metrics.jsonl</code> lines past that checkpoint's step, so the curve doesn't show steps twice.</p>
+  <div class="codewrap"><div id="code-sft"></div></div>
+  <h3 style="margin-top:var(--s5)">Makefile <span class="tag">new targets · proposed</span></h3>
+  <p class="why">Five targets. Only <code>modal-train</code>, and the Student's first request after <code>modal-serve</code>, start a GPU.</p>
+  <div class="codewrap"><div id="code-make"></div></div>
+  <p class="why">Also small: <code>cli.py</code> gains <code>serve --remote</code>, <code>new-run-id</code> and the Volume source for <code>sync-runs</code>. <code>config.py</code> reads the two proxy-token variables, and the run's <code>instance</code> becomes "Modal L4". <code>docs/run_folders.md</code> gains <code>retries</code> and <code>resumed_from</code>. Tests cover the retry, the token headers and the resume.</p>
+</section>
+
+<!-- 05 PERFORMANCE -->
+<section id="s-perf">
+  <span class="eyebrow">05 · how you'd see fine-tuning performance</span>
+  <h2>The same three questions as s01, <em>and on Modal the first one can be answered live</em></h2>
+  <p class="sub">The viewer and MLflow read the run folder, which <code>sync-runs</code> brings home. Modal adds a live view while a container runs.</p>
+  <div class="three">
+    <div class="card"><h3>Is the training working?</h3><ul class="tight">
+      <li><b>Live:</b> <code>modal app logs -f</code> shows each logged step as the trainer prints it.</li>
+      <li><b>Live:</b> Modal's dashboard shows the container's GPU utilisation and memory.</li>
+      <li><b>Under a minute behind:</b> <code>make sync-runs WATCH=60</code> brings <code>metrics.jsonl</code> home. <code>/train/:run</code> and MLflow's <code>tau-telecom-sft/train</code> then draw the loss, learning rate and gradient norm, as they did for the smoke run.</li>
+    </ul></div>
+    <div class="card"><h3>What is it costing?</h3><ul class="tight">
+      <li>The Starter plan has no per-app cost report; that's Team and up. So <code>run.json</code>'s <code>cost_usd</code> is seconds × list price (GPU + cores + GiB), labelled an estimate.</li>
+      <li>The workspace's spend counts against the $30 credit. A workspace budget can cap it.</li>
+    </ul></div>
+    <div class="card"><h3>Did it get better?</h3><ul class="tight">
+      <li><code>/eval/:run?vs=&lt;R0&gt;</code>, unchanged: pass^1 to pass^4, fixed / broke / same by task, and the sign test's p.</li>
+      <li>Each served line's <code>retries</code> shows whether a preemption touched a conversation.</li>
+    </ul></div>
+  </div>
+</section>
+
+<!-- 06 EC2 OR MODAL -->
+<section id="s-vs">
+  <span class="eyebrow">06 · EC2 or Modal</span>
+  <h2>Modal is cheaper and has less to build, <em>but EC2 never preempts and tells the better enterprise story</em></h2>
+  <p class="sub">The two paths side by side, line for line. Prices are list prices checked today: Modal's pricing page, and the plan's EC2 figure for g6.2xlarge in Sydney (16 Oct).</p>
+  <div class="tablewrap">
+    <table class="first-nowrap">
+      <thead><tr><th></th><th>EC2 (the plan)</th><th>Modal</th></tr></thead>
+      <tbody>
+        <tr><td>Before the first run</td><td class="ec2"><code>aws sso login</code>; Terraform for the instance, IAM, security group and S3; a Dockerfile and ECR; an SSH runbook</td><td class="mod"><code>modal setup</code>; <code>cloud/modal_app.py</code>; three Volumes</td></tr>
+        <tr><td>To start a job</td><td>Start the instance, SSH in, pull the image, <code>docker run</code></td><td><code>modal deploy</code> or <code>modal run --detach</code>. The cold start is unmeasured: Modal says weights load at 1–2 GB/s, and vLLM's own start-up comes on top.</td></tr>
+        <tr><td>To stop</td><td>You stop it, and pay until you do</td><td>The server scales to zero 15 min after its last request, and the job ends when it returns. <code>modal app stop</code> stops either at once.</td></tr>
+        <tr><td>Billing</td><td>Per second on Linux, 60 s minimum. One price for 8 vCPU and 32 GiB.</td><td>Per second, with the GPU, CPU cores and memory as separate lines; you pay for the request or actual use, whichever is higher</td></tr>
+        <tr><td>One L4 hour</td><td>$1.271 (g6.2xlarge)</td><td>$0.80 for the GPU + about $0.22 for 2 cores and 16 GiB = about <b>$1.02</b></td></tr>
+        <tr><td>M3 to M5</td><td>$9–16</td><td><b>$7–13</b>, and probably all inside the $30 monthly credit</td></tr>
+        <tr><td>The 30B (M6)</td><td>RunPod 80 GB A100, $1.79/h</td><td>80 GB A100 at $2.50/h, plus cores and memory</td></tr>
+        <tr><td>Where it runs</td><td>Sydney</td><td>With no region set, Modal chooses where the container runs, and routes requests through Virginia (us-east). Round trip from Sydney is about 195 ms, so about 3 s on a 289 s conversation. Pinning <code>au</code> costs 1.75×.</td></tr>
+        <tr><td>Preemption</td><td>None (on-demand)</td><td>Any GPU container. <code>nonpreemptible</code> isn't offered for GPU functions, so the code handles it (§04).</td></tr>
+        <tr><td>Who can reach the model</td><td>No one: localhost on the instance, through your SSH key</td><td>A public HTTPS URL that Modal's proxy refuses without your token (401)</td></tr>
+        <tr><td>Logs and cost views</td><td>CloudWatch and Cost Explorer</td><td>Starter keeps logs for 1 day and has no per-app cost report. The run folder and its computed cost are the record.</td></tr>
+        <tr><td>The enterprise story</td><td>The same building blocks as SageMaker. The plan chose EC2 for this (D4).</td><td>"Less like enterprise infrastructure", in the plan's own words. Its strength is that there's nothing to run.</td></tr>
+        <tr><td>Lock-in</td><td>Docker and Terraform</td><td>One file, <code>modal_app.py</code>. The trainer, the configs and the vLLM flags run anywhere.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3 style="margin-top:var(--s5)">The cost, milestone by milestone</h3>
+  <p class="why">Hours are the plan's estimates until steps 6 and 8 measure them. A conversation takes 289 s in tau2-loop's Claude runs, and training takes 3–4 h (untested; 3.6 h used here). Each serving run adds 15 minutes for start-up and scale-down. Modal is priced for 2 cores and 16 GiB at $1.02/h; EC2 at $1.27/h, assuming the instance stops the moment each step ends.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Milestone</th><th class="n">Hours, 3 at a time</th><th class="n">EC2</th><th class="n">Modal</th><th class="n">Hours, 8 at a time</th><th class="n">EC2</th><th class="n">Modal</th></tr></thead>
+      <tbody>
+        <tr><td>M3 · R0, 160 conversations</td><td class="n">4.5</td><td class="n">$5.76</td><td class="n">$4.63</td><td class="n">1.9</td><td class="n">$2.36</td><td class="n">$1.90</td></tr>
+        <tr><td>M4 · 3 epochs, plus the measured step</td><td class="n">3.6</td><td class="n">$4.58</td><td class="n">$3.68</td><td class="n">3.6</td><td class="n">$4.58</td><td class="n">$3.68</td></tr>
+        <tr><td>M5 · R1, 160 conversations</td><td class="n">4.5</td><td class="n">$5.76</td><td class="n">$4.63</td><td class="n">1.9</td><td class="n">$2.36</td><td class="n">$1.90</td></tr>
+        <tr><td><b>M3 to M5</b></td><td class="n"><b>12.7</b></td><td class="n"><b>$16.10</b></td><td class="n"><b>$12.94</b></td><td class="n"><b>7.3</b></td><td class="n"><b>$9.30</b></td><td class="n"><b>$7.48</b></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="why">Both paths are within a few dollars, so cost alone shouldn't decide this. What differs is the work before the first run (§06's first row) and what each path makes you handle: on EC2, remembering to stop the instance; on Modal, preemption.</p>
+  <div class="callout" style="margin-top:var(--s4)"><p><b>Also on Modal, not needed here:</b> <a href="https://modal.com/docs/guide/spindle">Spindle</a> (beta), an open-source training server with Tinker's API that you deploy on your own Modal account. It does multi-tenant LoRA and full fine-tunes. M4 is plain TRL SFT and doesn't need it, but it's worth a look for the later RL plan, which the plan sketched with Tinker-style tools.</p></div>
+</section>
+
+<!-- 07 RISKS -->
+<section id="s-risks">
+  <span class="eyebrow">07 · risks and unknowns</span>
+  <h2>Ten things that could go wrong on Modal, <em>with how each is handled and what's still unknown</em></h2>
+  <p class="sub">Ordered by how much each could cost the result. A plain <b>unknown</b> means Modal's docs didn't answer it, and the first measured conversation or step will.</p>
+  <div class="tablewrap">
+    <table class="first-nowrap">
+      <thead><tr><th>ID</th><th>Risk</th><th>What would happen</th><th>Handled by</th><th>Left over</th></tr></thead>
+      <tbody>
+        <tr><td>M-1</td><td>A training container is preempted</td><td>Modal restarts the job on the same input. With today's trainer, the work since the start would be lost.</td><td>The caller's run id, resuming from the newest checkpoint, a checkpoint every 10 steps, <code>retries=3</code></td><td>Up to about 20 minutes of work per preemption. <b>Unknown:</b> whether a preemption uses up a retry.</td></tr>
+        <tr><td>M-2</td><td>The server is preempted mid-run</td><td>The requests in flight fail; a new container takes about 1–3 minutes, unmeasured</td><td>The proxy retries for up to 15 minutes and logs the count, so the conversation waits instead of failing</td><td>A spoiled conversation is visible in <code>retries</code></td></tr>
+        <tr><td>M-3</td><td>Nothing answers until a container is up</td><td>A 503 on the first request after a deploy or a scale-down</td><td><code>serve --remote</code> waits for <code>/v1/models</code> before saying it's ready; then the retries</td><td>None</td></tr>
+        <tr><td>M-4</td><td>vLLM may not load the adapter from a Volume path</td><td>M5 couldn't serve <code>sft-a</code></td><td>One request at the start of step 12, before the 160</td><td><b>Unknown:</b> Modal's only LoRA example loads adapters inside Python</td></tr>
+        <tr><td>M-5</td><td><code>@app.server</code> is new</td><td>The API could still change</td><td>Pin the <code>modal</code> client version in uv.lock, as for every other dependency</td><td>Small</td></tr>
+        <tr><td>M-6</td><td>The free plan's limits</td><td>Logs are kept for 1 day, and there's no per-app cost report</td><td>The run folder is the record anyway, and the cost is computed from seconds × list price</td><td>None</td></tr>
+        <tr><td>M-7</td><td>The credit may need a card</td><td>Third-party sources say the free plan gives $5 a month without a card and $30 with one</td><td>Check when you sign up</td><td><b>Unknown:</b> Modal's own FAQ answer didn't load</td></tr>
+        <tr><td>M-8</td><td>Data leaves the Mac</td><td>v1's <code>train.jsonl</code> and the adapters are stored on Modal</td><td>Only v1: it comes from public board files, has no PII, and holds training tasks only. Never <code>raw/</code> or anything from test.</td><td>None</td></tr>
+        <tr><td>M-9</td><td>L4 availability</td><td>A job could wait for a GPU</td><td>No region pinned, so Modal can place it anywhere</td><td><b>Unknown:</b> which regions have L4s isn't documented</td></tr>
+        <tr><td>M-10</td><td>The customer's rate limit on your subscription</td><td>Too many conversations at once could make the customer fail</td><td>The same ramp as on EC2, 3 then 6 then 8</td><td>The same on either path</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 08 READY -->
+<section id="s-ready">
+  <span class="eyebrow">08 · ready to go ahead?</span>
+  <h2>If it's Modal, <em>I build the pieces at no cost first, and you say when anything starts paying</em></h2>
+  <div class="steps">
+    <div class="step"><b>Choose the path</b>Use the form below. My recommendation is Modal for the 4B's M3 to M5. There's less to build than on EC2, it costs a bit less and probably comes out of the credit, and nothing bills you if you forget to stop it. The code also stays portable, so EC2 remains open if Modal disappoints. Choose EC2 if the enterprise story weighs most for you. M6 can be decided at M6.<span class="tag">yours</span></div>
+    <div class="step"><b>Make a Modal account and run <code>modal setup</code></b>A browser login only you can do. The token goes to <code>~/.modal.toml</code>. You can run it here as <code>! uv run modal setup</code> once the CLI is installed.<span class="tag">yours · free</span></div>
+    <div class="step"><b>I build steps 1–5 offline</b><code>cloud/modal_app.py</code>, the proxy and trainer diffs with their tests, the make targets and the doc updates. I stop before any GPU starts.<span class="tag">no cost</span></div>
+    <div class="step"><b>Say go for step 6</b>One measured conversation on a training task, a few cents. It replaces this page's estimates with measurements before the 160.<span class="tag">paid · only when asked</span></div>
+  </div>
+  <form class="decide" data-lavish-question="compute" onsubmit="event.preventDefault(); const f=new FormData(event.currentTarget); const c=f.get('compute'); const n=(f.get('note')||'').toString().trim(); if(!c) return; window.lavish && window.lavish.queuePrompt('Compute for M3 to M5: ' + c + (n ? ' — note: ' + n : ''), { tag:'choice', text:'Compute: ' + c, element:event.currentTarget, data:{ question:'compute', answer:c, note:n } }); event.currentTarget.querySelector('.queued').textContent='Queued: ' + c;">
+    <h3>Where do M3 to M5 run?</h3>
+    <fieldset>
+      <label><input type="radio" name="compute" value="Modal for the 4B (M3 to M5); build steps 1 to 5 offline, then stop before any GPU; decide M6 later"> <span><b>Modal for the 4B</b> <span class="badge rec">recommended</span><br>Build steps 1–5 offline, then stop before any GPU. Decide M6 later.</span></label>
+      <label><input type="radio" name="compute" value="Modal for everything, including M6's 30B on an 80 GB A100"> <span><b>Modal for everything</b>, M6's 30B included, at $2.50/h against RunPod's $1.79</span></label>
+      <label><input type="radio" name="compute" value="Keep EC2 as the plan has it"> <span><b>Keep EC2</b>, as the plan has it: the enterprise path, no preemption</span></label>
+    </fieldset>
+    <textarea name="note" placeholder="Anything to add (optional)"></textarea>
+    <div class="row"><button class="btn" type="submit">Queue this answer</button><span class="queued"></span></div>
+  </form>
+</section>
+
+<!-- 09 COMMANDS -->
+<section id="s-cmds">
+  <span class="eyebrow">09 · commands</span>
+  <h2>The Modal path, <em>from the shell</em></h2>
+  <p class="sub">What it would look like once built. The tau2-loop version names are placeholders: the 4B's student versions are new at M3 on either path.</p>
+  <div class="codewrap"><div id="code-cmds"></div></div>
+</section>
+
+<!-- 10 SOURCES -->
+<section id="s-src">
+  <span class="eyebrow">10 · sources</span>
+  <h2>Where each fact came from, <em>and which ones I read myself</em></h2>
+  <p class="sub">A researcher read Modal's docs and pricing today, 19 Oct. I re-read the pages marked "read" myself before writing anything that rests on them. Modal changes fast; <code>@app.server</code> replaced <code>@modal.web_server</code> in its vLLM example.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Fact</th><th>Source</th><th>Checked</th></tr></thead>
+      <tbody>
+        <tr><td>L4 $0.000222/s; A100-80GB $0.000694/s; H100 $0.001097/s; CPU $0.0000131 per core-second; memory $0.00000222 per GiB-second; Starter $30 credit a month, 10 GPUs at once, logs kept 1 day; non-preemptible 3×; regions 1.15–1.75×</td><td><a href="https://modal.com/pricing">modal.com/pricing</a></td><td><span class="badge ok">read</span></td></tr>
+        <tr><td>All functions can be preempted; <code>nonpreemptible</code> isn't supported for GPU functions; a preempted function restarts on the same input</td><td><a href="https://modal.com/docs/guide/preemption">guide/preemption</a></td><td><span class="badge ok">read</span></td></tr>
+        <tr><td>The vLLM example: <code>@app.server</code>, <code>@modal.enter()</code>, CUDA 12.9 base + <code>vllm==0.21.0</code>, HF and vLLM cache Volumes, <code>scaledown_window</code> 15 min, <code>startup_timeout</code> 10 min, 503 when no container is up</td><td><a href="https://modal.com/docs/examples/vllm_inference">examples/vllm_inference</a></td><td><span class="badge ok">read</span></td></tr>
+        <tr><td>Servers require a token by default (401 without one); <code>Modal-Key</code>/<code>Modal-Secret</code> headers; request timeouts are left to the client or server, not Modal; 429 at <code>max_concurrency</code>; for a singleton, leave <code>target_concurrency</code> unset rather than set <code>max_containers=1</code></td><td><a href="https://modal.com/docs/guide/servers">guide/servers</a></td><td><span class="badge ok">read</span></td></tr>
+        <tr><td>Region codes <code>au</code>, <code>ap-southeast</code>, <code>ap-melbourne</code>; requests routed through us-east by default; 1.15× broad, 1.75× narrow</td><td><a href="https://modal.com/docs/guide/region-selection">guide/region-selection</a></td><td><span class="badge ok">read</span></td></tr>
+        <tr><td><code>modal skills install</code> / <code>show</code> / <code>update</code>; <code>--claude</code>, <code>-g</code>, <code>--no-docs</code></td><td><a href="https://modal.com/docs/cli/latest/skills">cli/skills</a></td><td><span class="badge ok">read</span></td></tr>
+        <tr><td>Timeouts: default 300 s, maximum 24 h</td><td><a href="https://modal.com/docs/guide/timeouts">guide/timeouts</a></td><td><span class="badge info">researcher</span></td></tr>
+        <tr><td>Long training: <code>modal.Retries</code>, checkpoints on a Volume, <code>modal run --detach</code></td><td><a href="https://modal.com/docs/examples/long-training">examples/long-training</a></td><td><span class="badge info">researcher</span></td></tr>
+        <tr><td>Volumes: <code>commit</code> and <code>reload</code>; v1 under about 50k files; <code>modal volume put</code>/<code>get</code></td><td><a href="https://modal.com/docs/guide/volumes">guide/volumes</a></td><td><span class="badge info">researcher</span></td></tr>
+        <tr><td>Fine-tuning with TRL's <code>SFTTrainer</code> + PEFT on Modal (Unsloth, Qwen3, resume from checkpoint)</td><td><a href="https://modal.com/docs/examples/unsloth_finetune">examples/unsloth_finetune</a></td><td><span class="badge info">researcher</span></td></tr>
+        <tr><td>Weights load from a Volume at 1–2 GB/s; GPU memory snapshots are alpha</td><td><a href="https://modal.com/docs/guide/high-performance-llm-inference">guide/high-performance-llm-inference</a></td><td><span class="badge info">researcher</span></td></tr>
+        <tr><td>Tunnels expose a container port to the internet; nothing reaches back to a laptop without, for example, Tailscale</td><td><a href="https://modal.com/docs/guide/tunnels">guide/tunnels</a></td><td><span class="badge info">researcher</span></td></tr>
+        <tr><td>Per-app billing reports are Team and Enterprise only</td><td><a href="https://modal.com/docs/guide/billing">guide/billing</a></td><td><span class="badge info">researcher</span></td></tr>
+        <tr><td>Sydney to Virginia round trip about 195 ms</td><td><a href="https://hatsnet.io/docs/network/latency/pairs/syd-iad-rtt">hatsnet.io</a></td><td><span class="badge info">researcher</span></td></tr>
+        <tr><td>The skill: <code>SKILL.md</code> (version 1.6.2), its advice to use <code>uv run modal</code> inside a project and to match the client's version, and 220 reference pages</td><td><code>.claude/skills/modal/</code>, installed 19 Oct</td><td><span class="badge ok">read</span></td></tr>
+        <tr><td>Spindle, Tinker-compatible (beta); <code>modal workspace proxy-tokens create</code> and <code>allow</code></td><td><a href="https://modal.com/docs/guide/spindle">guide/spindle</a> (in the skill's references)</td><td><span class="badge ok">read</span></td></tr>
+        <tr><td>The 289 s conversation and the 3–4 h training estimates; EC2's $1.271/h in Sydney</td><td><code>.lavish/s00_tau-airline-sft-plan.html</code> §7, §8</td><td><span class="badge ok">read</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<script type="application/json" id="code-data">[{"id": "code-app", "name": "src/tau_telecom_sft/cloud/modal_app.py", "contents": "\"\"\"M3 to M5 on Modal instead of EC2 (s02): the same trainer and the same vLLM command.\n\nTwo things, each on one L4 and billed only while it runs. `train` runs train/sft.py in a\ndetached GPU function and writes the run folder to the runs Volume. A container cannot reach\nthe Mac's localhost:5000, so `make sync-runs` copies the folder into runs/ and logs it to the\ncentral MLflow from the Mac, as the plan already had it for S3. `Student` is vLLM's own\nOpenAI-compatible server for the base model plus each adapter in ADAPTERS, in bf16 as trained.\nModal's proxy requires a token by default; serve/proxy.py on the Mac adds it to every request.\n\nModal can preempt any GPU container, and restarts it on the same input. `train` takes its run\nid from the caller, so a restart finds its folder and resumes from the last checkpoint; the\nproxy retries a 503 until a new Student is up.\n\"\"\"\n\nfrom __future__ import annotations\n\nimport subprocess\n\nimport modal\n\nBASE = \"Qwen/Qwen3-4B-Instruct-2507\"\nGPU = \"L4\"\nMINUTES = 60\nVLLM = \"vllm==0.21.0\"  # Modal's example's pin; ours is fixed at M3\n# M5: {\"sft-a\": \"<M4's train run id>\"}; each is one --lora-modules entry\nADAPTERS: dict[str, str] = {}\n\nhf = modal.Volume.from_name(\"tau-telecom-sft-hf\", create_if_missing=True)\ndata = modal.Volume.from_name(\"tau-telecom-sft-data\", create_if_missing=True)\nruns = modal.Volume.from_name(\"tau-telecom-sft-runs\", create_if_missing=True)\n\n# the trainer: uv.lock's pins (`uv export --extra train`, plus liger-kernel), tau2 at the pin,\n# then this repo's code and configs. Never raw/: the board files hold the test tasks.\ntrainer_image = (\n    modal.Image.debian_slim(python_version=\"3.12\")\n    .uv_pip_install(requirements=[\"requirements-train.txt\"])\n    .add_local_dir(\"vendor/tau2-bench\", \"/repo/vendor/tau2-bench\", copy=True)\n    .run_commands(\"uv pip install --system --no-deps /repo/vendor/tau2-bench\")\n    .env({\"PYTHONPATH\": \"/repo/src\", \"HF_HOME\": \"/hf\", \"TAUSFT_ENV\": \"modal\"})\n    .add_local_dir(\"src\", \"/repo/src\")\n    .add_local_dir(\"configs\", \"/repo/configs\")\n)\n# the server: the base of Modal's own vLLM example, with vLLM pinned\nstudent_image = (\n    modal.Image.from_registry(\"nvidia/cuda:12.9.0-devel-ubuntu22.04\", add_python=\"3.12\")\n    .uv_pip_install(VLLM)\n    .env({\"HF_HOME\": \"/hf\"})\n)\n\napp = modal.App(\"tau-telecom-sft\")\n\n\n@app.function(\n    image=trainer_image,\n    gpu=GPU,\n    memory=16 * 1024,\n    timeout=8 * 60 * MINUTES,\n    retries=modal.Retries(max_retries=3, initial_delay=0.0),\n    volumes={\"/hf\": hf, \"/repo/data/sft\": data, \"/repo/runs\": runs},\n)\ndef train(config_file: str, run_id: str, git_sha: str, max_steps: int = 0) -> str:\n    \"\"\"One training job under the caller's run id; a restart after preemption resumes it.\"\"\"\n    import hashlib\n    import json\n    import os\n    from pathlib import Path\n\n    from tau_telecom_sft.train import sft\n\n    os.environ[\"GIT_SHA\"] = git_sha  # no .git in the image\n    cfg = sft.load_config(Path(\"/repo\") / config_file)\n    v = Path(\"/repo/data/sft\") / cfg[\"dataset\"]\n    got = hashlib.sha256((v / \"train.jsonl\").read_bytes()).hexdigest()\n    want = json.loads((v / \"stats.json\").read_text())[\"train_sha256\"]\n    if got != want:  # the Volume's copy must be the card's, before the model loads\n        raise RuntimeError(f\"{v}/train.jsonl is not the card's: {got[:8]} != {want[:8]}\")\n    run_dir = sft.train(\n        Path(\"/repo\") / config_file,\n        run_id=run_id,\n        resume=True,\n        max_steps=max_steps or None,\n        use_mlflow=False,\n    )\n    runs.commit()\n    return run_dir.name\n\n\n@app.server(\n    image=student_image,\n    gpu=GPU,\n    port=8000,\n    volumes={\"/hf\": hf, \"/runs\": runs},\n    scaledown_window=15 * MINUTES,\n    startup_timeout=15 * MINUTES,\n)  # no target_concurrency: one container, so one prefix cache serves every conversation\nclass Student:\n    @modal.enter()\n    def start(self) -> None:\n        cmd = [\n            \"vllm\", \"serve\", BASE,\n            \"--host\", \"0.0.0.0\", \"--port\", \"8000\",\n            \"--dtype\", \"bfloat16\",\n            \"--max-model-len\", \"32768\",\n            \"--gpu-memory-utilization\", \"0.90\",\n            \"--enable-prefix-caching\",\n            \"--enable-auto-tool-choice\", \"--tool-call-parser\", \"hermes\",\n        ]\n        if ADAPTERS:\n            mods = [f\"{name}=/runs/{run}/adapter\" for name, run in ADAPTERS.items()]\n            cmd += [\"--enable-lora\", \"--max-lora-rank\", \"16\", \"--lora-modules\", *mods]\n        self.proc = subprocess.Popen(cmd)\n\n    @modal.exit()\n    def stop(self) -> None:\n        self.proc.terminate()\n"}, {"id": "code-proxy", "name": "src/tau_telecom_sft/serve/proxy.py", "old": "def make_app(upstream: str, log: Path, rewrite_model: str | None = None) -> FastAPI:\n    import httpx\n\n    app = FastAPI(title=\"tau-telecom-sft recording proxy\")\n    client = httpx.AsyncClient(base_url=upstream, timeout=httpx.Timeout(1800.0))\n    log.parent.mkdir(parents=True, exist_ok=True)\n\n    @app.post(\"/v1/chat/completions\")\n    async def chat(request: Request) -> Response:\n        body = await request.json()\n        sent = dict(body)\n        if rewrite_model:\n            sent[\"model\"] = rewrite_model\n        t0 = time.time()\n        reply: dict[str, Any] | None = None\n        try:\n            r = await client.post(\"/v1/chat/completions\", json=sent)\n            status = r.status_code\n            content = r.content\n            if status == 200:\n                reply = r.json()\n        except httpx.HTTPError as e:\n            status, content = 502, json.dumps({\"error\": str(e)}).encode()\n        with log.open(\"a\") as f:\n            f.write(json.dumps(record(body, reply, time.time() - t0)) + \"\\n\")\n        return Response(content=content, status_code=status, media_type=\"application/json\")\n", "contents": "# Modal answers 503 while no Student is up (a cold start, or one preempted) and 429 when one is\n# at its limit: the proxy waits, rather than end a conversation the student never saw\nRETRY = frozenset({429, 502, 503})\nRETRY_FOR_S = 900.0\n\n\ndef make_app(\n    upstream: str,\n    log: Path,\n    rewrite_model: str | None = None,\n    headers: dict[str, str] | None = None,\n) -> FastAPI:\n    import httpx\n\n    app = FastAPI(title=\"tau-telecom-sft recording proxy\")\n    client = httpx.AsyncClient(\n        base_url=upstream, headers=headers or {}, timeout=httpx.Timeout(1800.0)\n    )\n    log.parent.mkdir(parents=True, exist_ok=True)\n\n    @app.post(\"/v1/chat/completions\")\n    async def chat(request: Request) -> Response:\n        body = await request.json()\n        sent = dict(body)\n        if rewrite_model:\n            sent[\"model\"] = rewrite_model\n        t0 = time.time()\n        reply: dict[str, Any] | None = None\n        retries = 0\n        while True:\n            try:\n                r = await client.post(\"/v1/chat/completions\", json=sent)\n                status, content = r.status_code, r.content\n            except httpx.HTTPError as e:\n                status, content = 502, json.dumps({\"error\": str(e)}).encode()\n            if status not in RETRY or time.time() - t0 > RETRY_FOR_S:\n                break\n            retries += 1\n            await asyncio.sleep(min(30.0, 2.0**retries))\n        if status == 200:\n            reply = json.loads(content)\n        with log.open(\"a\") as f:\n            line = {**record(body, reply, time.time() - t0), \"retries\": retries}\n            f.write(json.dumps(line) + \"\\n\")\n        return Response(content=content, status_code=status, media_type=\"application/json\")\n"}, {"id": "code-sft", "name": "src/tau_telecom_sft/train/sft.py", "old": "def train(\n    config_path: Path,\n    *,\n    runs_dir: Path = RUNS_DIR,\n    max_steps: int | None = None,\n    use_mlflow: bool = True,\n    console: Any = None,\n) -> Path:\n    # … (load the config, stats and rows)\n    run_id = new_run_id(\"train\", cfg[\"label\"])\n    run_dir = runs_dir / run_id\n    run_dir.mkdir(parents=True)\n    # … (run.json, the model, the trainer, the mask check before step 1)\n    t0 = time.time()\n    try:\n        out = trainer.train()\n", "contents": "def train(\n    config_path: Path,\n    *,\n    runs_dir: Path = RUNS_DIR,\n    run_id: str | None = None,\n    resume: bool = False,\n    max_steps: int | None = None,\n    use_mlflow: bool = True,\n    console: Any = None,\n) -> Path:\n    from transformers.trainer_utils import get_last_checkpoint\n\n    # … (load the config, stats and rows)\n    # Modal restarts a preempted GPU job on the same input: the same run id finds its folder\n    run_id = run_id or new_run_id(\"train\", cfg[\"label\"])\n    run_dir = runs_dir / run_id\n    run_dir.mkdir(parents=True, exist_ok=resume)\n    # … (run.json, the model, the trainer, the mask check before step 1)\n    t0 = time.time()\n    ckpts = run_dir / \"checkpoints\"\n    last = get_last_checkpoint(str(ckpts)) if resume and ckpts.is_dir() else None\n    meta[\"resumed_from\"] = Path(last).name if last else None\n    try:\n        out = trainer.train(resume_from_checkpoint=last)\n"}, {"id": "code-make", "name": "Makefile", "contents": "# M3 to M5 on Modal (s02). Nothing here starts a GPU except modal-train, and the Student's\n# first request after modal-serve. The app is src/tau_telecom_sft/cloud/modal_app.py.\nMODAL_APP := src/tau_telecom_sft/cloud/modal_app.py\n\nmodal-data: ## dataset v1 into the data Volume (train.jsonl, stats.json); the job checks the sha256\n\tuv run modal volume put --force tau-telecom-sft-data data/sft/v1/train.jsonl /v1/train.jsonl\n\tuv run modal volume put --force tau-telecom-sft-data data/sft/v1/stats.json /v1/stats.json\n\nmodal-serve: ## M3, M5: deploy the Student (vLLM, one L4); it scales to zero 15 min after its last request\n\tuv run modal deploy $(MODAL_APP)\n\nmodal-train: ## M4: CONFIG=configs/sft_a.yaml [MAX_STEPS=1 for the measured step]; detached\n\tuv run modal run --detach $(MODAL_APP)::train --config-file $(CONFIG) \\\n\t  --run-id $$(uv run tausft new-run-id --config $(CONFIG)) \\\n\t  --git-sha $$(git rev-parse --short HEAD) $(if $(MAX_STEPS),--max-steps $(MAX_STEPS))\n\nsync-runs: ## run folders from the runs Volume into runs/, logged to MLflow (WATCH=60 repeats)\n\tuv run tausft sync-runs $(if $(WATCH),--watch $(WATCH))\n\nmodal-stop: ## stop the app now; the Volumes and their files stay\n\tuv run modal app stop tau-telecom-sft\n"}, {"id": "code-cmds", "name": "the Modal path.sh", "contents": "# once\nuv sync --extra cloud                      # modal==1.6.2, the skill's version (a proposed `cloud` extra)\nuv run modal setup                         # yours: a browser login; the token goes to ~/.modal.toml\nuv run modal workspace proxy-tokens create # → MODAL_PROXY_TOKEN_ID and MODAL_PROXY_TOKEN_SECRET in ~/.env\nuv run modal workspace proxy-tokens allow <token-id> \"$MODAL_ENVIRONMENT\"\n# done 19 Oct: Modal's skill in .claude/skills/modal/ (modal skills update --claude when the pin moves)\nmake modal-data                            # v1 → the data Volume; the job checks its sha256\n\n# M3 · the untrained 4B (R0)\nmake modal-serve                           # deploys Student; prints its URL\nuv run tausft serve --remote \"<the Student's URL>\"   # the proxy on :8020, with the token\nuv run tausft serve-check                  # a tool call comes back as tool_calls\n(cd ../tau2-loop-student && STUDENT_URL=http://127.0.0.1:8020 \\\n  make eval DOMAIN=telecom AGENT=s3 SPLIT=train TASKS=\"<one training task>\" TRIALS=1)   # step 6, measured\n(cd ../tau2-loop-student && STUDENT_URL=http://127.0.0.1:8020 \\\n  make eval DOMAIN=telecom AGENT=s3 SPLIT=test TRIALS=4 CONCURRENCY=3)                  # step 7\nuv run tausft score-pull …                 # unchanged\nmake modal-stop                            # or let it scale to zero after 15 min\n\n# M4 · the fine-tune\nmake modal-train CONFIG=configs/sft_a.yaml MAX_STEPS=1   # step 8, the measured step\nmake modal-train CONFIG=configs/sft_a.yaml               # step 9, detached\nuv run modal app logs tau-telecom-sft -f                 # live\nmake sync-runs WATCH=60                                  # runs/<id>/ and MLflow, every minute\n\n# M5 · set ADAPTERS = {\"sft-a\": \"<M4's run id>\"} in modal_app.py, then step 7 again with AGENT=s4\nmake modal-serve\n"}]</script>
+<script type="module">
+  import { File, FileDiff } from "https://esm.sh/@pierre/diffs@1.2.10?bundle";
+  const data = JSON.parse(document.getElementById("code-data").textContent);
+  const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+  const options = { theme: { light: "github-light", dark: "github-dark" }, themeType: dark ? "dark" : "light", overflow: "wrap" };
+  const narrow = matchMedia("(max-width: 900px)").matches;
+  for (const item of data) {
+    const el = document.getElementById(item.id);
+    if (!el) continue;
+    try {
+      if (item.old !== undefined) {
+        new FileDiff({ ...options, diffStyle: narrow ? "unified" : "split" }).render({
+          containerWrapper: el,
+          oldFile: { name: item.name, contents: item.old },
+          newFile: { name: item.name, contents: item.contents },
+        });
+      } else {
+        new File(options).render({ containerWrapper: el, file: { name: item.name, contents: item.contents } });
+      }
+    } catch (e) { const pre = document.createElement("pre"); pre.textContent = item.contents; el.appendChild(pre); }
+  }
+</script>
+</body>
+</html>
