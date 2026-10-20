@@ -18,7 +18,7 @@ tasks. The student faces the same 40 test tasks as the Claude telecom v2 agent (
 | M0 · Create the repo and connect it | done | 2026-10-17 | split v3 sha256 `45d48101…` matches tau2-loop's; leak test runs; `make -C ../nmp-central-ai check ARGS="--only P10"` PASS |
 | M1 · Build dataset v1 | done | 2026-10-19 | 518 of 912 kept, all reward 1.0; 74/74 training tasks with 4–8 each; all 19 test root issues in training; `data/sft/v1/card.md`; train.jsonl sha256 `75718a64…`; MLflow data `08d798c5`; signed off on the summary in `review.jsonl` (sample not read, 0/20) |
 | M2 · Prove the pipeline on the Mac, end to end (0.6B) | done (smoke) | 2026-10-17 | mask 11/11 agent turns; loss 1.47 → 0.87 in 16 steps; prompt bytes ok on 223 served requests; 0/3 → 0/3 on training tasks; own-tool calls 37% → 95%; tau2-loop branch `feat/open-student` |
-| M3 · Serve the untrained 4B on EC2 (R0) | | | |
+| M3 · Serve the untrained 4B on Modal (R0) | done (1 trial) | 2026-10-20 | vLLM 0.21.0 on one Modal L4 behind the recording proxy; R0 6/40 test (`runs/20261019T223319Z_eval_r0-4b-test`), 8/74 train (`runs/20261020T004651Z_eval_r0-4b-train`); tool calls structured, prompt bytes ok on all 4,337 requests; 41% of tool calls named phone tools; Modal bill ≈ $3.50; walkthrough `.lavish/s03_m3-baseline-and-m5-swap.html` |
 | M4 · SFT the 4B on v1 | | | |
 | M5 · Score it on test (R1) | | | |
 | M6 · The 30B shadow (R2, R3) | | | |
@@ -27,13 +27,14 @@ tasks. The student faces the same 40 test tasks as the Claude telecom v2 agent (
 
 ## Results
 
-Every row is the 40 test tasks of split v3 × 4 trials (160 conversations), played by tau2-loop
+Every row is the 40 test tasks of split v3 × 4 trials (160 conversations; for now 1 trial each,
+the person's call on 2026-10-20 until the pipeline is validated), played by tau2-loop
 with rules tau2_loop/2 and a Haiku 5.5 customer at high effort, and paired by task with a sign
 test against its own untrained base. Counts sit beside percentages: one task is 2.5 points.
 
 | Row | Model | pass^1 | pass^3 | vs base (p) | Cost / conv |
 |---|---|---|---|---|---|
-| R0 | Qwen3-4B-Instruct-2507, untrained | M3 | M3 | n/a | M3 |
+| R0 | Qwen3-4B-Instruct-2507, untrained | 6/40, 1 trial | needs trials | n/a | $0.03 (L4 list × wall) |
 | R1 | Qwen3-4B + SFT on v1 | M5 | M5 | M5 | M5 |
 | R2 | Qwen3-30B-A3B, untrained | M6 | M6 | n/a | M6 |
 | R3 | Qwen3-30B-A3B + SFT on v1 | M6 | M6 | M6 | M6 |

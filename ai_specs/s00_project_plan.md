@@ -72,7 +72,9 @@ each of the 40 tasks is worth 2.5 points.
         written as text; calls on the agent's own tools 36.6% → 94.5%. MLflow eval `24fceb79`,
         `d307e9ff`. Not results: a 0.6B on 3 training tasks.
   - [x] The viewer shows the chain: `/`, `/train/<run>`, `/eval/<run>?vs=` (s01 has screenshots)
-- [ ] **M3 · Serve the untrained 4B on EC2 and record the before row** (EC2 L4 · tau2-loop).
+- [x] **M3 · Serve the untrained 4B on EC2 and record the before row** (EC2 L4 · tau2-loop).
+  Done 2026-10-20 on a Modal L4 instead (s02), at 1 trial per task (the person's call): R0 6/40 test,
+  8/74 train; walkthrough s03.
   Start vLLM on the L4 with vLLM's own image, point M2's tau2-loop student version at it through
   the port forward, and play the 40 test tasks × 4 trials.
   - Done when: R0 is filled in, tool calls come back as `tool_calls` from vLLM too, and the

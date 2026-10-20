@@ -1,0 +1,84 @@
+{
+  "run_id": "20261019T205332Z_eval_measured-4b-base",
+  "kind": "eval",
+  "label": "measured-4b-base",
+  "purpose": "smoke",
+  "results_row": null,
+  "created": "2026-10-19T20:53:34Z",
+  "code_sha": "da1c9dc",
+  "model": {
+    "name": "openai/student-qwen3-4b",
+    "base_model": "Qwen/Qwen3-4B-Instruct-2507",
+    "train_run": null,
+    "adapter_sha256": null
+  },
+  "serving": {
+    "server": "vllm 0.21.0 on Modal L4",
+    "precision": "bfloat16",
+    "endpoint": "student:127.0.0.1:8020",
+    "sampling": {
+      "temperature": 0.7,
+      "top_p": 0.8,
+      "top_k": 20.0
+    },
+    "chat_template_sha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326",
+    "max_tokens": 2048
+  },
+  "tau2_loop_run": "20261019T205130Z_telecom_s3_custom",
+  "tau2_loop_version": "telecom/s3",
+  "tau2_loop_mlflow_run_id": "a3c14b4a4db541658ebcae3486bf1da1",
+  "customer": {
+    "model": "claude-sdk/claude-haiku-5-5",
+    "effort": "high"
+  },
+  "sim_rules": "tau2_loop/2",
+  "split": "train",
+  "task_ids": [
+    "[mobile_data_issue]airplane_mode_on|user_abroad_roaming_enabled_off[PERSONA:None]"
+  ],
+  "trials": 1,
+  "scores": {
+    "n_tasks": 1,
+    "trials": 1,
+    "passed": 0,
+    "pass_hat": {
+      "1": 0.0
+    },
+    "by_task": {
+      "[mobile_data_issue]airplane_mode_on|user_abroad_roaming_enabled_off[PERSONA:None]": [
+        0
+      ]
+    }
+  },
+  "prompt_bytes": {
+    "ok": true,
+    "requests": 12,
+    "system_prompt_sha256": [
+      "b76554cc96138af12ae5a6a053b213a08148a4edb6e2de9d19cd63eb7ac5ddac"
+    ],
+    "tools_sha256": [
+      "66b1aa33c7b193fedd548535867cef95cd7612fd5758f992c79e2feb2877a165"
+    ],
+    "expected_system_prompt_sha256": "b76554cc96138af12ae5a6a053b213a08148a4edb6e2de9d19cd63eb7ac5ddac",
+    "expected_tools_sha256": "66b1aa33c7b193fedd548535867cef95cd7612fd5758f992c79e2feb2877a165"
+  },
+  "tool_calls": {
+    "ok": true,
+    "requests_with_tool_calls": 2,
+    "text_tool_calls": 0,
+    "errors": 0,
+    "calls": 2,
+    "agent_tool_calls": 0,
+    "phone_tool_calls": 2,
+    "invented_tool_calls": 0,
+    "agent_tool_share": 0.0,
+    "most_called": {
+      "check_apn_settings": 2
+    }
+  },
+  "duration_s": 102.8,
+  "cost_usd": 0.02,
+  "cost_basis": "L4 list price x the run's wall time; CPU, memory, start-up and idle scale-down not included",
+  "mlflow_run_id": "49fa8bfcf9df4169816858cac176510d",
+  "mlflow_experiment": "tau-telecom-sft/eval"
+}
