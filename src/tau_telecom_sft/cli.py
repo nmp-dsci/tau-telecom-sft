@@ -216,6 +216,17 @@ def train(
     console.print(f"run folder {run_dir.relative_to(config.ROOT)}")
 
 
+@app.command("sync-runs")
+def sync_runs(
+    run_id: str = typer.Argument(None, help="a train run id; the newest on the Volume if omitted"),
+    watch: int = typer.Option(0, help="sync again every N seconds until the run ends"),
+) -> None:
+    """Copy a training run from Modal's runs Volume into runs/ and log it to MLflow (M4)."""
+    from tau_telecom_sft.cloud import sync
+
+    sync.run(run_id, watch=watch, console=console)
+
+
 @app.command()
 def mask(
     config_file: Path = typer.Option(Path("configs/smoke.yaml"), "--config"),  # noqa: B008

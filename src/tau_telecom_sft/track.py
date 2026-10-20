@@ -114,24 +114,26 @@ def _params(meta: dict[str, Any]) -> dict[str, Any]:
     return {k: str(v)[:500] for k, v in out.items()}
 
 
-def start_train(meta: dict[str, Any]) -> str | None:
+def start_train(meta: dict[str, Any], system_metrics: bool = True) -> str | None:
     """Open the job's run in tau-telecom-sft/train; None (and the job carries on) if MLflow is
-    down, so a job writes its folder first and `make sync-runs` logs it later."""
+    down, so a job writes its folder first and `make sync-runs` logs it later. A sync from
+    Modal's Volume logs no system metrics: they would be the Mac's, not the GPU's."""
     try:
         mlflow = _mlflow(config.EXPERIMENT_TRAIN)
     except Exception as e:  # noqa: BLE001 - tracking never stops a job
         print(f"MLflow not reachable ({e}); the run folder is the record")
         return None
-    run = mlflow.start_run(run_name=meta["run_id"], log_system_metrics=True)
+    run = mlflow.start_run(run_name=meta["run_id"], log_system_metrics=system_metrics)
     mlflow.set_tags(
         {
-            **required_tags(billing="none" if meta["device"] != "cuda" else "aws"),
+            **required_tags(billing=meta.get("billing", "none")),
             "kind": meta["purpose"],
             "run_folder": meta["run_id"],
             "dataset": meta["dataset"],
             "train_sha256": meta["train_sha256"],
             "device": meta["device"],
             "instance": meta["instance"],
+            "image_tag": str(meta.get("image_tag")),
         }
     )
     mlflow.log_params(_params(meta))

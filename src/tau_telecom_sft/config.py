@@ -14,7 +14,9 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-ROOT = Path(__file__).resolve().parents[2]
+# the repo; on Modal (M4) the trainer's image sets TAUSFT_ROOT, since Modal may also place this
+# package somewhere else in the container
+ROOT = Path(os.environ.get("TAUSFT_ROOT") or Path(__file__).resolve().parents[2])
 PROJECT = "tau-telecom-sft"
 DOMAIN = "telecom"
 
@@ -100,3 +102,30 @@ def modal_proxy_headers() -> dict[str, str]:
     key = os.environ.get("MODAL_PROXY_TOKEN_ID")
     secret = os.environ.get("MODAL_PROXY_TOKEN_SECRET")
     return {"Modal-Key": key, "Modal-Secret": secret} if key and secret else {}
+
+
+def clean_code_sha() -> str:
+    """The commit a job on Modal runs. Refused while src/ or configs/ have uncommitted changes:
+    the job ships them, and its run's code_sha has to be the code it ran."""
+    dirty = subprocess.run(
+        ["git", "status", "--porcelain", "--", "src", "configs"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout
+    if dirty.strip():
+        raise RuntimeError("commit src/ and configs/ first: a Modal job ships them (code_sha)")
+    return _git_sha()
+
+
+def modal_container() -> dict[str, str] | None:
+    """Where a job runs when it runs on Modal (M4): its image id stands in for the plan's
+    Docker image tag. None on the Mac."""
+    if "MODAL_TASK_ID" not in os.environ:
+        return None
+    return {
+        "task_id": os.environ["MODAL_TASK_ID"],
+        "image_id": os.environ.get("MODAL_IMAGE_ID", "unknown"),
+        "region": os.environ.get("MODAL_REGION", "unknown"),
+    }

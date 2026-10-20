@@ -15,6 +15,7 @@ runs/<id>/
   metrics.jsonl   one line per logged optimiser step
   mask.json       the loss-mask check on one row, and that row rendered for the tokens lens
   adapter/        the LoRA adapter (git-ignored)
+  checkpoints/    every 11 steps and at each epoch's end (git-ignored; on Modal they stay on the Volume)
 ```
 
 `run.json`
@@ -25,11 +26,14 @@ runs/<id>/
 | `purpose` | `smoke` (M2, not a result) or `result` |
 | `status` | `running`, `finished`, `failed` |
 | `created`, `finished`, `duration_s` | UTC ISO times; wall-clock seconds |
-| `code_sha`, `image_tag` | the repo commit; the Docker image (null on the Mac) |
+| `code_sha`, `image_tag` | the repo commit (a Modal job refuses uncommitted `src/` or `configs/`); Modal's image id (null on the Mac) |
 | `config_file`, `config` | the YAML the job read, and its parsed values (SFTConfig + LoRA) |
 | `base_model`, `tokenizer` | Hugging Face ids |
 | `dataset`, `train_sha256`, `n_rows`, `rows_selected` | the version, its hash, how many rows trained, and how they were chosen |
-| `device`, `instance`, `cost_usd` | `mps` or `cuda`; e.g. `MacBook Pro M1 Pro 32 GB`, `Modal L4`; dollars (0 on the Mac) |
+| `device`, `instance`, `billing` | `mps` or `cuda`; e.g. `Mac Apple M1 Pro, 32 GB`, `Modal NVIDIA L4 (us-east)`; `none` or `modal` |
+| `cost_usd`, `cost_basis` | dollars (0 on the Mac); on Modal, list price × the last attempt's wall time, an estimate |
+| `revision`, `stack` | the base model's Hugging Face snapshot (the one the Student serves); the versions of torch, transformers, TRL, PEFT and accelerate the job found |
+| `resumed_from` | the checkpoints a preempted job restarted from, in order (`[]` when it never was) |
 | `steps`, `epochs`, `final_loss`, `peak_mem_gb`, `tokens_trained` | totals |
 | `adapter` | `{path, sha256, bytes}` |
 | `mask_check` | `{ok, row_sim_id, assistant_turns, trained_turns, problems: []}` |

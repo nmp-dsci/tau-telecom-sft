@@ -1,6 +1,6 @@
 """The trainer's one callback: every logged step to metrics.jsonl, and to MLflow when it can.
 
-The run folder is the record. An MLflow call that fails (the tunnel from EC2 dropped, the Mac
+The run folder is the record. An MLflow call that fails (the job runs on Modal, the Mac
 asleep) is noted once and skipped, and training carries on; `make sync-runs` logs the folder
 afterwards. Never the other way round: a job never dies because tracking did.
 """
@@ -28,7 +28,7 @@ def _mem_gb(device: str) -> float | None:
 
 
 class RunFolder(TrainerCallback):  # type: ignore[misc]
-    def __init__(self, run_dir: Path, device: str) -> None:
+    def __init__(self, run_dir: Path, device: str, resume_step: int = 0) -> None:
         self.path = run_dir / "metrics.jsonl"
         self.device = device
         self.mlflow_run_id: str | None = None
@@ -39,6 +39,21 @@ class RunFolder(TrainerCallback):  # type: ignore[misc]
         self.last_loss: float | None = None
         self.peak_mem_gb: float | None = None
         self.mlflow_failed = False
+        if self.path.exists():
+            # a restarted job (Modal reruns a preempted one, s02's M-1) trains the steps after
+            # its checkpoint again, so their old lines go and no step is drawn twice
+            kept = [
+                line
+                for line in self.path.read_text().splitlines()
+                if line.strip() and json.loads(line)["step"] <= resume_step
+            ]
+            self.path.write_text("".join(f"{line}\n" for line in kept))
+
+    def on_train_begin(self, args: Any, state: Any, control: Any, **kwargs: Any) -> None:
+        # time from the first step, not from loading the model: the measured step's tokens per
+        # second set M4's hours
+        self.t0 = self.last_t = time.time()
+        self.last_tokens = int(state.num_input_tokens_seen or 0)
 
     def on_log(self, args: Any, state: Any, control: Any, logs: Any = None, **kwargs: Any) -> None:
         logs = dict(logs or {})

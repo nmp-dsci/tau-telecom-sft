@@ -71,6 +71,19 @@ serve-modal: ## the recording proxy on :8020 in front of the Student on Modal (N
 modal-stop: ## stop the Modal app now; its Volumes (weights, runs) stay
 	uv run modal app stop tau-telecom-sft --yes
 
+modal-data: leak-check ## M4: dataset v1's train.jsonl and stats.json to the data Volume, once (no test task: leak-check)
+	-uv run modal volume create tau-telecom-sft-data
+	uv run modal volume put tau-telecom-sft-data data/sft/v1/train.jsonl v1/train.jsonl
+	uv run modal volume put tau-telecom-sft-data data/sft/v1/stats.json v1/stats.json
+
+modal-train: ## M4: LoRA SFT on one Modal L4, detached; MAX_STEPS=1 LONGEST=16 is the measured step
+	uv run modal run --detach -m tau_telecom_sft.cloud.modal_app::train_job \
+	  --config $(or $(CONFIG),configs/sft_a.yaml) \
+	  $(if $(MAX_STEPS),--max-steps $(MAX_STEPS)) $(if $(LONGEST),--longest $(LONGEST))
+
+sync-runs: platform-status ## M4: a training run from the runs Volume into runs/, logged to MLflow (RUN=<id>, WATCH=60)
+	uv run tausft sync-runs $(RUN) $(if $(WATCH),--watch $(WATCH))
+
 test: ## pytest, offline: split, leak, agent view, filters, converter, card
 	uv run pytest
 

@@ -1,10 +1,13 @@
 # M4: step 1's run (plan §7). Qwen3-4B-Instruct-2507 with LoRA on dataset v1, all 74 training
 # tasks, 3 epochs fixed in advance; the final checkpoint is the model. Written at M2 so the Mac
-# smoke run and this job share one script; not run until M4, and only when asked.
+# smoke run and this job share one script; run on one Modal L4 (s02, D4), and only when asked.
 label: sft-a-4b
 purpose: result
 base_model: Qwen/Qwen3-4B-Instruct-2507
 tokenizer: Qwen/Qwen3-4B-Instruct-2507
+# the snapshot v1's token counts were made with and the Student serves (cloud/modal_app.py), so
+# the adapter is trained on the weights it is served on
+revision: cdbee75f17c01a7cc42f958dc650907174af0554
 dataset: v1
 rows:
   max_tokens: 24576
@@ -13,6 +16,8 @@ lora:
   lora_alpha: 32
   lora_dropout: 0.05
   target_modules: all-linear
+# No Liger: TRL 1.16 scores only the trained positions, through the LM head in tiles, so the
+# full logits (15 GB at 24K tokens) are never built; its use_liger_kernel is deprecated there
 sft:
   max_length: 24576
   assistant_only_loss: true
@@ -25,7 +30,9 @@ sft:
   gradient_accumulation_steps: 16
   gradient_checkpointing: true
   bf16: true
-  use_liger_kernel: true
   logging_steps: 1
-  save_strategy: epoch
+  # 518 rows at 16 a step is 33 steps an epoch: a checkpoint every 11 lands on each epoch's end
+  # (33, 66, 99) and a preempted job loses at most 11 steps (s02's M-1)
+  save_strategy: steps
+  save_steps: 11
   seed: 300
