@@ -114,6 +114,17 @@ def test_a_row_is_the_agents_view_in_chat_format(fixture_convs: list[Conversatio
     }
 
 
+def test_agent_text_loses_the_whitespace_around_it(fixture_convs: list[Conversation]) -> None:
+    # the board's Qwen3.5 replies begin "\n\n", which fused with the reply header (v1.1)
+    conv = fixture_convs[0]
+    msgs = list(conv.sim.messages)
+    i = next(i for i, m in enumerate(msgs) if m.role == "assistant" and m.content)
+    msgs[i] = msgs[i].model_copy(update={"content": f"\n\n{msgs[i].content}\n\n"})
+    sim = conv.sim.model_copy(update={"messages": msgs})
+    row = to_row(replace(conv, sim=sim), "smoke")
+    assert row["messages"][1] == {"role": "assistant", "content": "Hi! How can I help you today?"}
+
+
 def test_system_prompt_is_taus_stock_prompt() -> None:
     p = system_prompt()
     assert p.startswith("<instructions>\nYou are a customer service agent")

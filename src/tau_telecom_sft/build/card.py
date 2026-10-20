@@ -167,6 +167,14 @@ def render(st: dict[str, Any]) -> str:
         "",
         *_length_section(st),
         *_checks_section(st),
+        "## Agent text",
+        "",
+        "Each agent turn's text is kept without the whitespace around it (from v1.1). The board's "
+        "Qwen3.5 replies begin with two newlines, which after the reply header make one token "
+        "with the header's own newline, so the trainer would learn the header as part of the "
+        "reply; served, that newline is a token of its own. v1 kept them, and M4's mask check "
+        "refused it.",
+        "",
         "## Licence",
         "",
         "tau2-bench is MIT. The published board conversations carry no separate licence. Customer "

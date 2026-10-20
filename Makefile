@@ -34,8 +34,8 @@ download: ## fetch the board's telecom files S1 and S2 (128 MB) into raw/board/,
 sources-check: ## S1, S2 and a tau2-loop telecom run load with one loader and have one shape
 	uv run tausft sources-check
 
-data: download platform-status ## build dataset v1 (agent view, F1-F10, rows, card) and log it
-	uv run tausft build --version v1
+data: download platform-status ## build a dataset version (VERSION=v1.1; agent view, F1-F10, rows, card) and log it
+	uv run tausft build --version $(or $(VERSION),v1.1)
 
 # ── M2: the Mac proof of concept (Qwen3-0.6B; its scores are not results) ───────────────────
 mask: ## print one row's loss mask as the trainer applies it
@@ -71,10 +71,10 @@ serve-modal: ## the recording proxy on :8020 in front of the Student on Modal (N
 modal-stop: ## stop the Modal app now; its Volumes (weights, runs) stay
 	uv run modal app stop tau-telecom-sft --yes
 
-modal-data: leak-check ## M4: dataset v1's train.jsonl and stats.json to the data Volume, once (no test task: leak-check)
+modal-data: leak-check ## M4: a dataset version's train.jsonl and stats.json to the data Volume (VERSION=v1.1; no test task: leak-check)
 	-uv run modal volume create tau-telecom-sft-data
-	uv run modal volume put tau-telecom-sft-data data/sft/v1/train.jsonl v1/train.jsonl
-	uv run modal volume put tau-telecom-sft-data data/sft/v1/stats.json v1/stats.json
+	uv run modal volume put tau-telecom-sft-data data/sft/$(or $(VERSION),v1.1)/train.jsonl $(or $(VERSION),v1.1)/train.jsonl
+	uv run modal volume put tau-telecom-sft-data data/sft/$(or $(VERSION),v1.1)/stats.json $(or $(VERSION),v1.1)/stats.json
 
 modal-train: ## M4: LoRA SFT on one Modal L4, detached; MAX_STEPS=1 LONGEST=16 is the measured step
 	uv run modal run --detach -m tau_telecom_sft.cloud.modal_app::train_job \

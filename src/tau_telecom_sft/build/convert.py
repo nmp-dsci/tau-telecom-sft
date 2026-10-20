@@ -70,7 +70,10 @@ def prompt_fingerprint() -> dict[str, str]:
 
 
 def _assistant(m: Any) -> dict[str, Any]:
-    row: dict[str, Any] = {"role": "assistant", "content": m.content or ""}
+    # the text without the whitespace around it (v1.1): the board's Qwen3.5 replies begin "\n\n",
+    # and after the reply header that is one token, "\n\n\n", which trains the header's newline
+    # as the reply's (M4's first measured step); served, the header's "\n" is a token of its own
+    row: dict[str, Any] = {"role": "assistant", "content": (m.content or "").strip()}
     if m.tool_calls:
         row["tool_calls"] = [
             {

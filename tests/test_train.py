@@ -115,8 +115,9 @@ def test_mask_check_fails_on_a_missing_turn_or_trained_context() -> None:
 
 
 def _dataset(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, lengths: list[int]) -> Path:
-    """A version v1 under tmp_path whose rows count as `lengths` tokens, and a config for it."""
-    folder = tmp_path / "sft" / "v1"
+    """sft_a.yaml's dataset under tmp_path, whose rows count as `lengths` tokens, and the config."""
+    cfg = yaml.safe_load((config.CONFIGS_DIR / "sft_a.yaml").read_text())
+    folder = tmp_path / "sft" / cfg["dataset"]
     folder.mkdir(parents=True)
     rows = [
         {
@@ -134,7 +135,6 @@ def _dataset(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, lengths: list[int]
     monkeypatch.setattr(config, "SFT_DIR", tmp_path / "sft")
     monkeypatch.setattr(tokens, "count", lambda row, name: row["n"])
     monkeypatch.delenv("MODAL_TASK_ID", raising=False)
-    cfg = yaml.safe_load((config.CONFIGS_DIR / "sft_a.yaml").read_text())
     path = tmp_path / "sft_a.yaml"
     path.write_text(yaml.safe_dump(cfg))
     return path
@@ -150,7 +150,7 @@ def _stop_at_load(*args: Any, **kwargs: Any) -> Any:
 
 def test_a_changed_train_jsonl_is_refused(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     cfg_path = _dataset(tmp_path, monkeypatch, [10, 20])
-    path = tmp_path / "sft" / "v1" / "train.jsonl"
+    (path,) = (tmp_path / "sft").glob("*/train.jsonl")
     path.write_bytes(path.read_bytes().replace(b'"n": 10', b'"n": 11'))
     with pytest.raises(RuntimeError, match="re-upload"):
         sft.train(cfg_path, runs_dir=tmp_path / "runs", use_mlflow=False)
@@ -206,7 +206,7 @@ def test_a_restart_drops_the_steps_it_will_redo(tmp_path: Path) -> None:
 
 def test_checkpoints_land_on_each_epochs_end() -> None:
     cfg = sft.load_config(config.CONFIGS_DIR / "sft_a.yaml")
-    stats = json.loads((config.SFT_DIR / "v1" / "stats.json").read_text())
+    stats = json.loads((config.SFT_DIR / cfg["dataset"] / "stats.json").read_text())
     s = cfg["sft"]
     per_step = s["per_device_train_batch_size"] * s["gradient_accumulation_steps"]
     steps_per_epoch = math.ceil(stats["n_kept"] / per_step)
