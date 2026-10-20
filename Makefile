@@ -69,7 +69,7 @@ serve-modal: ## the recording proxy on :8020 in front of the Student on Modal (N
 	uv run tausft serve --remote $(or $(NAME),student-qwen3-4b)
 
 modal-stop: ## stop the Modal app now; its Volumes (weights, runs) stay
-	uv run modal app stop tau-telecom-sft
+	uv run modal app stop tau-telecom-sft --yes
 
 test: ## pytest, offline: split, leak, agent view, filters, converter, card
 	uv run pytest
