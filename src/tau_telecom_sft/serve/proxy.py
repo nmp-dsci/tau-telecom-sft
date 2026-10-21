@@ -109,7 +109,10 @@ def make_app(
             try:
                 reply = json.loads(content)
             except ValueError:
-                status, content = 502, json.dumps({"error": "upstream sent a non-JSON body"}).encode()
+                status, content = (
+                    502,
+                    json.dumps({"error": "upstream sent a non-JSON body"}).encode(),
+                )
         with log.open("a") as f:
             line = {**record(body, reply, time.time() - t0), "retries": retries}
             f.write(json.dumps(line) + "\n")

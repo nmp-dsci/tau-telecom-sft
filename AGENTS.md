@@ -126,8 +126,7 @@ frontend/                            the viewer (React 18, Vite, TS, react-route
 tests/                               split, leak, build, train, score, api; fixtures/ (board_mini, runs)
 ```
 
-Still to come: the Modal trainer and its Volumes' `make modal-data` and `make sync-runs` (M4),
-and `sources/teacher.py` (M7, only if needed). EC2's Dockerfile and Terraform are not needed (s02).
+Still to come: `sources/teacher.py` (M7, only if needed). EC2's Dockerfile and Terraform are not needed (s02).
 `.claude/skills/modal/` is Modal's own agent skill (v1.6.2, the `cloud` extra's pin).
 
 ## 5 · Commands
