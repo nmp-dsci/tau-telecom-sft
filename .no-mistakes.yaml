@@ -1,0 +1,4 @@
+# no-mistakes repository config. The repo has no CI workflow: `make check` (pytest, ruff, mypy,
+# vitest, leak-check) runs locally and in the gate's test and lint steps, and the GPU and eval
+# runs are paid and run by hand. So no checks ever register on a PR, and this declares that.
+no_ci: true
