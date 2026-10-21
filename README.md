@@ -20,7 +20,7 @@ tasks. The student faces the same 40 test tasks as the Claude telecom v2 agent (
 | M2 · Prove the pipeline on the Mac, end to end (0.6B) | done (smoke) | 2026-10-17 | mask 11/11 agent turns; loss 1.47 → 0.87 in 16 steps; prompt bytes ok on 223 served requests; 0/3 → 0/3 on training tasks; own-tool calls 37% → 95%; tau2-loop branch `feat/open-student` |
 | M3 · Serve the untrained 4B on Modal (R0) | done (1 trial) | 2026-10-20 | vLLM 0.21.0 on one Modal L4 behind the recording proxy; R0 6/40 test (`runs/20261019T223319Z_eval_r0-4b-test`), 8/74 train (`runs/20261020T004651Z_eval_r0-4b-train`); tool calls structured, prompt bytes ok on all 4,337 requests; 41% of tool calls named phone tools; Modal bill ≈ $3.50; walkthrough `.lavish/s03_m3-baseline-and-m5-swap.html` |
 | M4 · SFT the 4B on v1 | done | 2026-10-21 | LoRA r16 on all linear layers, 3 epochs = 99 steps on one Modal L4, on v1.1 (v1's 518 conversations, agent text stripped of surrounding whitespace; train.jsonl sha256 `3e95fed9…`); loss 1.21 → 0.364 (epoch means 0.69, 0.45, 0.40); 15.7M tokens at ~715 tokens/s in 6.1 h, peak 16.0 GB, no preemption; mask ok on 518/518 rows; adapter sha256 `8956c198…` on the runs Volume and in `runs/20261020T204721Z_train_sft-a-4b`; MLflow train `640880b1`; Modal bill ≈ $6.84, plus ≈ $0.25 for the two measured steps; plan `.lavish/s04_m4-sft-plan.html` |
-| M5 · Score it on test (R1) | | | |
+| M5 · Score it on test (R1) | done (1 trial) | 2026-10-21 | R1 17/40 test (`runs/20261021T040925Z_eval_r1-4b-test`) vs R0's 6/40: 13 fixed, 2 broke, sign test p = 0.0037, so the floor holds; in-sample 33/74 train (`runs/20261021T054742Z_eval_r1-4b-train`) vs 8/74: 27 fixed, 2 broke; by issue on test: mobile data 11/14, service 5/9, MMS 1/17; 13 of the 23 test failures hit max_steps repeating one tool call or one message; prompt bytes ok on all 6,113 requests; 4% of test tool calls named phone tools (R0 41%); L4 list × wall ≈ $2.02 for both splits |
 | M6 · The 30B shadow (R2, R3) | | | |
 | M7 · GLM-5.1 data, only if needed (R4) | | | |
 | M8 · Write it up (R5) | | | |
@@ -35,7 +35,7 @@ test against its own untrained base. Counts sit beside percentages: one task is 
 | Row | Model | pass^1 | pass^3 | vs base (p) | Cost / conv |
 |---|---|---|---|---|---|
 | R0 | Qwen3-4B-Instruct-2507, untrained | 6/40, 1 trial | needs trials | n/a | $0.03 (L4 list × wall) |
-| R1 | Qwen3-4B + SFT on v1 | M5 | M5 | M5 | M5 |
+| R1 | Qwen3-4B + SFT on v1 | 17/40, 1 trial | needs trials | 13 fixed, 2 broke (p = 0.0037) | $0.02 (L4 list × wall) |
 | R2 | Qwen3-30B-A3B, untrained | M6 | M6 | n/a | M6 |
 | R3 | Qwen3-30B-A3B + SFT on v1 | M6 | M6 | M6 | M6 |
 | R4 | the student that missed + SFT on v2 | if M7 | if M7 | if M7 | if M7 |

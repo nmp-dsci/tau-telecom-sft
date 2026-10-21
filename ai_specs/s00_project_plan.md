@@ -87,7 +87,10 @@ each of the 40 tasks is worth 2.5 points.
   Fix the success criteria and the epoch count before the run starts.
   - Done when: the final adapter is in S3, with its config, data hash and image tag logged.
     Evidence: MLflow train · runs/
-- [ ] **M5 · Score it on test, once** (EC2 L4 · tau2-loop). 40 tasks × 4 trials, with the sign
+- [x] **M5 · Score it on test, once** (EC2 L4 · tau2-loop). Done 2026-10-21 on the Modal L4 at
+  1 trial per task: R1 17/40 test against R0's 6/40, 13 fixed and 2 broke, sign test p = 0.0037;
+  33/74 on the training tasks, in-sample. pass^3 waits for more trials.
+  40 tasks × 4 trials, with the sign
   test against R0. Optionally play the 74 training tasks once, labelled in-sample.
   - Done when: R1 is filled in, with its counts. Evidence: MLflow eval · README table
 - [ ] **M6 · Train the shadow: Qwen3-30B-A3B on v1** (A100 80 GB · tau2-loop). Rent one 80 GB
