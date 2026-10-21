@@ -15,6 +15,7 @@ run's hours and dollars from the step's tokens per second.
 from __future__ import annotations
 
 import json
+import shutil
 import time
 from pathlib import Path
 from typing import Any
@@ -50,13 +51,16 @@ def pull(volume: Any, run_id: str, runs_dir: Path = RUNS_DIR) -> dict[str, Any]:
     for key in ("mlflow_run_id", "mlflow_experiment"):
         if before.get(key):
             meta[key] = before[key]
-    if meta["status"] == "finished" and not (dest / "adapter").exists():
-        for entry in volume.listdir(f"{run_id}/adapter", recursive=True):
-            if entry.type.name == "FILE":
-                out = runs_dir / entry.path
-                out.parent.mkdir(parents=True, exist_ok=True)
-                out.write_bytes(b"".join(volume.read_file(entry.path)))
-        sha, _ = _sha256_dir(dest / "adapter")
+    if meta["status"] == "finished":
+        adapter = dest / "adapter"
+        if not adapter.exists() or _sha256_dir(adapter)[0] != meta["adapter"]["sha256"]:
+            shutil.rmtree(adapter, ignore_errors=True)
+            for entry in volume.listdir(f"{run_id}/adapter", recursive=True):
+                if entry.type.name == "FILE":
+                    out = runs_dir / entry.path
+                    out.parent.mkdir(parents=True, exist_ok=True)
+                    out.write_bytes(b"".join(volume.read_file(entry.path)))
+        sha, _ = _sha256_dir(adapter)
         if sha != meta["adapter"]["sha256"]:
             raise RuntimeError(
                 f"{run_id}: the adapter copied home has sha256 {sha[:8]}…, not the job's "

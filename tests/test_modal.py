@@ -72,6 +72,18 @@ def test_the_proxy_gives_up_after_its_window(tmp_path: Path) -> None:
     assert line["retries"] == 0 and line["error"] == "upstream failed"
 
 
+def test_the_proxy_logs_a_200_that_is_not_json_as_a_failure(tmp_path: Path) -> None:
+    app = proxy.make_app(
+        "https://student.example",
+        tmp_path / "served.jsonl",
+        transport=httpx.MockTransport(lambda _: httpx.Response(200, content=b'{"choices": [')),
+    )
+    with TestClient(app) as c:
+        assert c.post("/v1/chat/completions", json=_body()).status_code == 502
+    line = json.loads((tmp_path / "served.jsonl").read_text())
+    assert line["error"] == "upstream failed" and line["n_messages"] == 1
+
+
 def test_the_vllm_command_is_the_plans() -> None:
     cmd = modal_app.vllm_command()
     for flag in ("--enable-prefix-caching", "--enable-auto-tool-choice"):
@@ -224,6 +236,17 @@ def test_sync_copies_the_folder_and_checks_the_adapter(tmp_path: Path) -> None:
     files[f"{RUN}/adapter/adapter_model.safetensors"] = b"\x01weights"
     with pytest.raises(RuntimeError, match="not the job's"):
         sync.pull(_Volume(files), RUN, tmp_path / "elsewhere")
+
+
+def test_sync_replaces_an_adapter_left_half_copied(tmp_path: Path) -> None:
+    files = _finished_run(tmp_path)
+    home = tmp_path / "runs"
+    (home / RUN / "adapter").mkdir(parents=True)
+    (home / RUN / "adapter" / "adapter_config.json").write_bytes(b'{"r"')  # a sync cut short
+    sync.pull(_Volume(files), RUN, home)
+    adapter = home / RUN / "adapter"
+    assert (adapter / "adapter_config.json").read_bytes() == b'{"r": 16}'
+    assert (adapter / "adapter_model.safetensors").read_bytes() == b"\x00weights"
 
 
 class _Client:

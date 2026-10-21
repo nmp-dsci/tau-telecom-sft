@@ -106,7 +106,10 @@ def make_app(
             retries += 1
             await asyncio.sleep(min(30.0, 2.0**retries))
         if status == 200:
-            reply = json.loads(content)
+            try:
+                reply = json.loads(content)
+            except ValueError:
+                status, content = 502, json.dumps({"error": "upstream sent a non-JSON body"}).encode()
         with log.open("a") as f:
             line = {**record(body, reply, time.time() - t0), "retries": retries}
             f.write(json.dumps(line) + "\n")
