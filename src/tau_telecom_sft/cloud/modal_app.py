@@ -47,9 +47,9 @@ VLLM = "0.21.0"  # the pin in Modal's vLLM example, 19 Oct
 PORT = 8000
 MAX_MODEL_LEN = 32768
 MINUTES = 60
-# M5: {"student-qwen3-4b-sft-a": "<M4's train run id>"}; one --lora-modules entry each, read from
-# the runs Volume, where M4's job writes its run folder
-ADAPTERS: dict[str, str] = {}
+# each adapter's train run id (M4); one --lora-modules entry each, read from the runs Volume,
+# where M4's job writes its run folder
+ADAPTERS: dict[str, str] = {"student-qwen3-4b-sft-a": "20261020T204721Z_train_sft-a-4b"}
 LORA_RANK = 16
 
 # M4's trainer: uv.lock's versions (tests/test_modal.py holds them to it). Liger is not among
