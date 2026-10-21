@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en" data-lavish-annotate="on">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>After R1: next steps</title>
+<link rel="stylesheet" href="house.css">
+<link rel="stylesheet" href="project.css">
+<style>
+  /* layout only: every colour is a house token */
+  .tablewrap td, .tablewrap th{ overflow-wrap:break-word; }
+  .tablewrap table{ min-width:620px; }
+  td.n, th.n{ text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  td.hi{ font-weight:700; color:var(--accent); }
+  td.lo{ color:var(--red); font-weight:600; }
+  .nav{ display:flex; flex-wrap:wrap; gap:var(--s1) var(--s3); font-family:var(--mono); font-size:var(--t-2); margin-top:var(--s4); }
+  .nav a{ color:var(--muted); text-decoration:none; border-bottom:1px solid var(--line-2); }
+  .nav a:hover{ color:var(--accent); border-color:var(--accent); }
+  header .verdict{ grid-template-columns:repeat(4, minmax(0,1fr)); }
+  @media (max-width: 980px){ header .verdict{ grid-template-columns:repeat(2, minmax(0,1fr)); } }
+  @media (max-width: 560px){ header .verdict{ grid-template-columns:minmax(0,1fr); } }
+  .verdict .stat .n{ font-size:var(--t3); }
+  svg.dg{ display:block; width:100%; height:auto; }
+  svg.dg .zone{ fill:var(--band); stroke:none; }
+  svg.dg .zone.cloud{ fill:var(--accent-soft); }
+  svg.dg .zl{ fill:var(--muted); font-family:var(--mono); font-size:12px; letter-spacing:.06em; }
+  svg.dg .nd rect{ fill:var(--panel); stroke:var(--line-2); stroke-width:1.2; }
+  svg.dg .nd.key rect{ stroke:var(--accent); stroke-width:2; }
+  svg.dg .t{ fill:var(--ink); font-family:var(--sans); font-size:15px; font-weight:600; }
+  svg.dg .s{ fill:var(--muted); font-family:var(--sans); font-size:13px; }
+  svg.dg .m{ fill:var(--muted); font-family:var(--mono); font-size:11.5px; }
+  svg.dg .e{ stroke:var(--line-3); stroke-width:1.6; fill:none; }
+  svg.dg .e.hot{ stroke:var(--accent); }
+  svg.dg .ah{ fill:var(--line-3); }
+  svg.dg .ah.hot{ fill:var(--accent); }
+  svg.dg .pin circle{ fill:var(--panel); stroke:var(--accent); stroke-width:1.5; }
+  svg.dg .pin text{ fill:var(--accent); font-family:var(--mono); font-size:11px; font-weight:600; text-anchor:middle; }
+  svg.strip .band{ fill:var(--band); stroke:var(--line-2); }
+  svg.strip .medline{ stroke:var(--line-3); stroke-width:1.4; stroke-dasharray:4 4; }
+  svg.strip .medr{ stroke:var(--red); stroke-width:2.5; }
+  svg.strip .ax, svg.strip .tk{ stroke:var(--line-3); stroke-width:1.2; }
+  svg.strip .dot{ stroke:var(--panel); stroke-width:1.2; }
+  svg.strip .dot.test{ fill:var(--red); }
+  svg.strip .dot.train{ fill:var(--amber); }
+  .legend{ display:flex; flex-wrap:wrap; gap:var(--s1) var(--s4); font-size:var(--t-2); color:var(--muted); margin-top:var(--s2); }
+  .legend i{ display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; vertical-align:-1px; }
+  .legend i.r{ background:var(--red); } .legend i.a{ background:var(--amber); }
+  .legend i.bar{ width:3px; height:12px; border-radius:0; background:var(--red); }
+  .two{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:var(--s3); }
+  @media (max-width: 860px){ .two{ grid-template-columns:minmax(0,1fr); } }
+  .three{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:var(--s3); }
+  @media (max-width: 900px){ .three{ grid-template-columns:minmax(0,1fr); } }
+  .card h3{ margin-top:0; }
+  .card > p:last-child, .card > ul:last-child{ margin-bottom:0; }
+  .answer{ font-size:var(--t1); font-weight:600; margin:var(--s1) 0 var(--s2); }
+  .tight{ margin:0; padding-left:var(--s4); }
+  .tight li{ margin:0 0 var(--s1); }
+  .why{ font-size:var(--t-1); color:var(--ink-2); margin:var(--s2) 0 0; max-width:var(--measure); }
+  .quote{ border-left:3px solid var(--line-3); padding:var(--s1) var(--s3); margin:0 0 var(--s2); font-size:var(--t-1); color:var(--ink-2); }
+  .quote .who{ display:block; font-family:var(--mono); font-size:var(--t-2); color:var(--muted); margin-top:var(--s1); }
+  .opt{ background:var(--panel); border:1px solid var(--line-2); border-radius:var(--r); padding:var(--s4); min-width:0; }
+  .opt.rec{ border-color:var(--accent); border-width:2px; }
+  .opt header{ display:flex; flex-wrap:wrap; gap:var(--s2); align-items:baseline; margin-bottom:var(--s2); }
+  .opt header h3{ margin:0; }
+  .opt header .badge{ margin-left:auto; }
+  .opt .kv{ margin-top:var(--s2); }
+  .cause{ display:grid; grid-template-columns:minmax(0,1fr); gap:var(--s3); }
+  .cause .card header{ display:flex; flex-wrap:wrap; gap:var(--s2); align-items:baseline; }
+  .cause .card header h3{ margin:0; }
+  .cause .card header .badge{ margin-left:auto; }
+  .phase{ counter-increment:ph; }
+  form.q fieldset{ border:0; padding:0; margin:0; }
+  form.q textarea{ min-height:64px; font-family:var(--sans); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="eyebrow">s05 · after M5 · tau-telecom-sft · 21 Oct 2026</span>
+  <h1>R1 works where the path is short, and loops where it is long</h1>
+  <p class="lede">The tuned 4B went from 6/40 to 17/40 on test. On the short issues it now matches or beats Claude v2. Its whole remaining gap to Claude is the long MMS tasks, where it repeats itself until a limit ends the call. This page shows the evidence, answers your two questions, and proposes what to train next.</p>
+  <div class="verdict">
+    <div class="stat accent"><div class="label">R1 on test, 1 trial</div><div class="n">17/40</div><div class="l">R0 6/40 · Claude v2 24/40 · p = 0.0037 vs R0</div></div>
+    <div class="stat"><div class="label">Gap to Claude v2</div><div class="n">MMS only</div><div class="l">MMS 1/17 vs 8/17 · mobile data 11/14 vs 9/14</div></div>
+    <div class="stat"><div class="label">Test failures that are loops</div><div class="n">17/23</div><div class="l">13 hit the 200-message cap · 4 repeat one failing call 10×</div></div>
+    <div class="stat"><div class="label">On its own training tasks</div><div class="n">33/74</div><div class="l">45%, about the same as test's 42.5%: not a coverage gap</div></div>
+  </div>
+  <nav class="nav">
+    <a href="#s-answers">01 · your two questions</a>
+    <a href="#s-loop">02 · how the agent runs</a>
+    <a href="#s-works">03 · what works</a>
+    <a href="#s-fails">04 · what fails</a>
+    <a href="#s-why">05 · why</a>
+    <a href="#s-options">06 · options</a>
+    <a href="#s-plan">07 · the plan</a>
+    <a href="#s-decide">08 · decide</a>
+  </nav>
+</header>
+
+<!-- 01 ANSWERS -->
+<section id="s-answers">
+  <span class="eyebrow">01 · your two questions</span>
+  <h2>Short answers first</h2>
+  <div class="two">
+    <div class="card" id="a-finetune">
+      <span class="label">Is fine-tuning the 4B a dead end, so we need a better model?</span>
+      <p class="answer">No. But more of the same data is.</p>
+      <ul class="tight">
+        <li><b>Fine-tuning worked:</b> 6 → 17 on test, with 13 tasks fixed and 2 broken. On mobile data, R1's 11/14 beats Claude v2's 9/14.</li>
+        <li><b>The same recipe has stalled on MMS:</b> on its own training tasks R1 passes MMS 6 of 32 times, with about 6.6 teacher conversations per task. More clean demonstrations of the same tasks won't fix that.</li>
+        <li><b>What's missing is behaviour:</b> it needs data from the states it actually gets into (a customer refusing, a tool error, a fix that didn't work), or a training signal that punishes repetition.</li>
+        <li><b>Size is still an open question:</b> 4B may be too small for 30-turn troubleshooting. M6, the 30B, is the test of that, and it's already planned.</li>
+      </ul>
+    </div>
+    <div class="card" id="a-react">
+      <span class="label">Is the agent a ReAct loop? Which framework?</span>
+      <p class="answer">An act–observe loop with native function calling, but no written "Thought" step.</p>
+      <ul class="tight">
+        <li><b>Harness:</b> tau2-bench's own orchestrator (half duplex), the same one the leaderboard runs, drives tau2-loop's <code>LoopAgent</code>. There's no LangChain or similar framework.</li>
+        <li><b>Who wrote it:</b> <code>LoopAgent</code> was written by Claude Code in this portfolio: all 9 commits to <code>factory.py</code> are co-authored by Claude. For a student it does what tau2's stock <code>llm_agent</code> does: the same prompt bytes, the same <code>generate()</code> call with the tools, and the same limits of 200 messages and 10 errors. That stock agent is the one the board's GLM-5 and Qwen3.5 runs, our teachers, record. The part that differs from the board is the customer (§02's table).</li>
+        <li><b>Each step is one call:</b> tau2's <code>generate()</code> calls <code>litellm.completion(messages, tools=13, tool_choice="auto")</code>. That goes to the recording proxy, then to vLLM on Modal, which parses <code>&lt;tool_call&gt;</code> into structured <code>tool_calls</code> with its hermes parser.</li>
+        <li><b>Routing:</b> a reply with tool calls goes to the environment and the results come back. A reply with only text goes to the customer. Nothing parses a written Thought/Action/Observation.</li>
+        <li><b>Claude v2 uses the same harness by a different route:</b> the Claude Agent SDK, with the tools described in the prompt as a JSON reply format, and the 37-line checklist that s4 doesn't have (§05).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 02 THE LOOP -->
+<section id="s-loop">
+  <span class="eyebrow">02 · how the agent runs</span>
+  <h2>One conversation: the orchestrator routes each message by its shape</h2>
+  <p class="sub">Every step sends the whole history with the 13 tool schemas and gets back one message. That's the ReAct pattern of act, observe, act, without a written reasoning step and without any guard against repeating.</p>
+  <div class="fig">
+<svg class="dg" id="fig-loop" viewBox="0 0 1000 470" role="img" aria-labelledby="fig-loop-t">
+  <title id="fig-loop-t">How one s4 conversation runs: tau2's orchestrator passes each message to the customer or the environment</title>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+    <marker id="ahh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah hot" d="M0,0 L10,5 L0,10 z"/></marker>
+  </defs>
+  <rect class="zone" x="10" y="14" width="980" height="300" rx="10"/>
+  <text class="zl" x="26" y="36">ON THE MAC · tau2-bench + tau2-loop</text>
+  <rect class="zone cloud" x="300" y="340" width="680" height="118" rx="10"/>
+  <text class="zl" x="530" y="362">THE MODEL CALL · litellm → proxy → Modal</text>
+
+  <g class="nd key" id="n-orch"><title>tau2's orchestrator, half duplex: one side speaks at a time</title>
+    <rect x="360" y="52" width="280" height="76" rx="8"/>
+    <text class="t" x="378" y="80">Orchestrator (tau2)</text>
+    <text class="s" x="378" y="102">routes each message by its shape</text>
+    <text class="m" x="378" y="120">max_steps 200 msgs · max_errors 10</text>
+  </g>
+  <g class="nd key" id="n-agent"><title>tau2-loop's LoopAgent, a subclass of tau2's HalfDuplexAgent</title>
+    <rect x="360" y="206" width="280" height="88" rx="8"/>
+    <text class="t" x="378" y="234">LoopAgent · s4</text>
+    <text class="s" x="378" y="256">whole history + 13 tools in,</text>
+    <text class="s" x="378" y="274">one message out per step</text>
+  </g>
+  <g class="nd" id="n-user"><title>The customer: LoopUser, tau2's UserSimulator subclass, Haiku 5.5 at high effort via the Claude Agent SDK</title>
+    <rect x="24" y="52" width="236" height="96" rx="8"/>
+    <text class="t" x="42" y="80">Customer</text>
+    <text class="s" x="42" y="102">Haiku 5.5 high, tau2_loop/2</text>
+    <text class="m" x="42" y="122">uses the phone's tools</text>
+    <text class="m" x="42" y="138">ends with ###STOP###</text>
+  </g>
+  <g class="nd" id="n-env"><title>The environment: the CRM database and the phone, behind tools</title>
+    <rect x="740" y="52" width="236" height="96" rx="8"/>
+    <text class="t" x="758" y="80">Environment</text>
+    <text class="s" x="758" y="102">13 agent tools (CRM)</text>
+    <text class="m" x="758" y="122">+ the customer's phone</text>
+    <text class="m" x="758" y="138">errors count to 10</text>
+  </g>
+  <g class="nd" id="n-llm"><title>tau2's generate(): litellm.completion(model, messages, tools, tool_choice=auto)</title>
+    <rect x="320" y="378" width="190" height="64" rx="8"/>
+    <text class="t" x="336" y="404">litellm</text>
+    <text class="m" x="336" y="426">tools=13, auto</text>
+  </g>
+  <g class="nd" id="n-proxy"><title>tau-telecom-sft's recording proxy on 127.0.0.1:8020</title>
+    <rect x="540" y="378" width="190" height="64" rx="8"/>
+    <text class="t" x="556" y="404">proxy :8020</text>
+    <text class="m" x="556" y="426">records, retries</text>
+  </g>
+  <g class="nd key" id="n-vllm"><title>vLLM 0.21 on a Modal L4: Qwen3-4B + the M4 LoRA, hermes tool-call parser</title>
+    <rect x="760" y="378" width="200" height="64" rx="8"/>
+    <text class="t" x="776" y="404">vLLM · 4B + LoRA</text>
+    <text class="m" x="776" y="426">hermes → tool_calls</text>
+  </g>
+
+  <path class="e" d="M360,80 L262,80" marker-end="url(#ah)"/>
+  <text class="m" x="270" y="72">text only</text>
+  <path class="e" d="M260,128 L358,118" marker-end="url(#ah)"/>
+  <text class="m" x="268" y="140">reply</text>
+  <path class="e hot" d="M640,80 L738,80" marker-end="url(#ahh)"/>
+  <text class="m" x="650" y="72">tool_calls</text>
+  <path class="e hot" d="M740,128 L642,118" marker-end="url(#ahh)"/>
+  <text class="m" x="652" y="140">results</text>
+  <path class="e" d="M470,130 L470,204" marker-end="url(#ah)"/>
+  <text class="m" x="410" y="172">history</text>
+  <path class="e" d="M530,204 L530,130" marker-end="url(#ah)"/>
+  <text class="m" x="538" y="172">message</text>
+  <path class="e" d="M415,296 L415,376" marker-end="url(#ah)"/>
+  <path class="e" d="M512,410 L538,410" marker-end="url(#ah)"/>
+  <path class="e" d="M732,410 L758,410" marker-end="url(#ah)"/>
+
+  <g class="pin" id="pin-1"><title>No Thought step: the model answers with tool calls or text, nothing else</title><circle cx="652" cy="232" r="11"/><text x="652" y="236">1</text></g>
+  <g class="pin" id="pin-2"><title>No loop guard and no trimming: the whole history goes back every step</title><circle cx="652" cy="268" r="11"/><text x="652" y="272">2</text></g>
+  <g class="pin" id="pin-3"><title>A message with tool calls goes to the environment; one without goes to the customer</title><circle cx="702" cy="104" r="11"/><text x="702" y="108">3</text></g>
+</svg></div>
+  <ol class="tight" style="margin-top:var(--s3)">
+    <li><b>No Thought step.</b> The served model replies with tool calls, text, or both. Qwen3-4B-Instruct-2507 is the non-thinking variant, and the teacher conversations had their reasoning stripped in M1.</li>
+    <li><b>No loop guard and no trimming.</b> <code>state.system_messages + state.messages</code> is resent in full every step (<code>factory.py:281</code>). Only three things end a call: the customer stopping, 200 messages (<code>max_steps</code>, which counts every message, not agent turns), or 10 tool errors across the conversation (<code>max_errors</code>, tau2's default).</li>
+    <li><b>Routing.</b> <code>is_tool_call</code> means <code>tool_calls is not None</code>, so a message with text and calls goes to the environment (<code>orchestrator.py:869-872</code>). s4 samples at temperature 0.7, top_p 0.8, top_k 20 (<code>agents/telecom/s4/agent.yaml:9-11</code>).</li>
+  </ol>
+  <div class="tablewrap" style="margin-top:var(--s4)"><table>
+    <thead><tr><th></th><th>s4, the tuned 4B (R1)</th><th>Claude v2 (24/40)</th><th>The board's teacher runs (v1's source)</th></tr></thead>
+    <tbody>
+      <tr><td>Agent class</td><td>tau2-loop <code>LoopAgent</code> (written by Claude Code)</td><td>the same <code>LoopAgent</code></td><td>tau2's stock <code>llm_agent</code> (<code>LLMAgent</code>)</td></tr>
+      <tr><td>Model route</td><td><code>openai/student-qwen3-4b-sft-a</code> via litellm → proxy → vLLM</td><td><code>claude-sdk/claude-haiku-5-5</code>, effort high, via the Claude Agent SDK</td><td><code>openai/glm-5-fp8</code>, <code>openai/qwen3.5-397b</code> via litellm → their vLLM</td></tr>
+      <tr><td>Tool format</td><td>native: the API's <code>tools</code> field, structured <code>tool_calls</code></td><td>JSON reply format written into the prompt and parsed from text</td><td>native, as s4</td></tr>
+      <tr><td>System prompt</td><td>tau2's stock prompt + telecom policy, the same bytes as the training rows</td><td>stock prompt + policy + a 37-line <code>&lt;technical_support_checklist&gt;</code> + a date note</td><td>stock prompt + policy, as s4</td></tr>
+      <tr><td>Sampling</td><td>0.7 / 0.8 / 20</td><td>the CLI's default</td><td>GLM-5 at 0.0 · Qwen3.5 at 1.0 / 0.95</td></tr>
+      <tr><td>Customer</td><td class="lo">Haiku 5.5 high, tau2-loop's <code>LoopUser</code>, tau2_loop/2 rules</td><td>the same</td><td>gpt-5.2 low, tau2's stock <code>user_simulator</code></td></tr>
+      <tr><td>Limits</td><td>200 messages · 10 errors</td><td>the same</td><td>200 messages · 10 errors</td></tr>
+      <tr><td>Ended by a limit</td><td class="lo">17 of 40</td><td>0 of 40 (all ended by the customer)</td><td>F3 kept the ones the customer ended</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 03 WHAT WORKS -->
+<section id="s-works">
+  <span class="eyebrow">03 · what works</span>
+  <h2>The short issues: R1 matches or beats Claude, in fewer turns</h2>
+  <p class="sub">Test and train, 1 trial per task, the same Haiku 5.5 customer. On mobile data and service issues, SFT took the 4B from far behind to level with Claude.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Issue type</th><th class="n">Tasks</th><th class="n">R0 untrained</th><th class="n">R1 tuned</th><th class="n">Claude v2</th><th>Read</th></tr></thead>
+    <tbody>
+      <tr id="w-md-test"><td>Mobile data · test</td><td class="n">14</td><td class="n">3</td><td class="n hi">11</td><td class="n">9</td><td>R1 ahead of Claude</td></tr>
+      <tr id="w-sv-test"><td>Service · test</td><td class="n">9</td><td class="n">3</td><td class="n">5</td><td class="n">7</td><td>2 behind</td></tr>
+      <tr id="w-md-train"><td>Mobile data · train</td><td class="n">22</td><td class="n">0</td><td class="n hi">14</td><td class="n">16</td><td>in-sample, close</td></tr>
+      <tr id="w-sv-train"><td>Service · train</td><td class="n">20</td><td class="n">8</td><td class="n">13</td><td class="n">16</td><td>in-sample</td></tr>
+    </tbody>
+  </table></div>
+  <div class="three" style="margin-top:var(--s4)">
+    <div class="card" id="w-tools"><span class="label">Own tools, structured</span><p><b>96%</b> of test tool calls name the agent's own 13 tools (R0: 59%). 3,286 replies carried <code>tool_calls</code> and only 29 wrote a call as text. The prompt bytes matched on all 6,113 requests.</p></div>
+    <div class="card" id="w-early"><span class="label">The first fixes land</span><p>Even in conversations it failed, R1 enabled roaming 28 of 28 times, had airplane mode toggled 26/32 and network mode set 23/34. It starts the troubleshooting tree correctly.</p></div>
+    <div class="card" id="w-short"><span class="label">Efficient when it passes</span><p>Its passing conversations take a median 18 agent turns on test (train 24). The teachers took a median 14. Claude v2's median is 23.5 over all of its conversations.</p></div>
+  </div>
+</section>
+
+<!-- 04 WHAT FAILS -->
+<section id="s-fails">
+  <span class="eyebrow">04 · what fails</span>
+  <h2>MMS, and loops: <em>17 of 23 test failures repeat one action until a limit ends the call</em></h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Issue type</th><th class="n">Tasks</th><th class="n">R0</th><th class="n">R1</th><th class="n">Claude v2</th><th>Read</th></tr></thead>
+    <tbody>
+      <tr id="f-mms-test"><td><b>MMS · test</b></td><td class="n">17</td><td class="n">0</td><td class="n lo">1</td><td class="n">8</td><td>the whole 7-task gap to Claude</td></tr>
+      <tr id="f-mms-train"><td><b>MMS · train</b></td><td class="n">32</td><td class="n">0</td><td class="n lo">6</td><td class="n">13</td><td>in-sample: trained on 212 MMS conversations</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 style="margin-top:var(--s5)">How the 23 test failures end</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Ending</th><th class="n">Test</th><th class="n">Train</th><th>What happens</th></tr></thead>
+    <tbody>
+      <tr id="f-maxsteps"><td>200-message cap (<code>max_steps</code>)</td><td class="n lo">13</td><td class="n lo">29</td><td>the same call or message, often dozens of times: e.g. <code>get_details_by_id("L1002")</code> 77×, or one apology 35×</td></tr>
+      <tr id="f-errors"><td>10 tool errors (<code>too_many_errors</code>)</td><td class="n lo">4</td><td class="n lo">4</td><td>one failing call 10 times: the customer's own <code>make_payment</code> (2 on test, 2 on train) or <code>run_speed_test</code>, an invented phone number, a plan id that doesn't exist</td></tr>
+      <tr id="f-userstop"><td>Customer stops, task not solved</td><td class="n">6</td><td class="n">8</td><td>4 of the 6 on test also repeated before the end</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 style="margin-top:var(--s5)" id="f-onset-h">When the loops start</h3>
+  <p class="why">A loop starts at the first agent action after which the next 6 actions all repeat earlier ones. It matched 12 of the 13 test max_steps runs and 27 of the 29 train ones. Each dot is one conversation, and the red bar is the median.</p>
+  <div class="fig" style="margin-top:var(--s2)">
+<svg class="dg strip" id="fig-turns" viewBox="0 0 1000 232" role="img" aria-labelledby="fig-turns-t">
+  <title id="fig-turns-t">Loop starts by agent turn, against the teacher conversations' lengths</title>
+  <g id="fig-turns-band"><title>every teacher conversation: 5–32 agent turns</title>
+    <rect class="band" x="122.9" y="22" width="339.4" height="164" rx="4"/>
+    <text class="zl" x="130.9" y="40">every teacher conversation: 5–32 agent turns</text>
+    <line class="medline" x1="236.0" y1="50" x2="236.0" y2="186"/>
+    <text class="m" x="242.0" y="64">median 14</text>
+  </g>
+  <text class="s" x="10" y="104">test</text>
+  <text class="s" x="10" y="164">train</text>
+  <g id="fig-turns-test"><title>loop starts, test split</title><circle class="dot test" cx="185.7" cy="104" r="5"/><circle class="dot test" cx="248.6" cy="104" r="5"/><circle class="dot test" cx="248.6" cy="95" r="5"/><circle class="dot test" cx="336.6" cy="104" r="5"/><circle class="dot test" cx="474.9" cy="104" r="5"/><circle class="dot test" cx="512.6" cy="104" r="5"/><circle class="dot test" cx="562.9" cy="104" r="5"/><circle class="dot test" cx="575.4" cy="104" r="5"/><circle class="dot test" cx="701.1" cy="104" r="5"/><circle class="dot test" cx="713.7" cy="104" r="5"/><circle class="dot test" cx="751.4" cy="104" r="5"/><circle class="dot test" cx="852.0" cy="104" r="5"/></g>
+  <g id="fig-turns-train"><title>loop starts, train split</title><circle class="dot train" cx="122.9" cy="164" r="5"/><circle class="dot train" cx="122.9" cy="155" r="5"/><circle class="dot train" cx="261.1" cy="164" r="5"/><circle class="dot train" cx="261.1" cy="155" r="5"/><circle class="dot train" cx="273.7" cy="164" r="5"/><circle class="dot train" cx="298.9" cy="164" r="5"/><circle class="dot train" cx="298.9" cy="155" r="5"/><circle class="dot train" cx="349.1" cy="164" r="5"/><circle class="dot train" cx="349.1" cy="155" r="5"/><circle class="dot train" cx="361.7" cy="164" r="5"/><circle class="dot train" cx="386.9" cy="164" r="5"/><circle class="dot train" cx="399.4" cy="164" r="5"/><circle class="dot train" cx="412.0" cy="164" r="5"/><circle class="dot train" cx="424.6" cy="164" r="5"/><circle class="dot train" cx="424.6" cy="155" r="5"/><circle class="dot train" cx="449.7" cy="164" r="5"/><circle class="dot train" cx="449.7" cy="155" r="5"/><circle class="dot train" cx="487.4" cy="164" r="5"/><circle class="dot train" cx="500.0" cy="164" r="5"/><circle class="dot train" cx="575.4" cy="164" r="5"/><circle class="dot train" cx="613.1" cy="164" r="5"/><circle class="dot train" cx="613.1" cy="155" r="5"/><circle class="dot train" cx="638.3" cy="164" r="5"/><circle class="dot train" cx="650.9" cy="164" r="5"/><circle class="dot train" cx="688.6" cy="164" r="5"/><circle class="dot train" cx="751.4" cy="164" r="5"/><circle class="dot train" cx="776.6" cy="164" r="5"/></g>
+  <line class="medr" x1="537.7" y1="80" x2="537.7" y2="116"/>
+  <line class="medr" x1="424.6" y1="140" x2="424.6" y2="176"/>
+  <line class="ax" x1="60" y1="186" x2="940" y2="186"/>
+  <line class="tk" x1="60.0" y1="186" x2="60.0" y2="192"/><text class="m" x="60.0" y="208" text-anchor="middle">0</text><line class="tk" x1="185.7" y1="186" x2="185.7" y2="192"/><text class="m" x="185.7" y="208" text-anchor="middle">10</text><line class="tk" x1="311.4" y1="186" x2="311.4" y2="192"/><text class="m" x="311.4" y="208" text-anchor="middle">20</text><line class="tk" x1="437.1" y1="186" x2="437.1" y2="192"/><text class="m" x="437.1" y="208" text-anchor="middle">30</text><line class="tk" x1="562.9" y1="186" x2="562.9" y2="192"/><text class="m" x="562.9" y="208" text-anchor="middle">40</text><line class="tk" x1="688.6" y1="186" x2="688.6" y2="192"/><text class="m" x="688.6" y="208" text-anchor="middle">50</text><line class="tk" x1="814.3" y1="186" x2="814.3" y2="192"/><text class="m" x="814.3" y="208" text-anchor="middle">60</text><line class="tk" x1="940.0" y1="186" x2="940.0" y2="192"/><text class="m" x="940.0" y="208" text-anchor="middle">70</text>
+  <text class="m" x="940" y="228" text-anchor="end">agent turn when the loop starts</text>
+</svg></div>
+  <div class="legend"><span><i class="r"></i>test</span><span><i class="a"></i>train</span><span><i class="bar"></i>median: turn 38 test, 29 train</span></div>
+  <p class="why"><b>The loops start where the teacher data runs out.</b> Only 3 of the 518 teacher conversations reach 29 agent turns (0.6%), and none go past 32. Past that point R1 has never seen a demonstration.</p>
+  <div class="fig" style="margin-top:var(--s3)">
+<svg class="dg strip" id="fig-tokens" viewBox="0 0 1000 232" role="img" aria-labelledby="fig-tokens-t">
+  <title id="fig-tokens-t">Loop starts by context length, against the lengths M4 trained on</title>
+  <g id="fig-tokens-band"><title>every trained row: 8.2K–16.9K tokens</title>
+    <rect class="band" x="73.9" y="22" width="586.5" height="164" rx="4"/>
+    <text class="zl" x="81.9" y="40">every trained row: 8.2K–16.9K tokens</text>
+    <line class="medline" x1="199.0" y1="50" x2="199.0" y2="186"/>
+    <text class="m" x="205.0" y="64">median 10.1K</text>
+  </g>
+  <text class="s" x="10" y="104">test</text>
+  <text class="s" x="10" y="164">train</text>
+  <g id="fig-tokens-test"><title>loop starts, test split</title><circle class="dot test" cx="154.2" cy="104" r="5"/><circle class="dot test" cx="169.5" cy="104" r="5"/><circle class="dot test" cx="209.0" cy="104" r="5"/><circle class="dot test" cx="281.1" cy="104" r="5"/><circle class="dot test" cx="408.2" cy="104" r="5"/><circle class="dot test" cx="426.8" cy="104" r="5"/><circle class="dot test" cx="458.2" cy="104" r="5"/><circle class="dot test" cx="503.9" cy="104" r="5"/><circle class="dot test" cx="576.1" cy="104" r="5"/><circle class="dot test" cx="634.9" cy="104" r="5"/><circle class="dot test" cx="736.7" cy="104" r="5"/><circle class="dot test" cx="893.0" cy="104" r="5"/></g>
+  <g id="fig-tokens-train"><title>loop starts, train split</title><circle class="dot train" cx="88.2" cy="164" r="5"/><circle class="dot train" cx="149.4" cy="164" r="5"/><circle class="dot train" cx="169.3" cy="164" r="5"/><circle class="dot train" cx="181.8" cy="164" r="5"/><circle class="dot train" cx="202.8" cy="164" r="5"/><circle class="dot train" cx="219.4" cy="164" r="5"/><circle class="dot train" cx="241.3" cy="164" r="5"/><circle class="dot train" cx="258.3" cy="164" r="5"/><circle class="dot train" cx="266.8" cy="164" r="5"/><circle class="dot train" cx="318.9" cy="164" r="5"/><circle class="dot train" cx="321.9" cy="164" r="5"/><circle class="dot train" cx="337.7" cy="164" r="5"/><circle class="dot train" cx="342.9" cy="164" r="5"/><circle class="dot train" cx="348.2" cy="164" r="5"/><circle class="dot train" cx="363.8" cy="164" r="5"/><circle class="dot train" cx="386.4" cy="164" r="5"/><circle class="dot train" cx="387.8" cy="164" r="5"/><circle class="dot train" cx="423.8" cy="164" r="5"/><circle class="dot train" cx="503.9" cy="164" r="5"/><circle class="dot train" cx="507.6" cy="164" r="5"/><circle class="dot train" cx="515.1" cy="164" r="5"/><circle class="dot train" cx="541.8" cy="164" r="5"/><circle class="dot train" cx="590.1" cy="164" r="5"/><circle class="dot train" cx="634.3" cy="164" r="5"/><circle class="dot train" cx="705.7" cy="164" r="5"/><circle class="dot train" cx="754.4" cy="164" r="5"/><circle class="dot train" cx="899.0" cy="164" r="5"/></g>
+  <line class="medr" x1="442.5" y1="80" x2="442.5" y2="116"/>
+  <line class="medr" x1="348.2" y1="140" x2="348.2" y2="176"/>
+  <line class="ax" x1="60" y1="186" x2="940" y2="186"/>
+  <line class="tk" x1="60.0" y1="186" x2="60.0" y2="192"/><text class="m" x="60.0" y="208" text-anchor="middle">8K</text><line class="tk" x1="195.4" y1="186" x2="195.4" y2="192"/><text class="m" x="195.4" y="208" text-anchor="middle">10K</text><line class="tk" x1="330.8" y1="186" x2="330.8" y2="192"/><text class="m" x="330.8" y="208" text-anchor="middle">12K</text><line class="tk" x1="466.2" y1="186" x2="466.2" y2="192"/><text class="m" x="466.2" y="208" text-anchor="middle">14K</text><line class="tk" x1="601.5" y1="186" x2="601.5" y2="192"/><text class="m" x="601.5" y="208" text-anchor="middle">16K</text><line class="tk" x1="736.9" y1="186" x2="736.9" y2="192"/><text class="m" x="736.9" y="208" text-anchor="middle">18K</text><line class="tk" x1="872.3" y1="186" x2="872.3" y2="192"/><text class="m" x="872.3" y="208" text-anchor="middle">20K</text>
+  <text class="m" x="940" y="228" text-anchor="end">tokens in the conversation when the loop starts</text>
+</svg></div>
+  <p class="why"><b>Context length is not the cause.</b> Most loops start at 12–14K tokens, inside the lengths M4 trained on (8.2K–16.9K). 29% of all served requests run past 16.9K, but by then the loop has usually started.</p>
+
+  <h3 style="margin-top:var(--s5)">What sets them off: the customer going off script</h3>
+  <div class="two">
+    <div>
+      <p class="quote" id="q-1">"Thanks, that's helpful. The check shows the messaging app has permission for SMS, storage, and phone… but I still can't get a picture message to go through. What would you like me to try next?"<span class="who">MMS test · then <code>get_details_by_id("L1002")</code> 77×</span></p>
+      <p class="quote" id="q-2">"I'm not going to run can_send_mms again, because it has already come back 'can send' several times…"<span class="who">MMS test · then one apology 35×</span></p>
+    </div>
+    <div>
+      <p class="quote" id="q-3">"Wait, I'm confused. You told me earlier that I'd used 15.1 GB and that adding 1GB would fix it… Did the 1GB I paid for not work?"<span class="who">MMS test · then <code>get_data_usage</code> and the same explanation, 6× each</span></p>
+      <p class="quote" id="q-4">"Before we go further, I'd like to be sure about the VPN… Could you check the VPN status? One step at a time, please."<span class="who">mobile data test · then two <code>get_details_by_id</code> calls, 18× each</span></p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:var(--s4)" id="f-pushback-h">Is this kind of customer in the training data? Mostly not</h3>
+  <p class="why">These count conversations where a customer turn matches each kind of pushback (a simple text match over the customer's turns). "What should I try next?" is common everywhere. Refusing to repeat a check and disputing what the agent said are almost absent from v1.1.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>The customer…</th><th class="n">v1.1 training rows<br><span class="small">gpt-5.2 low</span></th><th class="n">R1 · test</th><th class="n">R1 · train</th><th class="n">Claude v2 · test</th></tr></thead>
+    <tbody>
+      <tr id="pb-refuse"><td><b>refuses to repeat a check</b></td><td class="n lo">2 / 518</td><td class="n">11 / 40</td><td class="n">31 / 74</td><td class="n">4 / 40</td></tr>
+      <tr id="pb-dispute"><td><b>is confused or disputes what the agent said</b></td><td class="n lo">0 / 518</td><td class="n">3 / 40</td><td class="n">5 / 74</td><td class="n">2 / 40</td></tr>
+      <tr id="pb-slow"><td>asks to slow down, one step at a time</td><td class="n">25 / 518</td><td class="n">18 / 40</td><td class="n">39 / 74</td><td class="n">13 / 40</td></tr>
+      <tr id="pb-next"><td>asks what to try next</td><td class="n">391 / 518</td><td class="n">27 / 40</td><td class="n">59 / 74</td><td class="n">32 / 40</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout" style="margin-top:var(--s3)" id="pb-read">
+    <b>So yes, they're missing, and they can be added, but only one way.</b> R1 brings many of these refusals on itself by asking for the same check again; Claude v2, which doesn't repeat, met only 4. A teacher conversation can't contain a state that only R1's own mistakes create. So the data has to come from R1's states: play R1, and let a teacher continue from the point where the customer refuses or disputes (option B). The Haiku customer's turns in today's runs are Claude's text, so those exact conversations can't go into training under rule 2. The collection needs a non-Claude customer (decision 2).
+  </div>
+
+  <h3 style="margin-top:var(--s5)">The fixes it never reaches, though the data shows them</h3>
+  <p class="why">For each failed conversation, which of the task's expected actions happened at all (test and train together, 64 failures). The late MMS steps are the ones that go missing.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Expected action</th><th class="n">Done in failed runs</th><th>Who acts</th><th>In v1.1's 518 training conversations</th></tr></thead>
+    <tbody>
+      <tr id="m-wifi"><td><code>toggle_wifi_calling</code></td><td class="n lo">5 / 23</td><td>customer, on the agent's instruction</td><td>Wi-Fi calling discussed in 181</td></tr>
+      <tr id="m-reboot"><td><code>reboot_device</code></td><td class="n lo">6 / 26</td><td>customer</td><td>a restart in 204</td></tr>
+      <tr id="m-perm"><td><code>grant_app_permission</code></td><td class="n lo">10 / 42</td><td>customer</td><td>permissions in 191</td></tr>
+      <tr id="m-refuel"><td><code>refuel_data</code></td><td class="n lo">10 / 35</td><td>agent</td><td>called in 225</td></tr>
+      <tr id="m-apn"><td><code>reset_apn_settings</code></td><td class="n">9 / 21</td><td>customer</td><td>APN in 238</td></tr>
+      <tr id="m-resume"><td><code>resume_line</code> · <code>transfer_to_human_agents</code></td><td class="n lo">0 / 5 · 0 / 5</td><td>agent</td><td>called in 72 · 103</td></tr>
+      <tr id="m-early"><td><code>enable_roaming</code> · <code>toggle_airplane_mode</code></td><td class="n hi">28 / 28 · 26 / 32</td><td>agent · customer</td><td>early steps: these land</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 05 WHY -->
+<section id="s-why">
+  <span class="eyebrow">05 · why</span>
+  <h2>Four causes, ranked by how much evidence each has</h2>
+  <div class="cause">
+    <div class="card" id="c-1">
+      <header><h3>1 · It never saw a conversation go wrong and recover</h3><span class="badge ok">strong evidence</span></header>
+      <p>v1.1 keeps only clean passes. M1's filters dropped every conversation with an agent tool error (F5), every unusually long one (F6) and every one that called a customer's tool (F4). The teachers faced a cooperative customer and finished in a median 14 turns. So R1 has never seen a refusal, an error, or a fix that didn't work, followed by what to do next. Its loops start in exactly those states, past turn 29, where only 0.6% of the demonstrations reach. This is behaviour cloning's known weakness: small mistakes compound into states the demonstrations never visited.</p>
+    </div>
+    <div class="card" id="c-2">
+      <header><h3>2 · The customer changed between training and scoring</h3><span class="badge warn">medium</span></header>
+      <p>The training conversations used gpt-5.2 at low effort under tau2's own rules (the card's source table). Scoring uses Haiku 5.5 at high effort under tau2_loop/2, a customer that refuses to rerun checks, asks "what next?" and disputes charges, as the quotes in §04 show. Claude v2 takes a median 23.5 turns against this customer; the teachers took 14 against theirs.</p>
+    </div>
+    <div class="card" id="c-3">
+      <header><h3>3 · Claude v2 has a checklist that s4 doesn't</h3><span class="badge warn">medium</span></header>
+      <p>v2's prompt carries a 37-line <code>&lt;technical_support_checklist&gt;</code>. It covers both roaming switches, <code>get_data_usage</code> then refuel, granting both app permissions, and no transfer before every check. Those are nearly the exact steps R1 misses. s4 runs tau2's stock prompt, like its teachers. So "R1 vs Claude v2" is partly stock prompt against tuned prompt. The checklist was written by tau2-loop's Sonnet optimiser, so it's Claude's text.</p>
+    </div>
+    <div class="card" id="c-4">
+      <header><h3>4 · 4B may be too small for 30-turn troubleshooting</h3><span class="badge info">unknown</span></header>
+      <p>We can't separate this from causes 1–3 yet. The talk's Qwen3 30B reached 75% after SFT, on a different 40 tasks. M6 (Qwen3-30B-A3B, R2 untrained and R3 tuned) is the direct test. R1's in-sample MMS score of 6/32 is consistent both with too little capacity and with cause 1.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 OPTIONS -->
+<section id="s-options">
+  <span class="eyebrow">06 · options</span>
+  <h2>What each option tests, and what it costs</h2>
+  <p class="sub">Costs are Modal's L4 list price times the wall time measured in M4 and M5, unless marked. The Haiku customer runs on the Claude subscription. Any paid run needs one measured conversation or step first.</p>
+  <div class="two">
+    <div class="opt rec" id="o-a">
+      <header><h3>A · Diagnose first</h3><span class="badge rec">recommend</span></header>
+      <ul class="tight">
+        <li><b>A1, the checklist at inference only.</b> s5 = s4 plus v2's checklist, with no retraining, on the 40 test tasks. If MMS jumps, the gap is the policy knowledge, and the data should carry it.</li>
+        <li><b>A2, three more R1 test trials.</b> That gives pass^3 for the success criterion, and the noise around 17/40.</li>
+      </ul>
+      <div class="kv"><span class="label">tests</span><span>causes 3 and 4, and the noise</span><span class="label">cost</span><span>≈ $0.85 + ≈ $2.40 · about 4 h of runs · no training</span></div>
+    </div>
+    <div class="opt" id="o-b">
+      <header><h3>B · Data v2: recovery from R1's own states</h3><span class="badge info">the main fix</span></header>
+      <ul class="tight">
+        <li>Play R1 on the 74 training tasks, 4 trials each. Find where it loops or hits an error, and let an open teacher (GLM-5 or Qwen3.5-397B) carry on from that exact state. This is DAgger-style correction.</li>
+        <li>Keep only the continuations that pass. Put loss on the teacher's turns only; R1's turns are context with no loss.</li>
+        <li>Also keep teacher conversations that recover from a tool error, which v1 dropped. Then continue training M4's adapter on them (G).</li>
+      </ul>
+      <div class="kv"><span class="label">tests</span><span>causes 1 and 2</span><span class="label">cost</span><span>R1 rollouts ≈ $5.20 · teacher and customer API: measured first · training ≈ 2–4 h, ≈ $2.50–4.50 (G)</span></div>
+    </div>
+    <div class="opt" id="o-c">
+      <header><h3>C · A preference step after B</h3><span class="badge info">add-on</span></header>
+      <p>DPO on the states where R1 loops. Rejected is the repeated call; chosen is the teacher's next step from B. It directly penalises repeating, which SFT on clean demonstrations can't do.</p>
+      <div class="kv"><span class="label">tests</span><span>cause 1, targeted</span><span class="label">cost</span><span>reuses B's states · about 1–2 h on the L4</span></div>
+    </div>
+    <div class="opt" id="o-d">
+      <header><h3>D · M6, the 30B shadow</h3><span class="badge info">already planned</span></header>
+      <p>Qwen3-30B-A3B untrained (R2) and on v1.1 (R3), as the plan has it. R2 needs serving only, so it can run beside A. The model has 30.5B weights in all and 3.3B active per token, about 61 GB in bf16.</p>
+      <div class="kv"><span class="label">tests</span><span>cause 4</span><span class="label">train</span><span>≈ $5–15, most likely ≈ $8: v1.1's 15.7M tokens on one H100 (≈ $4.15/h) or A100 80 GB (≈ $2.70/h). Throughput is a guess until the measured step.</span><span class="label">score</span><span>≈ $2.30 for test and ≈ $4 for train per model on an A100 80 GB, plus ≈ $1 a session for start-up and idle. R2 and R3 on both splits ≈ $14.</span><span class="label">total</span><span>≈ $20–30 at 1 trial; the 4B's M3–M5 came to ≈ $13</span></div>
+    </div>
+    <div class="opt" id="o-g">
+      <header><h3>G · Continue training the M4 adapter</h3><span class="badge rec">yes: how B and C would train</span></header>
+      <p>Yes, the adapter can be trained further. Load M4's LoRA weights (sha256 <code>8956c198…</code>) as trainable and carry on with new rows, rather than starting a fresh LoRA. That's cheaper and faster to iterate, and C's DPO step starts from it anyway.</p>
+      <ul class="tight">
+        <li><b>Mix in v1.1.</b> Training on the new recovery rows alone would wear away what already works on mobile data and service.</li>
+        <li><b>Use a lower learning rate</b> (about 5e-5) for about 1 epoch. Optimizer state isn't carried over, because the data is different.</li>
+        <li><b>Trainer change:</b> an <code>init_adapter</code> field in the config. Its sha256 is checked against M4's run.json and recorded in the new run, so the R row names both its parent and its data.</li>
+      </ul>
+      <div class="kv"><span class="label">cost</span><span>about 1 epoch over v1.1 plus the new rows: ≈ 2–4 h, ≈ $2.50–4.50 on the L4, against ≈ 7–11 h to retrain from scratch</span><span class="label">trade-off</span><span>retrain from scratch only if the results table should show one clean recipe</span></div>
+    </div>
+    <div class="opt" id="o-e">
+      <header><h3>E · RL on tau2's reward</h3><span class="badge warn">later</span></header>
+      <p>GRPO-style training on whole conversations is the strongest fix for long horizons. It's also the most engineering: a reward server, rollouts with a customer, and many GPU hours. It's worth it only after B or D says the 4B, or the 30B, is close.</p>
+    </div>
+    <div class="opt" id="o-f">
+      <header><h3>F · A loop guard in the harness</h3><span class="badge warn">not recommended</span></header>
+      <p>Detect a repeated call and tell the model. It's cheap and would likely win a few tasks. But it changes the agent, not the model, so the R rows would stop being comparable with Claude v2's harness. It's only useful as a diagnostic.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 PLAN -->
+<section id="s-plan">
+  <span class="eyebrow">07 · the plan</span>
+  <h2>Diagnose cheaply, then fix the data, with the 30B running beside</h2>
+  <div class="steps">
+    <div class="step" id="p-1"><b>Phase 1 · diagnose (A1, A2, and R2 from D).</b> Make s5 in the tau2-loop worktree and play it once on test. Play R1 three more times on test. Serve the untrained 30B and play it on test once (R2). <span class="small">≈ $6 · no training · the gate: does the checklist lift MMS by 4 or more? Is R2 already near R1?</span></div>
+    <div class="step" id="p-2"><b>Phase 2 · data v2 (B, then C).</b> R1 rollouts on the 74 training tasks, teacher continuations from loop and error states, and the leak check. Build v2's card and sign it off. Continue training M4's adapter on v1.1 plus the new rows (G), which gives R4 in the results table. Then optionally the DPO step from that adapter. <span class="small">the customer and the checklist are decisions 2 and 3 below · paid parts measured first</span></div>
+    <div class="step" id="p-3"><b>Phase 3 · M6 with the better data.</b> Train the 30B on whichever dataset wins (R3), and score it like R1, with the sign test against R2. <span class="small">A100 80 GB · measured step first</span></div>
+  </div>
+  <div class="callout" style="margin-top:var(--s4)">
+    <b>What stays fixed:</b> no test task or twin in anything the trainer reads (the leak check runs on v2 too). Agent turns come only from open-weights models. tau2-loop changes go in the worktree only. Every paid run follows a measured step. 1 trial per task unless you choose decision 1's A2.
+  </div>
+</section>
+
+<!-- 08 DECIDE -->
+<section id="s-decide">
+  <span class="eyebrow">08 · decide</span>
+  <h2>Three answers before anything runs</h2>
+  <p class="sub">Each question has its own button, which queues one message to me. You can change your answers before sending. My recommendation is marked on each.</p>
+  <div class="qgrid">
+
+    <form class="q" data-lavish-question="next-step" onsubmit="event.preventDefault(); const f=new FormData(event.currentTarget); const c=f.get('next'); const n=(f.get('note')||'').toString().trim(); if(!c) return; window.lavish && window.lavish.queuePrompt('s05 next step: ' + c + (n ? ' (note: ' + n + ')' : ''), { tag:'choice', text:'Next step: ' + c, element:event.currentTarget, data:{ question:'next-step', answer:c, note:n } }); event.currentTarget.querySelector('.queued').textContent='queued: ' + c;">
+      <h3>1 · What runs next <span class="badge rec">recommend A</span></h3>
+      <fieldset>
+        <label><input type="radio" name="next" value="A: Phase 1, diagnose: s5 with the checklist on test, R1 at 3 more test trials, and R2 (untrained 30B) on test"><span>A · Phase 1: diagnose first<span class="d">s5 with the checklist, R1 ×3 more on test, R2. About $6, no training.</span></span></label>
+        <label><input type="radio" name="next" value="B: straight to data v2 (on-policy recovery data from R1's rollouts) and retrain the 4B"><span>B · Straight to data v2<span class="d">R1 rollouts, teacher corrections, retrain the 4B.</span></span></label>
+        <label><input type="radio" name="next" value="C: straight to M6, the 30B, on v1.1"><span>C · Straight to M6<span class="d">The 30B on the existing data.</span></span></label>
+        <label><input type="radio" name="next" value="D: stop here and write up R1"><span>D · Stop and write up<span class="d">R1 as the result for now.</span></span></label>
+      </fieldset>
+      <textarea name="note" placeholder="anything to add (optional)"></textarea>
+      <div class="row"><button type="submit">Queue this answer</button><span class="queued"></span></div>
+    </form>
+
+    <form class="q" data-lavish-question="customer" onsubmit="event.preventDefault(); const f=new FormData(event.currentTarget); const c=f.get('cust'); const n=(f.get('note')||'').toString().trim(); if(!c) return; window.lavish && window.lavish.queuePrompt('s05 customer for new training data: ' + c + (n ? ' (note: ' + n + ')' : ''), { tag:'choice', text:'Data customer: ' + c, element:event.currentTarget, data:{ question:'customer', answer:c, note:n } }); event.currentTarget.querySelector('.queued').textContent='queued: ' + c;">
+      <h3>2 · The customer for new training data <span class="badge rec">recommend A</span></h3>
+      <p class="why">Cause 2 says the training customer should behave like the scoring one. But under rule 2, the scoring customer's turns are Claude's text, so they can't go in the training set.</p>
+      <fieldset>
+        <label><input type="radio" name="cust" value="A: gpt-5.2 at high effort under tau2_loop/2's rules"><span>A · gpt-5.2, high effort, tau2_loop/2 rules<span class="d">The closest match without Claude. Needs an OpenAI key and a measured conversation.</span></span></label>
+        <label><input type="radio" name="cust" value="B: gpt-5.2 at low effort under tau2's rules, as the board data"><span>B · gpt-5.2 low, as v1's<span class="d">No change, so cause 2 stays.</span></span></label>
+        <label><input type="radio" name="cust" value="C: an open-weights customer (e.g. Qwen3.5-397B) under tau2_loop/2's rules"><span>C · An open-weights customer<span class="d">No closed-model text at all. Its behaviour is unmeasured.</span></span></label>
+        <label><input type="radio" name="cust" value="D: Haiku 5.5, the scoring customer, relaxing rule 2 for customer turns"><span>D · Haiku 5.5, as scored<span class="d">The closest match, but it puts Claude's text in the training context. It breaks rule 2 unless you change it.</span></span></label>
+      </fieldset>
+      <textarea name="note" placeholder="anything to add (optional)"></textarea>
+      <div class="row"><button type="submit">Queue this answer</button><span class="queued"></span></div>
+    </form>
+
+    <form class="q" data-lavish-question="checklist" onsubmit="event.preventDefault(); const f=new FormData(event.currentTarget); const c=f.get('ck'); const n=(f.get('note')||'').toString().trim(); if(!c) return; window.lavish && window.lavish.queuePrompt('s05 the checklist: ' + c + (n ? ' (note: ' + n + ')' : ''), { tag:'choice', text:'Checklist: ' + c, element:event.currentTarget, data:{ question:'checklist', answer:c, note:n } }); event.currentTarget.querySelector('.queued').textContent='queued: ' + c;">
+      <h3>3 · Claude v2's checklist <span class="badge rec">recommend A</span></h3>
+      <p class="why">Sonnet wrote it. Using it at inference is not training on it. Putting it in the training rows' system prompt would put Claude's text in the training data.</p>
+      <fieldset>
+        <label><input type="radio" name="ck" value="A: inference only, as the A1 diagnostic; if it helps, write our own checklist from tau2's policy for training"><span>A · Inference only, as A1<span class="d">If it helps, write our own from tau2's policy, by hand or with an open model, and train with that.</span></span></label>
+        <label><input type="radio" name="ck" value="B: allowed in training rows' system prompt too"><span>B · Also in training rows<span class="d">This relaxes rule 2 for the system prompt.</span></span></label>
+        <label><input type="radio" name="ck" value="C: don't use it at all; keep s4's stock prompt"><span>C · Not at all<span class="d">Stock prompt only, as the teachers had.</span></span></label>
+      </fieldset>
+      <textarea name="note" placeholder="anything to add (optional)"></textarea>
+      <div class="row"><button type="submit">Queue this answer</button><span class="queued"></span></div>
+    </form>
+
+  </div>
+  <p class="small" style="margin-top:var(--s4)">Sources: the scored runs <code>runs/20261021T040925Z_eval_r1-4b-test</code> and <code>runs/20261021T054742Z_eval_r1-4b-train</code>; tau2-loop runs <code>20261021T031415Z_telecom_s4_test</code>, <code>20261021T040945Z_telecom_s4_train</code>, <code>20261016T112041Z_telecom_v2_test</code> and <code>20261016T124631Z_telecom_v2_train</code>; <code>data/sft/v1.1/</code>; <code>agents/telecom/v2/system.md:14-50</code>. Loop onset: the first agent action after which the next 6 all repeat earlier actions. Tokens: the Qwen3-4B tokenizer at the served revision, over message text, plus 7,134 for the prompt and tools.</p>
+</section>
+
+</div>
+</body>
+</html>
