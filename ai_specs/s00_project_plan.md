@@ -79,7 +79,10 @@ each of the 40 tasks is worth 2.5 points.
   the port forward, and play the 40 test tasks × 4 trials.
   - Done when: R0 is filled in, tool calls come back as `tool_calls` from vLLM too, and the
     prompt-bytes test passes on the served bytes. Evidence: MLflow eval · tau2-loop run ids
-- [ ] **M4 · SFT the 4B on v1** (EC2 L4). `configs/sft_a.yaml` on all 74 training tasks for a
+- [x] **M4 · SFT the 4B on v1** (EC2 L4). Done 2026-10-21 on a Modal L4 instead (s02, s04), on
+  v1.1, v1 with the agent's text stripped (the mask check caught v1's leading newlines): 99 steps,
+  loss 1.21 → 0.364, adapter on the runs Volume, not S3, with its sha256 in run.json.
+  `configs/sft_a.yaml` on all 74 training tasks for a
   fixed 3 epochs. The final checkpoint is the model, and earlier epochs are kept for the record.
   Fix the success criteria and the epoch count before the run starts.
   - Done when: the final adapter is in S3, with its config, data hash and image tag logged.

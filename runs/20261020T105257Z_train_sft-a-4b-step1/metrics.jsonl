@@ -1,0 +1,1 @@
+{"step": 1, "loss": 1.0358855724334717, "grad_norm": 1.7679948806762695, "learning_rate": 0.0, "epoch": 1.0, "tokens": 204925, "tokens_per_s": 669.2, "mem_gb": 15.79, "elapsed_s": 306.2}
