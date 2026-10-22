@@ -1,0 +1,99 @@
+{
+  "run_id": "20261017T120150Z_train_smoke-0.6b",
+  "kind": "train",
+  "label": "smoke-0.6b",
+  "purpose": "smoke",
+  "status": "finished",
+  "created": "2026-10-17T12:01:50Z",
+  "code_sha": "8aa2715",
+  "image_tag": null,
+  "config_file": "configs/smoke.yaml",
+  "config": {
+    "label": "smoke-0.6b",
+    "purpose": "smoke",
+    "base_model": "Qwen/Qwen3-0.6B",
+    "tokenizer": "Qwen/Qwen3-4B-Instruct-2507",
+    "dataset": "v1",
+    "rows": {
+      "max_tokens": 12288,
+      "limit": 16,
+      "seed": 300
+    },
+    "model_init": {
+      "attn_implementation": "chunked_sdpa"
+    },
+    "lora": {
+      "r": 16,
+      "lora_alpha": 32,
+      "lora_dropout": 0.05,
+      "target_modules": "all-linear"
+    },
+    "sft": {
+      "max_length": 12288,
+      "assistant_only_loss": true,
+      "packing": false,
+      "learning_rate": 0.0002,
+      "lr_scheduler_type": "cosine",
+      "warmup_steps": 0.05,
+      "num_train_epochs": 1,
+      "per_device_train_batch_size": 1,
+      "gradient_accumulation_steps": 1,
+      "gradient_checkpointing": true,
+      "bf16": true,
+      "logging_steps": 1,
+      "save_strategy": "no",
+      "seed": 300
+    }
+  },
+  "base_model": "Qwen/Qwen3-0.6B",
+  "tokenizer": "Qwen/Qwen3-4B-Instruct-2507",
+  "dataset": "v1",
+  "train_sha256": "75718a646d5d2d85da1b2a9f42adb3b4f317f2f08614a36f4c07d95d6ee54745",
+  "n_rows": 16,
+  "rows_selected": "511 of 518 rows fit 12,288 tokens; 16 drawn with seed 300",
+  "row_sim_ids": [
+    "8ce0a3ec-1dad-4782-afd1-c45421977604",
+    "54cf41d5-8e69-4131-bcc9-e69b06f29fa3",
+    "5045653d-ba00-41ac-8542-dab1fcc68ba5",
+    "fa872a17-7ebf-49cd-b240-c43ba107c08d",
+    "00fb3511-52a2-4733-b0c6-2ae6638f2ee3",
+    "7342ea66-41b5-4b72-b204-e7dd8cf622e4",
+    "51004764-3efb-4301-8531-a975907de7e1",
+    "7b30fd67-527c-4627-813f-8c6299a19c44",
+    "d399a349-bdb3-4d64-b986-f476a2379d27",
+    "e7bbfdb8-f876-41ab-9600-b41662304608",
+    "63e78334-bfbf-4f03-8883-c45aa2c4b79a",
+    "87d8cdc6-4a8f-463c-9515-50a03b647b07",
+    "88f0d5f4-f51a-4dd9-894c-cb2dba625b5a",
+    "286b5634-a079-4c9e-ba0e-cbed241cfd00",
+    "2693d652-b7e2-47a0-985e-41b0485425fc",
+    "1918d1f1-c5fc-4700-b845-4fe946452778"
+  ],
+  "device": "mps",
+  "instance": "Mac Apple M1 Pro, 32 GB",
+  "cost_usd": 0.0,
+  "mask_check": {
+    "row_sim_id": "8ce0a3ec-1dad-4782-afd1-c45421977604",
+    "ok": true,
+    "assistant_turns": 11,
+    "trained_turns": 11,
+    "trained_tokens": 1530,
+    "total_tokens": 10081,
+    "problems": []
+  },
+  "mlflow_run_id": "b52a4b0226c14381ae74734d392c2090",
+  "mlflow_experiment": "tau-telecom-sft/train",
+  "finished": "2026-10-17T12:30:31Z",
+  "duration_s": 1716.7,
+  "steps": 16,
+  "epochs": 1.0,
+  "final_loss": 0.8724597692489624,
+  "train_loss": 1.0766639411449432,
+  "peak_mem_gb": 21.17,
+  "tokens_trained": 160198,
+  "adapter": {
+    "path": "runs/20261017T120150Z_train_smoke-0.6b/adapter",
+    "sha256": "4666b94fe05da70f49027303f9e72affc8363c9c2d4fcef468bb50f7f66900d0",
+    "bytes": 51860287
+  }
+}

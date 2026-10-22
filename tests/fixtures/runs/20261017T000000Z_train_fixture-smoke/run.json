@@ -1,0 +1,62 @@
+{
+ "run_id": "20261017T000000Z_train_fixture-smoke",
+ "kind": "train",
+ "label": "fixture-smoke",
+ "purpose": "smoke",
+ "status": "finished",
+ "created": "2026-10-17T00:00:00Z",
+ "finished": "2026-10-17T00:06:00Z",
+ "duration_s": 360.0,
+ "code_sha": "fixture",
+ "image_tag": null,
+ "config_file": "configs/smoke.yaml",
+ "config": {
+  "label": "fixture-smoke",
+  "purpose": "smoke",
+  "base_model": "Qwen/Qwen3-0.6B",
+  "tokenizer": "Qwen/Qwen3-4B-Instruct-2507",
+  "dataset": "smoke",
+  "lora": {
+   "r": 16,
+   "lora_alpha": 32,
+   "lora_dropout": 0.05,
+   "target_modules": "all-linear"
+  },
+  "sft": {
+   "max_length": 12288,
+   "assistant_only_loss": true,
+   "learning_rate": 0.0001,
+   "lr_scheduler_type": "cosine",
+   "num_train_epochs": 2,
+   "gradient_accumulation_steps": 2
+  }
+ },
+ "base_model": "Qwen/Qwen3-0.6B",
+ "tokenizer": "Qwen/Qwen3-4B-Instruct-2507",
+ "dataset": "smoke",
+ "train_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+ "n_rows": 8,
+ "rows_selected": "8 of 8 rows",
+ "device": "mps",
+ "instance": "fixture Mac",
+ "cost_usd": 0.0,
+ "steps": 6,
+ "epochs": 2,
+ "final_loss": 0.61,
+ "peak_mem_gb": 9.5,
+ "tokens_trained": 2400,
+ "adapter": {
+  "path": "runs/20261017T000000Z_train_fixture-smoke/adapter",
+  "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "bytes": 40000000
+ },
+ "mask_check": {
+  "ok": true,
+  "row_sim_id": "fixture-row",
+  "assistant_turns": 2,
+  "trained_turns": 2,
+  "problems": []
+ },
+ "mlflow_run_id": null,
+ "mlflow_experiment": "tau-telecom-sft/train"
+}

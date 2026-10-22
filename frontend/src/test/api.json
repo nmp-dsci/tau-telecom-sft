@@ -1,0 +1,3055 @@
+{
+ "ids": {
+  "version": "smoke",
+  "kept": "fixture-[mms_issue]airplane_mode-0-6",
+  "f4": "fixture-[mms_issue]break_app_sto-5-68",
+  "train": "20261017T000000Z_train_fixture-smoke",
+  "base": "20261017T010000Z_eval_fixture-base",
+  "tuned": "20261017T020000Z_eval_fixture-tuned",
+  "task": "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]"
+ },
+ "answers": {
+  "/healthz": {
+   "ok": true,
+   "code_sha": "0667fed",
+   "mlflow": "down"
+  },
+  "/api/overview": {
+   "project": "tau-telecom-sft",
+   "code_sha": "0667fed",
+   "milestones": [
+    {
+     "id": "M0",
+     "title": "Create the repo and connect it",
+     "done": true,
+     "detail": "(Mac). 2026-10-17."
+    },
+    {
+     "id": "M1",
+     "title": "Build dataset v1",
+     "done": false,
+     "detail": "(Mac). Download S1 and S2 (128 MB) and keep the 74 training"
+    },
+    {
+     "id": "M2",
+     "title": "Prove the pipeline on the Mac, end to end",
+     "done": false,
+     "detail": "(Mac · tau2-loop). A proof of concept"
+    },
+    {
+     "id": "M3",
+     "title": "Serve the untrained 4B on EC2 and record the before row",
+     "done": false,
+     "detail": "(EC2 L4 · tau2-loop)."
+    },
+    {
+     "id": "M4",
+     "title": "SFT the 4B on v1",
+     "done": false,
+     "detail": "(EC2 L4). `configs/sft_a.yaml` on all 74 training tasks for a"
+    },
+    {
+     "id": "M5",
+     "title": "Score it on test, once",
+     "done": false,
+     "detail": "(EC2 L4 · tau2-loop). 40 tasks × 4 trials, with the sign"
+    },
+    {
+     "id": "M6",
+     "title": "Train the shadow: Qwen3-30B-A3B on v1",
+     "done": false,
+     "detail": "(A100 80 GB · tau2-loop). Rent one 80 GB"
+    },
+    {
+     "id": "M7",
+     "title": "Only if needed: add the GLM-5.1 data (S3).",
+     "done": false,
+     "detail": "Trigger: R1 or R3 misses its target,"
+    },
+    {
+     "id": "M8",
+     "title": "Write it up",
+     "done": false,
+     "detail": "(Mac). A model card, and cost per conversation against Haiku and"
+    }
+   ],
+   "datasets": [
+    {
+     "version": "smoke",
+     "built": "2026-10-17T11:52:40Z",
+     "code_sha": "0667fed",
+     "n_loaded": 17,
+     "n_kept": 8,
+     "n_dropped": 9,
+     "training_tasks_covered": 3,
+     "training_tasks_total": 74,
+     "train_sha256": "26efec0277444ac2e83d2edc92b8bc923439124c330b146f2e6ee94197ef601c",
+     "sources": [
+      "fixture tests/fixtures/board_mini"
+     ],
+     "tokens": {
+      "min": 8210,
+      "median": 8211,
+      "p90": 8255,
+      "p99": 8256,
+      "max": 8256,
+      "prompt_and_tools": 7809
+     },
+     "max_tokens": 24576,
+     "token_counter": "estimate: characters / 4 (smoke only)",
+     "rows_here": true,
+     "review": {
+      "reviewed": 0,
+      "total": 6,
+      "signed_off": null
+     }
+    }
+   ],
+   "train_runs": [
+    {
+     "run_id": "20261017T000000Z_train_fixture-smoke",
+     "label": "fixture-smoke",
+     "purpose": "smoke",
+     "status": "finished",
+     "created": "2026-10-17T00:00:00Z",
+     "base_model": "Qwen/Qwen3-0.6B",
+     "dataset": "smoke",
+     "train_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+     "n_rows": 8,
+     "device": "mps",
+     "instance": "fixture Mac",
+     "duration_s": 360.0,
+     "cost_usd": 0.0,
+     "steps": 6,
+     "final_loss": 0.61,
+     "peak_mem_gb": 9.5,
+     "settings": {
+      "learning_rate": 0.0001,
+      "num_train_epochs": 2,
+      "lora_r": 16,
+      "lora_alpha": 32,
+      "max_length": 12288,
+      "gradient_accumulation_steps": 2,
+      "lr_scheduler_type": "cosine"
+     },
+     "adapter": {
+      "path": "runs/20261017T000000Z_train_fixture-smoke/adapter",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bytes": 40000000
+     },
+     "mask_ok": true,
+     "scored": [
+      {
+       "run_id": "20261017T020000Z_eval_fixture-tuned",
+       "label": "fixture tuned 0.6B",
+       "purpose": "smoke",
+       "results_row": null,
+       "created": "2026-10-17T02:00:00Z",
+       "model": {
+        "name": "Qwen3-0.6B + fixture-smoke",
+        "base_model": "Qwen/Qwen3-0.6B",
+        "train_run": "20261017T000000Z_train_fixture-smoke",
+        "adapter_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+       },
+       "split": "train",
+       "trials": 1,
+       "tau2_loop_run": "20261017T020000Z_telecom_student-0.6b_custom",
+       "n_tasks": 3,
+       "passed": 2,
+       "pass_hat": {
+        "1": 0.6666666666666666
+       },
+       "prompt_bytes_ok": true,
+       "tool_calls_ok": true,
+       "vs": {
+        "run_id": "20261017T010000Z_eval_fixture-base"
+       },
+       "mlflow_url": null
+      }
+     ],
+     "mlflow_url": null
+    }
+   ],
+   "eval_runs": [
+    {
+     "run_id": "20261017T020000Z_eval_fixture-tuned",
+     "label": "fixture tuned 0.6B",
+     "purpose": "smoke",
+     "results_row": null,
+     "created": "2026-10-17T02:00:00Z",
+     "model": {
+      "name": "Qwen3-0.6B + fixture-smoke",
+      "base_model": "Qwen/Qwen3-0.6B",
+      "train_run": "20261017T000000Z_train_fixture-smoke",
+      "adapter_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+     },
+     "split": "train",
+     "trials": 1,
+     "tau2_loop_run": "20261017T020000Z_telecom_student-0.6b_custom",
+     "n_tasks": 3,
+     "passed": 2,
+     "pass_hat": {
+      "1": 0.6666666666666666
+     },
+     "prompt_bytes_ok": true,
+     "tool_calls_ok": true,
+     "vs": {
+      "run_id": "20261017T010000Z_eval_fixture-base"
+     },
+     "mlflow_url": null
+    },
+    {
+     "run_id": "20261017T010000Z_eval_fixture-base",
+     "label": "fixture base 0.6B",
+     "purpose": "smoke",
+     "results_row": null,
+     "created": "2026-10-17T01:00:00Z",
+     "model": {
+      "name": "Qwen3-0.6B",
+      "base_model": "Qwen/Qwen3-0.6B",
+      "train_run": null,
+      "adapter_sha256": null
+     },
+     "split": "train",
+     "trials": 1,
+     "tau2_loop_run": "20261017T010000Z_telecom_student-0.6b_custom",
+     "n_tasks": 3,
+     "passed": 1,
+     "pass_hat": {
+      "1": 0.3333333333333333
+     },
+     "prompt_bytes_ok": true,
+     "tool_calls_ok": true,
+     "vs": null,
+     "mlflow_url": null
+    }
+   ],
+   "results": [
+    {
+     "row": "R0",
+     "model": "Qwen3-4B, untrained",
+     "milestone": "M3",
+     "run": null
+    },
+    {
+     "row": "R1",
+     "model": "Qwen3-4B + SFT on v1",
+     "milestone": "M5",
+     "run": null
+    },
+    {
+     "row": "R2",
+     "model": "Qwen3-30B-A3B, untrained",
+     "milestone": "M6",
+     "run": null
+    },
+    {
+     "row": "R3",
+     "model": "Qwen3-30B-A3B + SFT on v1",
+     "milestone": "M6",
+     "run": null
+    },
+    {
+     "row": "R4",
+     "model": "the student that missed + SFT on v2",
+     "milestone": "M7, only if needed",
+     "run": null
+    },
+    {
+     "row": "R5",
+     "model": "Claude telecom v2 (Haiku 5.5), 4 trials",
+     "milestone": "M8",
+     "run": null
+    }
+   ],
+   "smoke": [
+    {
+     "run_id": "20261017T020000Z_eval_fixture-tuned",
+     "label": "fixture tuned 0.6B",
+     "purpose": "smoke",
+     "results_row": null,
+     "created": "2026-10-17T02:00:00Z",
+     "model": {
+      "name": "Qwen3-0.6B + fixture-smoke",
+      "base_model": "Qwen/Qwen3-0.6B",
+      "train_run": "20261017T000000Z_train_fixture-smoke",
+      "adapter_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+     },
+     "split": "train",
+     "trials": 1,
+     "tau2_loop_run": "20261017T020000Z_telecom_student-0.6b_custom",
+     "n_tasks": 3,
+     "passed": 2,
+     "pass_hat": {
+      "1": 0.6666666666666666
+     },
+     "prompt_bytes_ok": true,
+     "tool_calls_ok": true,
+     "vs": {
+      "run_id": "20261017T010000Z_eval_fixture-base"
+     },
+     "mlflow_url": null
+    },
+    {
+     "run_id": "20261017T010000Z_eval_fixture-base",
+     "label": "fixture base 0.6B",
+     "purpose": "smoke",
+     "results_row": null,
+     "created": "2026-10-17T01:00:00Z",
+     "model": {
+      "name": "Qwen3-0.6B",
+      "base_model": "Qwen/Qwen3-0.6B",
+      "train_run": null,
+      "adapter_sha256": null
+     },
+     "split": "train",
+     "trials": 1,
+     "tau2_loop_run": "20261017T010000Z_telecom_student-0.6b_custom",
+     "n_tasks": 3,
+     "passed": 1,
+     "pass_hat": {
+      "1": 0.3333333333333333
+     },
+     "prompt_bytes_ok": true,
+     "tool_calls_ok": true,
+     "vs": null,
+     "mlflow_url": null
+    }
+   ],
+   "chains": [
+    {
+     "dataset": "smoke",
+     "train_run": "20261017T000000Z_train_fixture-smoke",
+     "train_label": "fixture-smoke",
+     "purpose": "smoke",
+     "adapter_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "evals": [
+      {
+       "run_id": "20261017T020000Z_eval_fixture-tuned",
+       "label": "fixture tuned 0.6B",
+       "purpose": "smoke",
+       "results_row": null,
+       "created": "2026-10-17T02:00:00Z",
+       "model": {
+        "name": "Qwen3-0.6B + fixture-smoke",
+        "base_model": "Qwen/Qwen3-0.6B",
+        "train_run": "20261017T000000Z_train_fixture-smoke",
+        "adapter_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+       },
+       "split": "train",
+       "trials": 1,
+       "tau2_loop_run": "20261017T020000Z_telecom_student-0.6b_custom",
+       "n_tasks": 3,
+       "passed": 2,
+       "pass_hat": {
+        "1": 0.6666666666666666
+       },
+       "prompt_bytes_ok": true,
+       "tool_calls_ok": true,
+       "vs": {
+        "run_id": "20261017T010000Z_eval_fixture-base"
+       },
+       "mlflow_url": null
+      }
+     ],
+     "bases": [
+      {
+       "run_id": "20261017T010000Z_eval_fixture-base",
+       "label": "fixture base 0.6B",
+       "purpose": "smoke",
+       "results_row": null,
+       "created": "2026-10-17T01:00:00Z",
+       "model": {
+        "name": "Qwen3-0.6B",
+        "base_model": "Qwen/Qwen3-0.6B",
+        "train_run": null,
+        "adapter_sha256": null
+       },
+       "split": "train",
+       "trials": 1,
+       "tau2_loop_run": "20261017T010000Z_telecom_student-0.6b_custom",
+       "n_tasks": 3,
+       "passed": 1,
+       "pass_hat": {
+        "1": 0.3333333333333333
+       },
+       "prompt_bytes_ok": true,
+       "tool_calls_ok": true,
+       "vs": null,
+       "mlflow_url": null
+      }
+     ]
+    }
+   ]
+  },
+  "/api/data": {
+   "versions": [
+    {
+     "version": "smoke",
+     "built": "2026-10-17T11:52:40Z",
+     "code_sha": "0667fed",
+     "n_loaded": 17,
+     "n_kept": 8,
+     "n_dropped": 9,
+     "training_tasks_covered": 3,
+     "training_tasks_total": 74,
+     "train_sha256": "26efec0277444ac2e83d2edc92b8bc923439124c330b146f2e6ee94197ef601c",
+     "sources": [
+      "fixture tests/fixtures/board_mini"
+     ],
+     "tokens": {
+      "min": 8210,
+      "median": 8211,
+      "p90": 8255,
+      "p99": 8256,
+      "max": 8256,
+      "prompt_and_tools": 7809
+     },
+     "max_tokens": 24576,
+     "token_counter": "estimate: characters / 4 (smoke only)",
+     "rows_here": true,
+     "review": {
+      "reviewed": 0,
+      "total": 6,
+      "signed_off": null
+     }
+    }
+   ]
+  },
+  "/api/data/smoke": {
+   "summary": {
+    "version": "smoke",
+    "built": "2026-10-17T11:52:40Z",
+    "code_sha": "0667fed",
+    "n_loaded": 17,
+    "n_kept": 8,
+    "n_dropped": 9,
+    "training_tasks_covered": 3,
+    "training_tasks_total": 74,
+    "train_sha256": "26efec0277444ac2e83d2edc92b8bc923439124c330b146f2e6ee94197ef601c",
+    "sources": [
+     "fixture tests/fixtures/board_mini"
+    ],
+    "tokens": {
+     "min": 8210,
+     "median": 8211,
+     "p90": 8255,
+     "p99": 8256,
+     "max": 8256,
+     "prompt_and_tools": 7809
+    },
+    "max_tokens": 24576,
+    "token_counter": "estimate: characters / 4 (smoke only)",
+    "rows_here": true,
+    "review": {
+     "reviewed": 0,
+     "total": 6,
+     "signed_off": null
+    }
+   },
+   "stats": {
+    "dataset": "smoke",
+    "built": "2026-10-17T11:52:40Z",
+    "code_sha": "0667fed",
+    "split_version": 3,
+    "split_sha256": "45d481019e630fba8a5a1e0b55f3fc789ba3118858300e8688c37b6c2fc4f90a",
+    "system_prompt_sha256": "b76554cc96138af12ae5a6a053b213a08148a4edb6e2de9d19cd63eb7ac5ddac",
+    "tools_sha256": "66b1aa33c7b193fedd548535867cef95cd7612fd5758f992c79e2feb2877a165",
+    "tau2_pin": "2174a603f6d014ef94473ffa95957f6ce27100db",
+    "sources": [
+     {
+      "id": "fixture",
+      "label": "tests/fixtures/board_mini",
+      "file": "board_mini.json",
+      "bytes": 339022,
+      "sha256": "abd3e1f5f2c04b1175ae37561804dd54e4f537d5ff3706dc2dcdabeb30dae82e",
+      "conversations": 17
+     }
+    ],
+    "n_loaded": 17,
+    "n_kept": 8,
+    "n_dropped": 9,
+    "filters": [
+     {
+      "rule": "F1",
+      "keep_if": "tau2 scored it a pass (reward 1)",
+      "in": 17,
+      "dropped": 1
+     },
+     {
+      "rule": "F2",
+      "keep_if": "its task is one of split v3's 74 training tasks",
+      "in": 16,
+      "dropped": 1
+     },
+     {
+      "rule": "F3",
+      "keep_if": "it ended normally: the customer stopped, or the agent transferred when the task expects it",
+      "in": 15,
+      "dropped": 1
+     },
+     {
+      "rule": "F4",
+      "keep_if": "every agent tool call names one of the 13 agent tools",
+      "in": 14,
+      "dropped": 1
+     },
+     {
+      "rule": "F5",
+      "keep_if": "no agent tool result is an error",
+      "in": 13,
+      "dropped": 1
+     },
+     {
+      "rule": "F6",
+      "keep_if": "its agent turns are at most 1.5 x the median of its task's passes",
+      "in": 12,
+      "dropped": 1
+     },
+     {
+      "rule": "F7",
+      "keep_if": "no reply holds a tool call written as text",
+      "in": 11,
+      "dropped": 1
+     },
+     {
+      "rule": "F8",
+      "keep_if": "not a test twin: no test task's exact set of root issues",
+      "in": 10,
+      "dropped": 0
+     },
+     {
+      "rule": "F9",
+      "keep_if": "at most 3 conversations per task with the same agent tool calls",
+      "in": 10,
+      "dropped": 1
+     },
+     {
+      "rule": "F10",
+      "keep_if": "it fits the length limit once rendered",
+      "in": 9,
+      "dropped": 1
+     }
+    ],
+    "drop_reasons": {
+     "F1: reward 0.0": 1,
+     "F2: a test task": 1,
+     "F3: ended by max_steps": 1,
+     "F4: called toggle_airplane_mode": 1,
+     "F5: 1 agent tool error(s)": 1,
+     "F6: 17 agent turns, over 1.5 x the task median 8": 1,
+     "F7: a reply holds a tool call written as text": 1,
+     "F9: copy 4 of one tool path": 1,
+     "F10: 28291 tokens, over 24576": 1
+    },
+    "kept_by_task": {
+     "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]": 2,
+     "[mms_issue]bad_wifi_calling|break_apn_mms_setting|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Easy]": 3,
+     "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]": 3
+    },
+    "kept_by_symptom": {
+     "mms_issue": 8
+    },
+    "kept_by_root_issue": {
+     "airplane_mode_on": 2,
+     "bad_wifi_calling": 5,
+     "break_apn_mms_setting": 3,
+     "break_app_storage_permission": 3,
+     "data_usage_exceeded": 3,
+     "unseat_sim_card": 3,
+     "user_abroad_roaming_enabled_off": 5
+    },
+    "kept_by_source": {
+     "fixture tests/fixtures/board_mini": 8
+    },
+    "training_tasks_covered": 3,
+    "training_tasks_total": 74,
+    "token_counter": "estimate: characters / 4 (smoke only)",
+    "max_tokens": 24576,
+    "tokens": {
+     "min": 8210,
+     "median": 8211,
+     "p90": 8255,
+     "p99": 8256,
+     "max": 8256,
+     "prompt_and_tools": 7809
+    },
+    "tokens_hist": [
+     {
+      "from": 8192,
+      "n": 8
+     }
+    ],
+    "reached_f10": 9,
+    "over_limit": {
+     "8192": 9,
+     "12288": 1,
+     "16384": 1,
+     "20480": 1,
+     "24576": 1
+    },
+    "agent_turns": {
+     "median": 7,
+     "max": 8
+    },
+    "source_checks": [],
+    "train_sha256": "26efec0277444ac2e83d2edc92b8bc923439124c330b146f2e6ee94197ef601c"
+   },
+   "card": "# Dataset smoke: tau-telecom-sft\n\nBuilt 2026-10-17T11:52:40Z at code `0667fed` from 17 conversations in 1 source(s): **8 kept**, 9 dropped. 3 of the 74 training tasks have at least one row.\n\n|  |  |\n|---|---|\n| train.jsonl sha256 | `26efec0277444ac2e83d2edc92b8bc923439124c330b146f2e6ee94197ef601c` |\n| split | v3, sha256 `45d481019e630fba8a5a1e0b55f3fc789ba3118858300e8688c37b6c2fc4f90a` |\n| tau2 pin | `2174a603f6d014ef94473ffa95957f6ce27100db` |\n| system prompt sha256 | `b76554cc96138af12ae5a6a053b213a08148a4edb6e2de9d19cd63eb7ac5ddac` |\n| tools sha256 | `66b1aa33c7b193fedd548535867cef95cd7612fd5758f992c79e2feb2877a165` |\n| token counter | estimate: characters / 4 (smoke only); limit 24,576 |\n\n## Sources\n\n| id | source | file | bytes | sha256 | conversations |\n|---|---|---|---|---|---|\n| fixture | tests/fixtures/board_mini | board_mini.json | 339,022 | `abd3e1f5f2c04b11…` | 17 |\n\n## Filters, in order\n\nEach drop is charged to the first rule it failed.\n\n| rule | keep a conversation only if | in | dropped | kept |\n|---|---|---|---|---|\n| F1 | tau2 scored it a pass (reward 1) | 17 | 1 | 16 |\n| F2 | its task is one of split v3's 74 training tasks | 16 | 1 | 15 |\n| F3 | it ended normally: the customer stopped, or the agent transferred when the task expects it | 15 | 1 | 14 |\n| F4 | every agent tool call names one of the 13 agent tools | 14 | 1 | 13 |\n| F5 | no agent tool result is an error | 13 | 1 | 12 |\n| F6 | its agent turns are at most 1.5 x the median of its task's passes | 12 | 1 | 11 |\n| F7 | no reply holds a tool call written as text | 11 | 1 | 10 |\n| F8 | not a test twin: no test task's exact set of root issues | 10 | 0 | 10 |\n| F9 | at most 3 conversations per task with the same agent tool calls | 10 | 1 | 9 |\n| F10 | it fits the length limit once rendered | 9 | 1 | 8 |\n\n### Why they were dropped\n\n| rule: reason | conversations |\n|---|---|\n| F10: 28291 tokens, over 24576 | 1 |\n| F1: reward 0.0 | 1 |\n| F2: a test task | 1 |\n| F3: ended by max_steps | 1 |\n| F4: called toggle_airplane_mode | 1 |\n| F5: 1 agent tool error(s) | 1 |\n| F6: 17 agent turns, over 1.5 x the task median 8 | 1 |\n| F7: a reply holds a tool call written as text | 1 |\n| F9: copy 4 of one tool path | 1 |\n\n## What was kept\n\n### By symptom\n\n| symptom | rows |\n|---|---|\n| mms_issue | 8 |\n\n### By root issue\n\n| root issue | rows |\n|---|---|\n| airplane_mode_on | 2 |\n| bad_wifi_calling | 5 |\n| break_apn_mms_setting | 3 |\n| break_app_storage_permission | 3 |\n| data_usage_exceeded | 3 |\n| unseat_ …",
+   "withheld": 1
+  },
+  "/api/data/smoke/coverage": {
+   "version": "smoke",
+   "thin_below": 10,
+   "issues": [
+    {
+     "issue": "bad_network_preference",
+     "kept_rows": 0,
+     "train_tasks": 37,
+     "test_tasks": 19,
+     "thin": true
+    },
+    {
+     "issue": "data_usage_exceeded",
+     "kept_rows": 3,
+     "train_tasks": 33,
+     "test_tasks": 17,
+     "thin": true
+    },
+    {
+     "issue": "airplane_mode_on",
+     "kept_rows": 2,
+     "train_tasks": 46,
+     "test_tasks": 16,
+     "thin": true
+    },
+    {
+     "issue": "data_mode_off",
+     "kept_rows": 0,
+     "train_tasks": 26,
+     "test_tasks": 15,
+     "thin": true
+    },
+    {
+     "issue": "unseat_sim_card",
+     "kept_rows": 3,
+     "train_tasks": 27,
+     "test_tasks": 13,
+     "thin": true
+    },
+    {
+     "issue": "bad_wifi_calling",
+     "kept_rows": 5,
+     "train_tasks": 15,
+     "test_tasks": 10,
+     "thin": true
+    },
+    {
+     "issue": "bad_vpn",
+     "kept_rows": 0,
+     "train_tasks": 8,
+     "test_tasks": 8,
+     "thin": true
+    },
+    {
+     "issue": "data_saver_mode_on",
+     "kept_rows": 0,
+     "train_tasks": 11,
+     "test_tasks": 8,
+     "thin": true
+    },
+    {
+     "issue": "user_abroad_roaming_disabled_on",
+     "kept_rows": 0,
+     "train_tasks": 13,
+     "test_tasks": 8,
+     "thin": true
+    },
+    {
+     "issue": "break_apn_mms_setting",
+     "kept_rows": 3,
+     "train_tasks": 13,
+     "test_tasks": 8,
+     "thin": true
+    },
+    {
+     "issue": "user_abroad_roaming_enabled_off",
+     "kept_rows": 5,
+     "train_tasks": 15,
+     "test_tasks": 8,
+     "thin": true
+    },
+    {
+     "issue": "user_abroad_roaming_disabled_off",
+     "kept_rows": 0,
+     "train_tasks": 14,
+     "test_tasks": 6,
+     "thin": true
+    },
+    {
+     "issue": "break_apn_settings",
+     "kept_rows": 0,
+     "train_tasks": 12,
+     "test_tasks": 5,
+     "thin": true
+    },
+    {
+     "issue": "break_app_sms_permission",
+     "kept_rows": 0,
+     "train_tasks": 5,
+     "test_tasks": 5,
+     "thin": true
+    },
+    {
+     "issue": "lock_sim_card_pin",
+     "kept_rows": 0,
+     "train_tasks": 13,
+     "test_tasks": 5,
+     "thin": true
+    },
+    {
+     "issue": "break_app_both_permissions",
+     "kept_rows": 0,
+     "train_tasks": 10,
+     "test_tasks": 4,
+     "thin": true
+    },
+    {
+     "issue": "contract_end_suspension",
+     "kept_rows": 0,
+     "train_tasks": 4,
+     "test_tasks": 4,
+     "thin": true
+    },
+    {
+     "issue": "overdue_bill_suspension",
+     "kept_rows": 0,
+     "train_tasks": 10,
+     "test_tasks": 3,
+     "thin": true
+    },
+    {
+     "issue": "break_app_storage_permission",
+     "kept_rows": 3,
+     "train_tasks": 8,
+     "test_tasks": 3,
+     "thin": true
+    }
+   ],
+   "symptoms": [
+    {
+     "symptom": "mms_issue",
+     "kept_rows": 8,
+     "test_tasks": 17
+    }
+   ],
+   "tasks_covered": 3,
+   "tasks_total": 74,
+   "note": "test tasks are counted, never named"
+  },
+  "/api/data/smoke/rows": {
+   "version": "smoke",
+   "rows_here": true,
+   "total": 16,
+   "counts": {
+    "kept": 8,
+    "dropped": 8,
+    "withheld": 1
+   },
+   "n_kept": 8,
+   "rules": [
+    "F1",
+    "F2",
+    "F3",
+    "F4",
+    "F5",
+    "F6",
+    "F7",
+    "F8",
+    "F9",
+    "F10"
+   ],
+   "sources": [
+    "fixture tests/fixtures/board_mini"
+   ],
+   "symptoms": [
+    "mms_issue"
+   ],
+   "items": [
+    {
+     "sim_id": "fixture-[mms_issue]airplane_mode-0-6",
+     "status": "kept",
+     "task_id": "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "symptom": "mms_issue",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 0,
+     "agent_turns": 7,
+     "rule": null,
+     "reason": null
+    },
+    {
+     "sim_id": "fixture-[mms_issue]airplane_mode-1-13",
+     "status": "kept",
+     "task_id": "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "symptom": "mms_issue",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 1,
+     "agent_turns": 8,
+     "rule": null,
+     "reason": null
+    },
+    {
+     "sim_id": "fixture-[mms_issue]airplane_mode-2-19",
+     "status": "dropped",
+     "task_id": "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "symptom": "mms_issue",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 2,
+     "agent_turns": 7,
+     "rule": "F1",
+     "reason": "reward 0.0"
+    },
+    {
+     "sim_id": "fixture-[mms_issue]bad_wifi_call-0-87",
+     "status": "kept",
+     "task_id": "[mms_issue]bad_wifi_calling|break_apn_mms_setting|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "symptom": "mms_issue",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 0,
+     "agent_turns": 7,
+     "rule": null,
+     "reason": null
+    },
+    {
+     "sim_id": "fixture-[mms_issue]bad_wifi_call-1-93",
+     "status": "kept",
+     "task_id": "[mms_issue]bad_wifi_calling|break_apn_mms_setting|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "symptom": "mms_issue",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 1,
+     "agent_turns": 7,
+     "rule": null,
+     "reason": null
+    },
+    {
+     "sim_id": "fixture-[mms_issue]bad_wifi_call-2-99",
+     "status": "kept",
+     "task_id": "[mms_issue]bad_wifi_calling|break_apn_mms_setting|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "symptom": "mms_issue",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 2,
+     "agent_turns": 7,
+     "rule": null,
+     "reason": null
+    },
+    {
+     "sim_id": "fixture-[mms_issue]bad_wifi_call-3-105",
+     "status": "dropped",
+     "task_id": "[mms_issue]bad_wifi_calling|break_apn_mms_setting|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "symptom": "mms_issue",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 3,
+     "agent_turns": 7,
+     "rule": "F9",
+     "reason": "copy 4 of one tool path"
+    },
+    {
+     "sim_id": "fixture-[mms_issue]bad_wifi_call-4-112",
+     "status": "dropped",
+     "task_id": "[mms_issue]bad_wifi_calling|break_apn_mms_setting|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "symptom": "mms_issue",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 4,
+     "agent_turns": 8,
+     "rule": "F10",
+     "reason": "28291 tokens, over 24576"
+    },
+    {
+     "sim_id": "fixture-[mms_issue]break_app_sto-0-31",
+     "status": "kept",
+     "task_id": "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]",
+     "symptom": "mms_issue",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 0,
+     "agent_turns": 7,
+     "rule": null,
+     "reason": null
+    },
+    {
+     "sim_id": "fixture-[mms_issue]break_app_sto-1-38",
+     "status": "kept",
+     "task_id": "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]",
+     "symptom": "mms_issue",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 1,
+     "agent_turns": 8,
+     "rule": null,
+     "reason": null
+    },
+    {
+     "sim_id": "fixture-[mms_issue]break_app_sto-2-44",
+     "status": "kept",
+     "task_id": "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]",
+     "symptom": "mms_issue",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 2,
+     "agent_turns": 7,
+     "rule": null,
+     "reason": null
+    },
+    {
+     "sim_id": "fixture-[mms_issue]break_app_sto-3-55",
+     "status": "dropped",
+     "task_id": "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]",
+     "symptom": "mms_issue",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 3,
+     "agent_turns": 17,
+     "rule": "F6",
+     "reason": "17 agent turns, over 1.5 x the task median 8"
+    },
+    {
+     "sim_id": "fixture-[mms_issue]break_app_sto-4-61",
+     "status": "dropped",
+     "task_id": "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]",
+     "symptom": "mms_issue",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 4,
+     "agent_turns": 7,
+     "rule": "F3",
+     "reason": "ended by max_steps"
+    },
+    {
+     "sim_id": "fixture-[mms_issue]break_app_sto-5-68",
+     "status": "dropped",
+     "task_id": "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]",
+     "symptom": "mms_issue",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 5,
+     "agent_turns": 8,
+     "rule": "F4",
+     "reason": "called toggle_airplane_mode"
+    },
+    {
+     "sim_id": "fixture-[mms_issue]break_app_sto-6-75",
+     "status": "dropped",
+     "task_id": "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]",
+     "symptom": "mms_issue",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 6,
+     "agent_turns": 8,
+     "rule": "F5",
+     "reason": "1 agent tool error(s)"
+    },
+    {
+     "sim_id": "fixture-[mms_issue]break_app_sto-7-81",
+     "status": "dropped",
+     "task_id": "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]",
+     "symptom": "mms_issue",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 7,
+     "agent_turns": 8,
+     "rule": "F7",
+     "reason": "a reply holds a tool call written as text"
+    }
+   ]
+  },
+  "/api/data/smoke/rows?status=dropped&rule=F4": {
+   "version": "smoke",
+   "rows_here": true,
+   "total": 1,
+   "counts": {
+    "kept": 8,
+    "dropped": 8,
+    "withheld": 1
+   },
+   "n_kept": 8,
+   "rules": [
+    "F1",
+    "F2",
+    "F3",
+    "F4",
+    "F5",
+    "F6",
+    "F7",
+    "F8",
+    "F9",
+    "F10"
+   ],
+   "sources": [
+    "fixture tests/fixtures/board_mini"
+   ],
+   "symptoms": [
+    "mms_issue"
+   ],
+   "items": [
+    {
+     "sim_id": "fixture-[mms_issue]break_app_sto-5-68",
+     "status": "dropped",
+     "task_id": "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]",
+     "symptom": "mms_issue",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 5,
+     "agent_turns": 8,
+     "rule": "F4",
+     "reason": "called toggle_airplane_mode"
+    }
+   ]
+  },
+  "/api/data/smoke/rows/fixture-[mms_issue]airplane_mode-0-6?lens=chat": {
+   "version": "smoke",
+   "sim_id": "fixture-[mms_issue]airplane_mode-0-6",
+   "status": "kept",
+   "meta": {
+    "task_id": "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+    "sim_id": "fixture-[mms_issue]airplane_mode-0-6",
+    "symptom": "mms_issue",
+    "source": "fixture tests/fixtures/board_mini",
+    "trial": 0,
+    "reward": 1.0,
+    "agent_turns": 7,
+    "dataset": "smoke"
+   },
+   "drop": null,
+   "in_review_sample": true,
+   "lens": "chat",
+   "raw_here": true,
+   "messages": [
+    {
+     "role": "system",
+     "content": "<instructions>\nYou are a customer service agent that helps the user according to the <policy> provided below.\nIn each turn you can either:\n- Send a message to the user.\n- Make a tool call.\nYou cannot do both at the same time.\n\nTry to be helpful and always follow the policy. Always make sure you generate valid JSON only.\n</instructions>\n<policy>\n<main_policy>\n# Telecom Agent Policy\n\nThe current time is 2025-02-25 12:08:00 EST.\n\nAs a telecom agent, you can help users with  **technical support**, **overdue bill payment**, **line suspension**, and **plan options**.\n\nYou should not provide any information, knowledge, or procedures not provided by the user or available tools, or give subjective recommendations or comments.\n\nYou should only make one tool call at a time, and if you make a tool call, you should not respond to the user simultaneously. If you respond to the user, you should not make a tool call at the same time.\n\nYou should deny user requests that are against this policy.\n\nYou should transfer the user to a human agent if and only if the request cannot be handled within the scope of your actions. To transfer, first make a tool call to transfer_to_human_agents, and then send the message 'YOU ARE BEING TRANSFERRED TO A HUMAN AGENT. PLEASE HOLD ON.' to the user.\n\nYou should try your best to resolve the issue for the user before transferring the user to a human agent.\n\n## Domain Basics\n\n### Customer\nEach customer has a profile containing:\n- customer ID\n- full name\n- date of birth\n- email\n- phone number\n- address (street, city, state, zip code)\n- account status\n- created date\n- payment methods\n- line IDs associated with their account\n- bill IDs\n- last extension date (for payment extensions)\n- goodwill credit usage for the year\n\nThere are four account status types: **Active**, **Suspended**, **Pending Verification**, and **Closed**.\n\n### Payment Method\nEach payment method includes:\n- method type (Credit Card, Debit Card, PayPal)\n- account number last 4 digits\n- expiration date (MM/YYYY format)\n\n### Line\nEach line has the following attributes:\n- line ID\n- phone number\n- status\n- plan ID\n- device ID (if applicable)\n- data usage (in GB)\n- data refueling (in GB)\n- roaming status\n- contract end date\n- last plan change date\n- last SIM replacement date\n- suspension start date (if applicable)\n\nThere are four line status types: **Active**, **Suspended**, **Pending Activation**, and **Closed**.\n\n### Plan\nEach plan specifies:\n- plan ID\n- name\n- data limit (in GB)\n- mo …",
+     "tool_calls": [],
+     "tool_call_id": null
+    },
+    {
+     "role": "assistant",
+     "content": "Hi! How can I help you today?",
+     "tool_calls": [],
+     "tool_call_id": null
+    },
+    {
+     "role": "user",
+     "content": "My mobile data stopped working. I'm in France at the moment.",
+     "tool_calls": [],
+     "tool_call_id": null
+    },
+    {
+     "role": "assistant",
+     "content": "I can help with that. What's the phone number on the affected line?",
+     "tool_calls": [],
+     "tool_call_id": null
+    },
+    {
+     "role": "user",
+     "content": "It's 555-123-2002.",
+     "tool_calls": [],
+     "tool_call_id": null
+    },
+    {
+     "role": "assistant",
+     "content": "",
+     "tool_calls": [
+      {
+       "id": "call_1",
+       "name": "get_customer_by_phone",
+       "arguments": "{\"phone_number\": \"555-123-2002\"}"
+      }
+     ],
+     "tool_call_id": null
+    },
+    {
+     "role": "tool",
+     "content": "{\"customer_id\": \"C1001\", \"full_name\": \"John Smith\", \"line_ids\": [\"L1002\"]}",
+     "tool_calls": [],
+     "tool_call_id": "call_1"
+    },
+    {
+     "role": "assistant",
+     "content": "",
+     "tool_calls": [
+      {
+       "id": "call_2",
+       "name": "get_details_by_id",
+       "arguments": "{\"id\": \"L1002\"}"
+      }
+     ],
+     "tool_call_id": null
+    },
+    {
+     "role": "tool",
+     "content": "{\"line_id\": \"L1002\", \"status\": \"Active\", \"roaming_enabled\": false}",
+     "tool_calls": [],
+     "tool_call_id": "call_2"
+    },
+    {
+     "role": "assistant",
+     "content": "Roaming is off on your line, which stops data abroad. Shall I turn it on?",
+     "tool_calls": [],
+     "tool_call_id": null
+    },
+    {
+     "role": "user",
+     "content": "Yes, please.",
+     "tool_calls": [],
+     "tool_call_id": null
+    },
+    {
+     "role": "assistant",
+     "content": "",
+     "tool_calls": [
+      {
+       "id": "call_3",
+       "name": "enable_roaming",
+       "arguments": "{\"customer_id\": \"C1001\", \"line_id\": \"L1002\"}"
+      }
+     ],
+     "tool_call_id": null
+    },
+    {
+     "role": "tool",
+     "content": "Roaming enabled on L1002",
+     "tool_calls": [],
+     "tool_call_id": "call_3"
+    },
+    {
+     "role": "assistant",
+     "content": "Done. Please turn on Data Roaming in your phone's settings, then run a speed test.",
+     "tool_calls": [],
+     "tool_call_id": null
+    },
+    {
+     "role": "user",
+     "content": "The speed test says excellent. Thanks! ###STOP###",
+     "tool_calls": [],
+     "tool_call_id": null
+    }
+   ],
+   "n_tools": 13
+  },
+  "/api/data/smoke/rows/fixture-[mms_issue]airplane_mode-0-6?lens=raw": {
+   "version": "smoke",
+   "sim_id": "fixture-[mms_issue]airplane_mode-0-6",
+   "status": "kept",
+   "meta": {
+    "task_id": "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+    "sim_id": "fixture-[mms_issue]airplane_mode-0-6",
+    "symptom": "mms_issue",
+    "source": "fixture tests/fixtures/board_mini",
+    "trial": 0,
+    "reward": 1.0,
+    "agent_turns": 7,
+    "dataset": "smoke"
+   },
+   "drop": null,
+   "in_review_sample": true,
+   "lens": "raw",
+   "raw_here": true,
+   "messages": [
+    {
+     "i": 0,
+     "role": "assistant",
+     "content": "Hi! How can I help you today?",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 1,
+     "role": "user",
+     "content": "My mobile data stopped working. I'm in France at the moment.",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 2,
+     "role": "assistant",
+     "content": "I can help with that. What's the phone number on the affected line?",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 3,
+     "role": "user",
+     "content": "It's 555-123-2002.",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 4,
+     "role": "assistant",
+     "content": null,
+     "tool_calls": [
+      {
+       "id": "call_1",
+       "name": "get_customer_by_phone",
+       "arguments": {
+        "phone_number": "555-123-2002"
+       }
+      }
+     ],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 5,
+     "role": "tool",
+     "content": "{\"customer_id\": \"C1001\", \"full_name\": \"John Smith\", \"line_ids\": [\"L1002\"]}",
+     "tool_calls": [],
+     "requestor": "assistant",
+     "error": false,
+     "tool_call_id": "call_1",
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 6,
+     "role": "assistant",
+     "content": null,
+     "tool_calls": [
+      {
+       "id": "call_2",
+       "name": "get_details_by_id",
+       "arguments": {
+        "id": "L1002"
+       }
+      }
+     ],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 7,
+     "role": "tool",
+     "content": "{\"line_id\": \"L1002\", \"status\": \"Active\", \"roaming_enabled\": false}",
+     "tool_calls": [],
+     "requestor": "assistant",
+     "error": false,
+     "tool_call_id": "call_2",
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 8,
+     "role": "assistant",
+     "content": "Roaming is off on your line, which stops data abroad. Shall I turn it on?",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 9,
+     "role": "user",
+     "content": "Yes, please.",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 10,
+     "role": "assistant",
+     "content": null,
+     "tool_calls": [
+      {
+       "id": "call_3",
+       "name": "enable_roaming",
+       "arguments": {
+        "customer_id": "C1001",
+        "line_id": "L1002"
+       }
+      }
+     ],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 11,
+     "role": "tool",
+     "content": "Roaming enabled on L1002",
+     "tool_calls": [],
+     "requestor": "assistant",
+     "error": false,
+     "tool_call_id": "call_3",
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 12,
+     "role": "assistant",
+     "content": "Done. Please turn on Data Roaming in your phone's settings, then run a speed test.",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 13,
+     "role": "user",
+     "content": null,
+     "tool_calls": [
+      {
+       "id": "call_4",
+       "name": "toggle_roaming",
+       "arguments": {}
+      }
+     ],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": false,
+     "offending": false
+    },
+    {
+     "i": 14,
+     "role": "tool",
+     "content": "Data Roaming: ON",
+     "tool_calls": [],
+     "requestor": "user",
+     "error": false,
+     "tool_call_id": "call_4",
+     "in_agent_view": false,
+     "offending": false
+    },
+    {
+     "i": 15,
+     "role": "user",
+     "content": null,
+     "tool_calls": [
+      {
+       "id": "call_5",
+       "name": "run_speed_test",
+       "arguments": {}
+      }
+     ],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": false,
+     "offending": false
+    },
+    {
+     "i": 16,
+     "role": "tool",
+     "content": "Speed test: 200 Mbps, excellent",
+     "tool_calls": [],
+     "requestor": "user",
+     "error": false,
+     "tool_call_id": "call_5",
+     "in_agent_view": false,
+     "offending": false
+    },
+    {
+     "i": 17,
+     "role": "user",
+     "content": "The speed test says excellent. Thanks! ###STOP###",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    }
+   ],
+   "termination": "user_stop",
+   "reward": 1.0
+  },
+  "/api/data/smoke/rows/fixture-[mms_issue]airplane_mode-0-6?lens=tokens": {
+   "version": "smoke",
+   "sim_id": "fixture-[mms_issue]airplane_mode-0-6",
+   "status": "kept",
+   "meta": {
+    "task_id": "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+    "sim_id": "fixture-[mms_issue]airplane_mode-0-6",
+    "symptom": "mms_issue",
+    "source": "fixture tests/fixtures/board_mini",
+    "trial": 0,
+    "reward": 1.0,
+    "agent_turns": 7,
+    "dataset": "smoke"
+   },
+   "drop": null,
+   "in_review_sample": true,
+   "lens": "tokens",
+   "raw_here": true,
+   "tokens": {
+    "tokenizer": "Qwen/Qwen3-4B-Instruct-2507",
+    "template": "TRL's training copy of the student's chat template",
+    "n_tokens": 7480,
+    "n_trained": 172,
+    "segments": [
+     {
+      "text": "<|im_start|>system\n<instructions>\nYou are a customer service agent that helps the user according to the <policy> provided below.\nIn each turn you can either:\n- Send a message to the user.\n- Make a tool call.\nYou cannot do both at the same time.\n\nTry to be helpful and always follow the policy. Always make sure you generate valid JSON only.\n</instructions>\n<policy>\n<main_policy>\n# Telecom Agent Policy\n\nThe current time is 2025-02-25 12:08:00 EST.\n\nAs a telecom agent, you can help users with  **technical support**, **overdue bill payment**, **line suspension**, and **plan options**.\n\nYou should not provide any information, knowledge, or procedures not provided by the user or available tools, or give subjective recommendations or comments.\n\nYou should only make one tool call at a time, and if you make a tool call, you should not respond to the user simultaneously. If you respond to the user, you should not make a tool call at the same time.\n\nYou should deny user requests that are against this policy.\n\nYou should transfer the user to a human agent if and only if the request cannot be handled within the scope of your actions. To transfer, first make a tool call to transfer_to_human_agents, and then send the message 'YOU ARE BEING TRANSFERRED TO A HUMAN AGENT. PLEASE HOLD ON.' to the user.\n\nYou should try your best to resolve the issue for the user before transferring the user to a human agent.\n\n## Domain Basics\n\n### Customer\nEach customer has a profile containing:\n- customer ID\n- full name\n- date of birth\n- email\n- phone number\n- address (street, city, state, zip code)\n- account status\n- created date\n- payment methods\n- line IDs associated with their account\n- bill IDs\n- last extension date (for payment extensions)\n- goodwill credit usage for the year\n\nThere are four account status types: **Active**, **Suspended**, **Pending Verification**, and **Closed**.\n\n### Payment Method\nEach payment method includes:\n- method type (Credit Card, Debit Card, PayPal)\n- account number last 4 digits\n- expiration date (MM/YYYY format)\n\n### Line\nEach line has the following attributes:\n- line ID\n- phone number\n- status\n- plan ID\n- device ID (if applicable)\n- data usage (in GB)\n- data refueling (in GB)\n- roaming status\n- contract end date\n- last plan change date\n- last SIM replacement date\n- suspension start date (if applicable)\n\nThere are four line status types: **Active**, **Suspended**, **Pending Activation**, and **Closed**.\n\n### Plan\nEach plan specifies:\n- plan ID\n- name\n- data …",
+      "trained": false
+     },
+     {
+      "text": "Hi! How can I help you today?<|im_end|>\n",
+      "trained": true
+     },
+     {
+      "text": "<|im_start|>user\nMy mobile data stopped working. I'm in France at the moment.<|im_end|>\n<|im_start|>assistant\n",
+      "trained": false
+     },
+     {
+      "text": "I can help with that. What's the phone number on the affected line?<|im_end|>\n",
+      "trained": true
+     },
+     {
+      "text": "<|im_start|>user\nIt's 555-123-2002.<|im_end|>\n<|im_start|>assistant\n",
+      "trained": false
+     },
+     {
+      "text": "<tool_call>\n{\"name\": \"get_customer_by_phone\", \"arguments\": {\"phone_number\": \"555-123-2002\"}}\n</tool_call><|im_end|>\n",
+      "trained": true
+     },
+     {
+      "text": "<|im_start|>user\n<tool_response>\n{\"customer_id\": \"C1001\", \"full_name\": \"John Smith\", \"line_ids\": [\"L1002\"]}\n</tool_response><|im_end|>\n<|im_start|>assistant\n",
+      "trained": false
+     },
+     {
+      "text": "<tool_call>\n{\"name\": \"get_details_by_id\", \"arguments\": {\"id\": \"L1002\"}}\n</tool_call><|im_end|>\n",
+      "trained": true
+     },
+     {
+      "text": "<|im_start|>user\n<tool_response>\n{\"line_id\": \"L1002\", \"status\": \"Active\", \"roaming_enabled\": false}\n</tool_response><|im_end|>\n<|im_start|>assistant\n",
+      "trained": false
+     },
+     {
+      "text": "Roaming is off on your line, which stops data abroad. Shall I turn it on?<|im_end|>\n",
+      "trained": true
+     },
+     {
+      "text": "<|im_start|>user\nYes, please.<|im_end|>\n<|im_start|>assistant\n",
+      "trained": false
+     },
+     {
+      "text": "<tool_call>\n{\"name\": \"enable_roaming\", \"arguments\": {\"customer_id\": \"C1001\", \"line_id\": \"L1002\"}}\n</tool_call><|im_end|>\n",
+      "trained": true
+     },
+     {
+      "text": "<|im_start|>user\n<tool_response>\nRoaming enabled on L1002\n</tool_response><|im_end|>\n<|im_start|>assistant\n",
+      "trained": false
+     },
+     {
+      "text": "Done. Please turn on Data Roaming in your phone's settings, then run a speed test.<|im_end|>\n",
+      "trained": true
+     },
+     {
+      "text": "<|im_start|>user\nThe speed test says excellent. Thanks! ###STOP###<|im_end|>\n",
+      "trained": false
+     }
+    ]
+   }
+  },
+  "/api/data/smoke/rows/fixture-[mms_issue]break_app_sto-5-68?lens=raw": {
+   "version": "smoke",
+   "sim_id": "fixture-[mms_issue]break_app_sto-5-68",
+   "status": "dropped",
+   "meta": {
+    "task_id": "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]",
+    "source": "fixture tests/fixtures/board_mini",
+    "trial": 5,
+    "agent_turns": 8,
+    "sim_id": "fixture-[mms_issue]break_app_sto-5-68"
+   },
+   "drop": {
+    "rule": "F4",
+    "reason": "called toggle_airplane_mode"
+   },
+   "in_review_sample": true,
+   "lens": "raw",
+   "raw_here": true,
+   "messages": [
+    {
+     "i": 0,
+     "role": "assistant",
+     "content": "Hi! How can I help you today?",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 1,
+     "role": "user",
+     "content": "My mobile data stopped working. I'm in France at the moment.",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 2,
+     "role": "assistant",
+     "content": "I can help with that. What's the phone number on the affected line?",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 3,
+     "role": "user",
+     "content": "It's 555-123-2002.",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 4,
+     "role": "assistant",
+     "content": null,
+     "tool_calls": [
+      {
+       "id": "call_62",
+       "name": "get_customer_by_phone",
+       "arguments": {
+        "phone_number": "555-123-2002"
+       }
+      }
+     ],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 5,
+     "role": "tool",
+     "content": "{\"customer_id\": \"C1001\", \"full_name\": \"John Smith\", \"line_ids\": [\"L1002\"]}",
+     "tool_calls": [],
+     "requestor": "assistant",
+     "error": false,
+     "tool_call_id": "call_62",
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 6,
+     "role": "assistant",
+     "content": null,
+     "tool_calls": [
+      {
+       "id": "call_63",
+       "name": "toggle_airplane_mode",
+       "arguments": {}
+      }
+     ],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": true
+    },
+    {
+     "i": 7,
+     "role": "tool",
+     "content": "Tool toggle_airplane_mode not found",
+     "tool_calls": [],
+     "requestor": "assistant",
+     "error": false,
+     "tool_call_id": "call_63",
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 8,
+     "role": "assistant",
+     "content": null,
+     "tool_calls": [
+      {
+       "id": "call_64",
+       "name": "get_details_by_id",
+       "arguments": {
+        "id": "L1002"
+       }
+      }
+     ],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 9,
+     "role": "tool",
+     "content": "{\"line_id\": \"L1002\", \"status\": \"Active\", \"roaming_enabled\": false}",
+     "tool_calls": [],
+     "requestor": "assistant",
+     "error": false,
+     "tool_call_id": "call_64",
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 10,
+     "role": "assistant",
+     "content": "Roaming is off on your line, which stops data abroad. Shall I turn it on?",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 11,
+     "role": "user",
+     "content": "Yes, please.",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 12,
+     "role": "assistant",
+     "content": null,
+     "tool_calls": [
+      {
+       "id": "call_65",
+       "name": "enable_roaming",
+       "arguments": {
+        "customer_id": "C1001",
+        "line_id": "L1002"
+       }
+      }
+     ],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 13,
+     "role": "tool",
+     "content": "Roaming enabled on L1002",
+     "tool_calls": [],
+     "requestor": "assistant",
+     "error": false,
+     "tool_call_id": "call_65",
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 14,
+     "role": "assistant",
+     "content": "Done. Please turn on Data Roaming in your phone's settings, then run a speed test.",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 15,
+     "role": "user",
+     "content": null,
+     "tool_calls": [
+      {
+       "id": "call_66",
+       "name": "toggle_roaming",
+       "arguments": {}
+      }
+     ],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": false,
+     "offending": false
+    },
+    {
+     "i": 16,
+     "role": "tool",
+     "content": "Data Roaming: ON",
+     "tool_calls": [],
+     "requestor": "user",
+     "error": false,
+     "tool_call_id": "call_66",
+     "in_agent_view": false,
+     "offending": false
+    },
+    {
+     "i": 17,
+     "role": "user",
+     "content": null,
+     "tool_calls": [
+      {
+       "id": "call_67",
+       "name": "run_speed_test",
+       "arguments": {}
+      }
+     ],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": false,
+     "offending": false
+    },
+    {
+     "i": 18,
+     "role": "tool",
+     "content": "Speed test: 200 Mbps, excellent",
+     "tool_calls": [],
+     "requestor": "user",
+     "error": false,
+     "tool_call_id": "call_67",
+     "in_agent_view": false,
+     "offending": false
+    },
+    {
+     "i": 19,
+     "role": "user",
+     "content": "The speed test says excellent. Thanks! ###STOP###",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    }
+   ],
+   "termination": "user_stop",
+   "reward": 1.0
+  },
+  "/api/data/smoke/review": {
+   "version": "smoke",
+   "seed": 300,
+   "drawn": "2026-10-17T11:52:40Z",
+   "items": [
+    {
+     "sim_id": "fixture-[mms_issue]break_app_sto-0-31",
+     "status": "kept",
+     "task_id": "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 0,
+     "rule": null,
+     "reason": null,
+     "latest": null
+    },
+    {
+     "sim_id": "fixture-[mms_issue]bad_wifi_call-0-87",
+     "status": "kept",
+     "task_id": "[mms_issue]bad_wifi_calling|break_apn_mms_setting|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 0,
+     "rule": null,
+     "reason": null,
+     "latest": null
+    },
+    {
+     "sim_id": "fixture-[mms_issue]airplane_mode-0-6",
+     "status": "kept",
+     "task_id": "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 0,
+     "rule": null,
+     "reason": null,
+     "latest": null
+    },
+    {
+     "sim_id": "fixture-[mms_issue]airplane_mode-2-19",
+     "status": "dropped",
+     "task_id": "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 2,
+     "rule": "F1",
+     "reason": "reward 0.0",
+     "latest": null
+    },
+    {
+     "sim_id": "fixture-[mms_issue]break_app_sto-4-61",
+     "status": "dropped",
+     "task_id": "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 4,
+     "rule": "F3",
+     "reason": "ended by max_steps",
+     "latest": null
+    },
+    {
+     "sim_id": "fixture-[mms_issue]break_app_sto-5-68",
+     "status": "dropped",
+     "task_id": "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]",
+     "source": "fixture tests/fixtures/board_mini",
+     "trial": 5,
+     "rule": "F4",
+     "reason": "called toggle_airplane_mode",
+     "latest": null
+    }
+   ],
+   "reviewed": 0,
+   "total": 6,
+   "signed_off": null,
+   "verdicts": [
+    "good",
+    "bad",
+    "note"
+   ],
+   "log": []
+  },
+  "/api/train": {
+   "runs": [
+    {
+     "run_id": "20261017T000000Z_train_fixture-smoke",
+     "label": "fixture-smoke",
+     "purpose": "smoke",
+     "status": "finished",
+     "created": "2026-10-17T00:00:00Z",
+     "base_model": "Qwen/Qwen3-0.6B",
+     "dataset": "smoke",
+     "train_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+     "n_rows": 8,
+     "device": "mps",
+     "instance": "fixture Mac",
+     "duration_s": 360.0,
+     "cost_usd": 0.0,
+     "steps": 6,
+     "final_loss": 0.61,
+     "peak_mem_gb": 9.5,
+     "settings": {
+      "learning_rate": 0.0001,
+      "num_train_epochs": 2,
+      "lora_r": 16,
+      "lora_alpha": 32,
+      "max_length": 12288,
+      "gradient_accumulation_steps": 2,
+      "lr_scheduler_type": "cosine"
+     },
+     "adapter": {
+      "path": "runs/20261017T000000Z_train_fixture-smoke/adapter",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bytes": 40000000
+     },
+     "mask_ok": true,
+     "scored": [
+      {
+       "run_id": "20261017T020000Z_eval_fixture-tuned",
+       "label": "fixture tuned 0.6B",
+       "purpose": "smoke",
+       "results_row": null,
+       "created": "2026-10-17T02:00:00Z",
+       "model": {
+        "name": "Qwen3-0.6B + fixture-smoke",
+        "base_model": "Qwen/Qwen3-0.6B",
+        "train_run": "20261017T000000Z_train_fixture-smoke",
+        "adapter_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+       },
+       "split": "train",
+       "trials": 1,
+       "tau2_loop_run": "20261017T020000Z_telecom_student-0.6b_custom",
+       "n_tasks": 3,
+       "passed": 2,
+       "pass_hat": {
+        "1": 0.6666666666666666
+       },
+       "prompt_bytes_ok": true,
+       "tool_calls_ok": true,
+       "vs": {
+        "run_id": "20261017T010000Z_eval_fixture-base"
+       },
+       "mlflow_url": null
+      }
+     ],
+     "mlflow_url": null
+    }
+   ]
+  },
+  "/api/train/20261017T000000Z_train_fixture-smoke": {
+   "run": {
+    "run_id": "20261017T000000Z_train_fixture-smoke",
+    "kind": "train",
+    "label": "fixture-smoke",
+    "purpose": "smoke",
+    "status": "finished",
+    "created": "2026-10-17T00:00:00Z",
+    "finished": "2026-10-17T00:06:00Z",
+    "duration_s": 360.0,
+    "code_sha": "fixture",
+    "image_tag": null,
+    "config_file": "configs/smoke.yaml",
+    "config": {
+     "label": "fixture-smoke",
+     "purpose": "smoke",
+     "base_model": "Qwen/Qwen3-0.6B",
+     "tokenizer": "Qwen/Qwen3-4B-Instruct-2507",
+     "dataset": "smoke",
+     "lora": {
+      "r": 16,
+      "lora_alpha": 32,
+      "lora_dropout": 0.05,
+      "target_modules": "all-linear"
+     },
+     "sft": {
+      "max_length": 12288,
+      "assistant_only_loss": true,
+      "learning_rate": 0.0001,
+      "lr_scheduler_type": "cosine",
+      "num_train_epochs": 2,
+      "gradient_accumulation_steps": 2
+     }
+    },
+    "base_model": "Qwen/Qwen3-0.6B",
+    "tokenizer": "Qwen/Qwen3-4B-Instruct-2507",
+    "dataset": "smoke",
+    "train_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "n_rows": 8,
+    "rows_selected": "8 of 8 rows",
+    "device": "mps",
+    "instance": "fixture Mac",
+    "cost_usd": 0.0,
+    "steps": 6,
+    "epochs": 2,
+    "final_loss": 0.61,
+    "peak_mem_gb": 9.5,
+    "tokens_trained": 2400,
+    "adapter": {
+     "path": "runs/20261017T000000Z_train_fixture-smoke/adapter",
+     "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "bytes": 40000000
+    },
+    "mask_check": {
+     "ok": true,
+     "row_sim_id": "fixture-row",
+     "assistant_turns": 2,
+     "trained_turns": 2,
+     "problems": []
+    },
+    "mlflow_run_id": null,
+    "mlflow_experiment": "tau-telecom-sft/train"
+   },
+   "summary": {
+    "run_id": "20261017T000000Z_train_fixture-smoke",
+    "label": "fixture-smoke",
+    "purpose": "smoke",
+    "status": "finished",
+    "created": "2026-10-17T00:00:00Z",
+    "base_model": "Qwen/Qwen3-0.6B",
+    "dataset": "smoke",
+    "train_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "n_rows": 8,
+    "device": "mps",
+    "instance": "fixture Mac",
+    "duration_s": 360.0,
+    "cost_usd": 0.0,
+    "steps": 6,
+    "final_loss": 0.61,
+    "peak_mem_gb": 9.5,
+    "settings": {
+     "learning_rate": 0.0001,
+     "num_train_epochs": 2,
+     "lora_r": 16,
+     "lora_alpha": 32,
+     "max_length": 12288,
+     "gradient_accumulation_steps": 2,
+     "lr_scheduler_type": "cosine"
+    },
+    "adapter": {
+     "path": "runs/20261017T000000Z_train_fixture-smoke/adapter",
+     "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "bytes": 40000000
+    },
+    "mask_ok": true,
+    "scored": [
+     {
+      "run_id": "20261017T020000Z_eval_fixture-tuned",
+      "label": "fixture tuned 0.6B",
+      "purpose": "smoke",
+      "results_row": null,
+      "created": "2026-10-17T02:00:00Z",
+      "model": {
+       "name": "Qwen3-0.6B + fixture-smoke",
+       "base_model": "Qwen/Qwen3-0.6B",
+       "train_run": "20261017T000000Z_train_fixture-smoke",
+       "adapter_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "split": "train",
+      "trials": 1,
+      "tau2_loop_run": "20261017T020000Z_telecom_student-0.6b_custom",
+      "n_tasks": 3,
+      "passed": 2,
+      "pass_hat": {
+       "1": 0.6666666666666666
+      },
+      "prompt_bytes_ok": true,
+      "tool_calls_ok": true,
+      "vs": {
+       "run_id": "20261017T010000Z_eval_fixture-base"
+      },
+      "mlflow_url": null
+     }
+    ],
+    "mlflow_url": null
+   },
+   "config_flat": {
+    "label": "fixture-smoke",
+    "purpose": "smoke",
+    "base_model": "Qwen/Qwen3-0.6B",
+    "tokenizer": "Qwen/Qwen3-4B-Instruct-2507",
+    "dataset": "smoke",
+    "lora.r": 16,
+    "lora.lora_alpha": 32,
+    "lora.lora_dropout": 0.05,
+    "lora.target_modules": "all-linear",
+    "sft.max_length": 12288,
+    "sft.assistant_only_loss": true,
+    "sft.learning_rate": 0.0001,
+    "sft.lr_scheduler_type": "cosine",
+    "sft.num_train_epochs": 2,
+    "sft.gradient_accumulation_steps": 2
+   },
+   "metrics": [
+    {
+     "step": 1,
+     "epoch": 0.333,
+     "loss": 1.9,
+     "grad_norm": 2.0,
+     "learning_rate": 0.0001,
+     "tokens": 400,
+     "tokens_per_s": 900.0,
+     "mem_gb": 9.0,
+     "elapsed_s": 60.0
+    },
+    {
+     "step": 2,
+     "epoch": 0.667,
+     "loss": 1.5,
+     "grad_norm": 1.8,
+     "learning_rate": 8.333333333333334e-05,
+     "tokens": 800,
+     "tokens_per_s": 901.0,
+     "mem_gb": 9.1,
+     "elapsed_s": 120.0
+    },
+    {
+     "step": 3,
+     "epoch": 1.0,
+     "loss": 1.2,
+     "grad_norm": 1.6,
+     "learning_rate": 6.666666666666668e-05,
+     "tokens": 1200,
+     "tokens_per_s": 902.0,
+     "mem_gb": 9.2,
+     "elapsed_s": 180.0
+    },
+    {
+     "step": 4,
+     "epoch": 1.333,
+     "loss": 0.9,
+     "grad_norm": 1.4,
+     "learning_rate": 5e-05,
+     "tokens": 1600,
+     "tokens_per_s": 903.0,
+     "mem_gb": 9.3,
+     "elapsed_s": 240.0
+    },
+    {
+     "step": 5,
+     "epoch": 1.667,
+     "loss": 0.75,
+     "grad_norm": 1.2,
+     "learning_rate": 3.333333333333334e-05,
+     "tokens": 2000,
+     "tokens_per_s": 904.0,
+     "mem_gb": 9.4,
+     "elapsed_s": 300.0
+    },
+    {
+     "step": 6,
+     "epoch": 2.0,
+     "loss": 0.61,
+     "grad_norm": 1.0,
+     "learning_rate": 1.6666666666666664e-05,
+     "tokens": 2400,
+     "tokens_per_s": 905.0,
+     "mem_gb": 9.5,
+     "elapsed_s": 360.0
+    }
+   ],
+   "mask": {
+    "row_sim_id": "fixture-row",
+    "task_id": "fixture task",
+    "n_tokens": 30,
+    "n_trained": 10,
+    "segments": [
+     {
+      "text": "<|im_start|>system\nYou are an agent.<|im_end|>\n<|im_start|>assistant\n",
+      "trained": false
+     },
+     {
+      "text": "Hi! How can I help you today?<|im_end|>\n",
+      "trained": true
+     },
+     {
+      "text": "<|im_start|>user\nMy data is off.<|im_end|>\n<|im_start|>assistant\n",
+      "trained": false
+     },
+     {
+      "text": "Let me check your line.<|im_end|>\n",
+      "trained": true
+     }
+    ],
+    "check": {
+     "ok": true,
+     "assistant_turns": 2,
+     "trained_turns": 2,
+     "problems": []
+    }
+   }
+  },
+  "/api/eval": {
+   "runs": [
+    {
+     "run_id": "20261017T020000Z_eval_fixture-tuned",
+     "label": "fixture tuned 0.6B",
+     "purpose": "smoke",
+     "results_row": null,
+     "created": "2026-10-17T02:00:00Z",
+     "model": {
+      "name": "Qwen3-0.6B + fixture-smoke",
+      "base_model": "Qwen/Qwen3-0.6B",
+      "train_run": "20261017T000000Z_train_fixture-smoke",
+      "adapter_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+     },
+     "split": "train",
+     "trials": 1,
+     "tau2_loop_run": "20261017T020000Z_telecom_student-0.6b_custom",
+     "n_tasks": 3,
+     "passed": 2,
+     "pass_hat": {
+      "1": 0.6666666666666666
+     },
+     "prompt_bytes_ok": true,
+     "tool_calls_ok": true,
+     "vs": {
+      "run_id": "20261017T010000Z_eval_fixture-base"
+     },
+     "mlflow_url": null
+    },
+    {
+     "run_id": "20261017T010000Z_eval_fixture-base",
+     "label": "fixture base 0.6B",
+     "purpose": "smoke",
+     "results_row": null,
+     "created": "2026-10-17T01:00:00Z",
+     "model": {
+      "name": "Qwen3-0.6B",
+      "base_model": "Qwen/Qwen3-0.6B",
+      "train_run": null,
+      "adapter_sha256": null
+     },
+     "split": "train",
+     "trials": 1,
+     "tau2_loop_run": "20261017T010000Z_telecom_student-0.6b_custom",
+     "n_tasks": 3,
+     "passed": 1,
+     "pass_hat": {
+      "1": 0.3333333333333333
+     },
+     "prompt_bytes_ok": true,
+     "tool_calls_ok": true,
+     "vs": null,
+     "mlflow_url": null
+    }
+   ]
+  },
+  "/api/eval/20261017T020000Z_eval_fixture-tuned": {
+   "run": {
+    "run_id": "20261017T020000Z_eval_fixture-tuned",
+    "kind": "eval",
+    "label": "fixture tuned 0.6B",
+    "purpose": "smoke",
+    "created": "2026-10-17T02:00:00Z",
+    "model": {
+     "name": "Qwen3-0.6B + fixture-smoke",
+     "base_model": "Qwen/Qwen3-0.6B",
+     "train_run": "20261017T000000Z_train_fixture-smoke",
+     "adapter_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "serving": {
+     "server": "mlx_lm.server",
+     "precision": "bf16",
+     "endpoint": "http://127.0.0.1:8000/v1",
+     "sampling": {
+      "temperature": 0.7,
+      "top_p": 0.8,
+      "top_k": 20
+     },
+     "max_tokens": 32768
+    },
+    "tau2_loop_run": "20261017T020000Z_telecom_student-0.6b_custom",
+    "tau2_loop_version": "telecom/student-0.6b",
+    "split": "train",
+    "task_ids": [
+     "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "[mms_issue]bad_wifi_calling|break_apn_mms_setting|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]"
+    ],
+    "trials": 1,
+    "scores": {
+     "n_tasks": 3,
+     "trials": 1,
+     "passed": 2,
+     "pass_hat": {
+      "1": 0.6666666666666666
+     },
+     "by_task": {
+      "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]": [
+       1
+      ],
+      "[mms_issue]bad_wifi_calling|break_apn_mms_setting|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Easy]": [
+       0
+      ],
+      "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]": [
+       1
+      ]
+     }
+    },
+    "prompt_bytes": {
+     "ok": true,
+     "system_prompt_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "tools_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "expected_system_prompt_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "expected_tools_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "requests": 4
+    },
+    "tool_calls": {
+     "ok": true,
+     "requests_with_tool_calls": 2,
+     "text_tool_calls": 0
+    },
+    "vs": {
+     "run_id": "20261017T010000Z_eval_fixture-base"
+    },
+    "mlflow_run_id": null,
+    "mlflow_experiment": "tau-telecom-sft/eval"
+   },
+   "summary": {
+    "run_id": "20261017T020000Z_eval_fixture-tuned",
+    "label": "fixture tuned 0.6B",
+    "purpose": "smoke",
+    "results_row": null,
+    "created": "2026-10-17T02:00:00Z",
+    "model": {
+     "name": "Qwen3-0.6B + fixture-smoke",
+     "base_model": "Qwen/Qwen3-0.6B",
+     "train_run": "20261017T000000Z_train_fixture-smoke",
+     "adapter_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "split": "train",
+    "trials": 1,
+    "tau2_loop_run": "20261017T020000Z_telecom_student-0.6b_custom",
+    "n_tasks": 3,
+    "passed": 2,
+    "pass_hat": {
+     "1": 0.6666666666666666
+    },
+    "prompt_bytes_ok": true,
+    "tool_calls_ok": true,
+    "vs": {
+     "run_id": "20261017T010000Z_eval_fixture-base"
+    },
+    "mlflow_url": null
+   },
+   "grid": [
+    {
+     "task_id": "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "trials": [
+      1
+     ]
+    },
+    {
+     "task_id": "[mms_issue]bad_wifi_calling|break_apn_mms_setting|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "trials": [
+      0
+     ]
+    },
+    {
+     "task_id": "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]",
+     "trials": [
+      1
+     ]
+    }
+   ],
+   "trials": 1,
+   "pass_hat": {
+    "1": 0.6666666666666666
+   },
+   "results": [
+    {
+     "task_id": "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "trial": 1,
+     "reward": 1.0,
+     "correct": true,
+     "termination_reason": "user_stop",
+     "n_agent_turns": 6,
+     "n_tool_calls": 2,
+     "n_tool_errors": 0,
+     "duration_ms": 120000,
+     "error": null
+    },
+    {
+     "task_id": "[mms_issue]bad_wifi_calling|break_apn_mms_setting|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "trial": 1,
+     "reward": 0.0,
+     "correct": false,
+     "termination_reason": "user_stop",
+     "n_agent_turns": 6,
+     "n_tool_calls": 2,
+     "n_tool_errors": 0,
+     "duration_ms": 120000,
+     "error": null
+    },
+    {
+     "task_id": "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]",
+     "trial": 1,
+     "reward": 1.0,
+     "correct": true,
+     "termination_reason": "user_stop",
+     "n_agent_turns": 6,
+     "n_tool_calls": 2,
+     "n_tool_errors": 0,
+     "duration_ms": 120000,
+     "error": null
+    }
+   ],
+   "served": {
+    "requests": 4,
+    "system_prompt_sha256": [
+     "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    ],
+    "tools_sha256": [
+     "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    ],
+    "with_tool_calls": 2,
+    "text_tool_calls": 0,
+    "latency_s_median": 1.65,
+    "prompt_tokens_max": 7500
+   },
+   "loop_run": {
+    "run_id": "20261017T020000Z_telecom_student-0.6b_custom",
+    "domain": "telecom",
+    "agent": "student-0.6b",
+    "split": "custom"
+   },
+   "compare": {
+    "vs": {
+     "run_id": "20261017T010000Z_eval_fixture-base",
+     "label": "fixture base 0.6B",
+     "purpose": "smoke",
+     "results_row": null,
+     "created": "2026-10-17T01:00:00Z",
+     "model": {
+      "name": "Qwen3-0.6B",
+      "base_model": "Qwen/Qwen3-0.6B",
+      "train_run": null,
+      "adapter_sha256": null
+     },
+     "split": "train",
+     "trials": 1,
+     "tau2_loop_run": "20261017T010000Z_telecom_student-0.6b_custom",
+     "n_tasks": 3,
+     "passed": 1,
+     "pass_hat": {
+      "1": 0.3333333333333333
+     },
+     "prompt_bytes_ok": true,
+     "tool_calls_ok": true,
+     "vs": null,
+     "mlflow_url": null
+    },
+    "n_tasks": 3,
+    "fixed": 1,
+    "broke": 0,
+    "same": 2,
+    "p": 0.5,
+    "tasks": [
+     {
+      "task_id": "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+      "a": [
+       1
+      ],
+      "b": [
+       1
+      ],
+      "change": "same"
+     },
+     {
+      "task_id": "[mms_issue]bad_wifi_calling|break_apn_mms_setting|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+      "a": [
+       0
+      ],
+      "b": [
+       0
+      ],
+      "change": "same"
+     },
+     {
+      "task_id": "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]",
+      "a": [
+       1
+      ],
+      "b": [
+       0
+      ],
+      "change": "fixed"
+     }
+    ]
+   }
+  },
+  "/api/eval/20261017T010000Z_eval_fixture-base": {
+   "run": {
+    "run_id": "20261017T010000Z_eval_fixture-base",
+    "kind": "eval",
+    "label": "fixture base 0.6B",
+    "purpose": "smoke",
+    "created": "2026-10-17T01:00:00Z",
+    "model": {
+     "name": "Qwen3-0.6B",
+     "base_model": "Qwen/Qwen3-0.6B",
+     "train_run": null,
+     "adapter_sha256": null
+    },
+    "serving": {
+     "server": "mlx_lm.server",
+     "precision": "bf16",
+     "endpoint": "http://127.0.0.1:8000/v1",
+     "sampling": {
+      "temperature": 0.7,
+      "top_p": 0.8,
+      "top_k": 20
+     },
+     "max_tokens": 32768
+    },
+    "tau2_loop_run": "20261017T010000Z_telecom_student-0.6b_custom",
+    "tau2_loop_version": "telecom/student-0.6b",
+    "split": "train",
+    "task_ids": [
+     "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "[mms_issue]bad_wifi_calling|break_apn_mms_setting|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]"
+    ],
+    "trials": 1,
+    "scores": {
+     "n_tasks": 3,
+     "trials": 1,
+     "passed": 1,
+     "pass_hat": {
+      "1": 0.3333333333333333
+     },
+     "by_task": {
+      "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]": [
+       1
+      ],
+      "[mms_issue]bad_wifi_calling|break_apn_mms_setting|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Easy]": [
+       0
+      ],
+      "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]": [
+       0
+      ]
+     }
+    },
+    "prompt_bytes": {
+     "ok": true,
+     "system_prompt_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "tools_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "expected_system_prompt_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "expected_tools_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+     "requests": 4
+    },
+    "tool_calls": {
+     "ok": true,
+     "requests_with_tool_calls": 2,
+     "text_tool_calls": 0
+    },
+    "vs": null,
+    "mlflow_run_id": null,
+    "mlflow_experiment": "tau-telecom-sft/eval"
+   },
+   "summary": {
+    "run_id": "20261017T010000Z_eval_fixture-base",
+    "label": "fixture base 0.6B",
+    "purpose": "smoke",
+    "results_row": null,
+    "created": "2026-10-17T01:00:00Z",
+    "model": {
+     "name": "Qwen3-0.6B",
+     "base_model": "Qwen/Qwen3-0.6B",
+     "train_run": null,
+     "adapter_sha256": null
+    },
+    "split": "train",
+    "trials": 1,
+    "tau2_loop_run": "20261017T010000Z_telecom_student-0.6b_custom",
+    "n_tasks": 3,
+    "passed": 1,
+    "pass_hat": {
+     "1": 0.3333333333333333
+    },
+    "prompt_bytes_ok": true,
+    "tool_calls_ok": true,
+    "vs": null,
+    "mlflow_url": null
+   },
+   "grid": [
+    {
+     "task_id": "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "trials": [
+      1
+     ]
+    },
+    {
+     "task_id": "[mms_issue]bad_wifi_calling|break_apn_mms_setting|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "trials": [
+      0
+     ]
+    },
+    {
+     "task_id": "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]",
+     "trials": [
+      0
+     ]
+    }
+   ],
+   "trials": 1,
+   "pass_hat": {
+    "1": 0.3333333333333333
+   },
+   "results": [
+    {
+     "task_id": "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "trial": 1,
+     "reward": 1.0,
+     "correct": true,
+     "termination_reason": "user_stop",
+     "n_agent_turns": 6,
+     "n_tool_calls": 2,
+     "n_tool_errors": 0,
+     "duration_ms": 120000,
+     "error": null
+    },
+    {
+     "task_id": "[mms_issue]bad_wifi_calling|break_apn_mms_setting|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+     "trial": 1,
+     "reward": 0.0,
+     "correct": false,
+     "termination_reason": "user_stop",
+     "n_agent_turns": 6,
+     "n_tool_calls": 2,
+     "n_tool_errors": 0,
+     "duration_ms": 120000,
+     "error": null
+    },
+    {
+     "task_id": "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]",
+     "trial": 1,
+     "reward": 0.0,
+     "correct": false,
+     "termination_reason": "user_stop",
+     "n_agent_turns": 6,
+     "n_tool_calls": 2,
+     "n_tool_errors": 0,
+     "duration_ms": 120000,
+     "error": null
+    }
+   ],
+   "served": {
+    "requests": 4,
+    "system_prompt_sha256": [
+     "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    ],
+    "tools_sha256": [
+     "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    ],
+    "with_tool_calls": 2,
+    "text_tool_calls": 0,
+    "latency_s_median": 1.65,
+    "prompt_tokens_max": 7500
+   },
+   "loop_run": {
+    "run_id": "20261017T010000Z_telecom_student-0.6b_custom",
+    "domain": "telecom",
+    "agent": "student-0.6b",
+    "split": "custom"
+   },
+   "compare": null
+  },
+  "/api/eval/20261017T020000Z_eval_fixture-tuned/[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]/t1": {
+   "run_id": "20261017T020000Z_eval_fixture-tuned",
+   "task_id": "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+   "trial": 1,
+   "reward": 1.0,
+   "termination": "user_stop",
+   "result": {
+    "task_id": "[mms_issue]airplane_mode_on|bad_wifi_calling|user_abroad_roaming_enabled_off[PERSONA:Easy]",
+    "trial": 1,
+    "reward": 1.0,
+    "correct": true,
+    "termination_reason": "user_stop",
+    "n_agent_turns": 6,
+    "n_tool_calls": 2,
+    "n_tool_errors": 0,
+    "duration_ms": 120000,
+    "error": null
+   },
+   "messages": [
+    {
+     "i": 0,
+     "role": "assistant",
+     "content": "Hi! How can I help you today?",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 1,
+     "role": "user",
+     "content": "My mobile data stopped working. I'm in France at the moment.",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 2,
+     "role": "assistant",
+     "content": "I can help with that. What's the phone number on the affected line?",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 3,
+     "role": "user",
+     "content": "It's 555-123-2002.",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 4,
+     "role": "assistant",
+     "content": null,
+     "tool_calls": [
+      {
+       "id": "call_1",
+       "name": "get_customer_by_phone",
+       "arguments": {
+        "phone_number": "555-123-2002"
+       }
+      }
+     ],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 5,
+     "role": "tool",
+     "content": "{\"customer_id\": \"C1001\", \"full_name\": \"John Smith\", \"line_ids\": [\"L1002\"]}",
+     "tool_calls": [],
+     "requestor": "assistant",
+     "error": false,
+     "tool_call_id": "call_1",
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 6,
+     "role": "assistant",
+     "content": null,
+     "tool_calls": [
+      {
+       "id": "call_2",
+       "name": "get_details_by_id",
+       "arguments": {
+        "id": "L1002"
+       }
+      }
+     ],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 7,
+     "role": "tool",
+     "content": "{\"line_id\": \"L1002\", \"status\": \"Active\", \"roaming_enabled\": false}",
+     "tool_calls": [],
+     "requestor": "assistant",
+     "error": false,
+     "tool_call_id": "call_2",
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 8,
+     "role": "assistant",
+     "content": "Roaming is off on your line, which stops data abroad. Shall I turn it on?",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 9,
+     "role": "user",
+     "content": "Yes, please.",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 10,
+     "role": "assistant",
+     "content": null,
+     "tool_calls": [
+      {
+       "id": "call_3",
+       "name": "enable_roaming",
+       "arguments": {
+        "customer_id": "C1001",
+        "line_id": "L1002"
+       }
+      }
+     ],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 11,
+     "role": "tool",
+     "content": "Roaming enabled on L1002",
+     "tool_calls": [],
+     "requestor": "assistant",
+     "error": false,
+     "tool_call_id": "call_3",
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 12,
+     "role": "assistant",
+     "content": "Done. Please turn on Data Roaming in your phone's settings, then run a speed test.",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    },
+    {
+     "i": 13,
+     "role": "user",
+     "content": null,
+     "tool_calls": [
+      {
+       "id": "call_4",
+       "name": "toggle_roaming",
+       "arguments": {}
+      }
+     ],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": false,
+     "offending": false
+    },
+    {
+     "i": 14,
+     "role": "tool",
+     "content": "Data Roaming: ON",
+     "tool_calls": [],
+     "requestor": "user",
+     "error": false,
+     "tool_call_id": "call_4",
+     "in_agent_view": false,
+     "offending": false
+    },
+    {
+     "i": 15,
+     "role": "user",
+     "content": null,
+     "tool_calls": [
+      {
+       "id": "call_5",
+       "name": "run_speed_test",
+       "arguments": {}
+      }
+     ],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": false,
+     "offending": false
+    },
+    {
+     "i": 16,
+     "role": "tool",
+     "content": "Speed test: 200 Mbps, excellent",
+     "tool_calls": [],
+     "requestor": "user",
+     "error": false,
+     "tool_call_id": "call_5",
+     "in_agent_view": false,
+     "offending": false
+    },
+    {
+     "i": 17,
+     "role": "user",
+     "content": "The speed test says excellent. Thanks! ###STOP###",
+     "tool_calls": [],
+     "requestor": null,
+     "error": false,
+     "tool_call_id": null,
+     "in_agent_view": true,
+     "offending": false
+    }
+   ]
+  },
+  "/api/method": {
+   "train_run": {
+    "run_id": "20261017T000000Z_train_fixture-smoke",
+    "kind": "train",
+    "label": "fixture-smoke",
+    "purpose": "smoke",
+    "status": "finished",
+    "created": "2026-10-17T00:00:00Z",
+    "finished": "2026-10-17T00:06:00Z",
+    "duration_s": 360.0,
+    "code_sha": "fixture",
+    "image_tag": null,
+    "config_file": "configs/smoke.yaml",
+    "config": {
+     "label": "fixture-smoke",
+     "purpose": "smoke",
+     "base_model": "Qwen/Qwen3-0.6B",
+     "tokenizer": "Qwen/Qwen3-4B-Instruct-2507",
+     "dataset": "smoke",
+     "lora": {
+      "r": 16,
+      "lora_alpha": 32,
+      "lora_dropout": 0.05,
+      "target_modules": "all-linear"
+     },
+     "sft": {
+      "max_length": 12288,
+      "assistant_only_loss": true,
+      "learning_rate": 0.0001,
+      "lr_scheduler_type": "cosine",
+      "num_train_epochs": 2,
+      "gradient_accumulation_steps": 2
+     }
+    },
+    "base_model": "Qwen/Qwen3-0.6B",
+    "tokenizer": "Qwen/Qwen3-4B-Instruct-2507",
+    "dataset": "smoke",
+    "train_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "n_rows": 8,
+    "rows_selected": "8 of 8 rows",
+    "device": "mps",
+    "instance": "fixture Mac",
+    "cost_usd": 0.0,
+    "steps": 6,
+    "epochs": 2,
+    "final_loss": 0.61,
+    "peak_mem_gb": 9.5,
+    "tokens_trained": 2400,
+    "adapter": {
+     "path": "runs/20261017T000000Z_train_fixture-smoke/adapter",
+     "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "bytes": 40000000
+    },
+    "mask_check": {
+     "ok": true,
+     "row_sim_id": "fixture-row",
+     "assistant_turns": 2,
+     "trained_turns": 2,
+     "problems": []
+    },
+    "mlflow_run_id": null,
+    "mlflow_experiment": "tau-telecom-sft/train"
+   },
+   "metrics": [
+    {
+     "step": 1,
+     "epoch": 0.333,
+     "loss": 1.9,
+     "grad_norm": 2.0,
+     "learning_rate": 0.0001,
+     "tokens": 400,
+     "tokens_per_s": 900.0,
+     "mem_gb": 9.0,
+     "elapsed_s": 60.0
+    },
+    {
+     "step": 2,
+     "epoch": 0.667,
+     "loss": 1.5,
+     "grad_norm": 1.8,
+     "learning_rate": 8.333333333333334e-05,
+     "tokens": 800,
+     "tokens_per_s": 901.0,
+     "mem_gb": 9.1,
+     "elapsed_s": 120.0
+    },
+    {
+     "step": 3,
+     "epoch": 1.0,
+     "loss": 1.2,
+     "grad_norm": 1.6,
+     "learning_rate": 6.666666666666668e-05,
+     "tokens": 1200,
+     "tokens_per_s": 902.0,
+     "mem_gb": 9.2,
+     "elapsed_s": 180.0
+    },
+    {
+     "step": 4,
+     "epoch": 1.333,
+     "loss": 0.9,
+     "grad_norm": 1.4,
+     "learning_rate": 5e-05,
+     "tokens": 1600,
+     "tokens_per_s": 903.0,
+     "mem_gb": 9.3,
+     "elapsed_s": 240.0
+    },
+    {
+     "step": 5,
+     "epoch": 1.667,
+     "loss": 0.75,
+     "grad_norm": 1.2,
+     "learning_rate": 3.333333333333334e-05,
+     "tokens": 2000,
+     "tokens_per_s": 904.0,
+     "mem_gb": 9.4,
+     "elapsed_s": 300.0
+    },
+    {
+     "step": 6,
+     "epoch": 2.0,
+     "loss": 0.61,
+     "grad_norm": 1.0,
+     "learning_rate": 1.6666666666666664e-05,
+     "tokens": 2400,
+     "tokens_per_s": 905.0,
+     "mem_gb": 9.5,
+     "elapsed_s": 360.0
+    }
+   ],
+   "mask": {
+    "row_sim_id": "fixture-row",
+    "task_id": "fixture task",
+    "n_tokens": 30,
+    "n_trained": 10,
+    "segments": [
+     {
+      "text": "<|im_start|>system\nYou are an agent.<|im_end|>\n<|im_start|>assistant\n",
+      "trained": false
+     },
+     {
+      "text": "Hi! How can I help you today?<|im_end|>\n",
+      "trained": true
+     },
+     {
+      "text": "<|im_start|>user\nMy data is off.<|im_end|>\n<|im_start|>assistant\n",
+      "trained": false
+     },
+     {
+      "text": "Let me check your line.<|im_end|>\n",
+      "trained": true
+     }
+    ],
+    "check": {
+     "ok": true,
+     "assistant_turns": 2,
+     "trained_turns": 2,
+     "problems": []
+    }
+   },
+   "dataset": {
+    "version": "smoke",
+    "n_kept": 8,
+    "tokens": {
+     "min": 8210,
+     "median": 8211,
+     "p90": 8255,
+     "p99": 8256,
+     "max": 8256,
+     "prompt_and_tools": 7809
+    },
+    "max_tokens": 24576,
+    "token_counter": "estimate: characters / 4 (smoke only)"
+   }
+  }
+ }
+}

@@ -17,9 +17,35 @@ dependencies = [
   "pydantic>=2.9",
   "pyyaml>=6.0",
   "python-dotenv>=1.0",
+  # M1: F10 counts tokens with the student's own tokenizer and chat template
+  "transformers>=5.0",
+  "jinja2>=3.1",
+  # the viewer's API (plan §10)
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.32",
+  # serve/proxy.py, in front of the student's server
+  "httpx>=0.27",
 ]
-# The trainer (trl, peft, transformers, liger-kernel, datasets) joins at M3 as an extra, so the
-# Mac's data work never installs torch.
+
+[project.optional-dependencies]
+# The trainer: the same code on the Mac (M2, MPS) and on the GPU (M4, CUDA). liger-kernel joins
+# the GPU image only: it needs CUDA.
+train = [
+  "torch>=2.8",
+  "trl>=0.24",
+  "peft>=0.17",
+  "accelerate>=1.0",
+  "datasets>=3.2",
+]
+# M2's Mac serving: merge, convert to MLX and serve with mlx_lm.server (plan §8, option B)
+mac = [
+  "mlx-lm>=0.28; sys_platform == 'darwin' and platform_machine == 'arm64'",
+]
+# M3 to M5 on Modal (s02): the GPU serving and training. Pinned to the version of the Modal skill in
+# .claude/skills/modal (its metadata.version); `modal skills update --claude` when this moves.
+cloud = [
+  "modal==1.6.2",
+]
 
 [project.scripts]
 tausft = "tau_telecom_sft.cli:app"
@@ -30,6 +56,7 @@ dev = [
   "ruff>=0.14.2",
   "mypy>=1.13",
   "types-PyYAML",
+  "httpx>=0.27",
 ]
 
 [tool.uv.sources]
@@ -59,7 +86,11 @@ packages = ["tau_telecom_sft"]
 mypy_path = "src"
 
 [[tool.mypy.overrides]]
-module = ["tau2.*", "mlflow.*", "loguru.*"]
+module = [
+  "tau2.*", "mlflow.*", "loguru.*",
+  # the trainer and Mac serving stack: big, partly untyped, and only ever called at the edges
+  "torch.*", "transformers.*", "trl.*", "peft.*", "datasets.*", "accelerate.*", "mlx.*", "mlx_lm.*",
+]
 ignore_missing_imports = true
 follow_imports = "skip"
 

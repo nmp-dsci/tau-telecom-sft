@@ -4,9 +4,12 @@ from __future__ import annotations
 
 import json
 from dataclasses import replace
+from pathlib import Path
+
+import pytest
 
 from tau_telecom_sft import split
-from tau_telecom_sft.build import filters
+from tau_telecom_sft.build import filters, review
 from tau_telecom_sft.build.agent_view import agent_view
 from tau_telecom_sft.build.convert import (
     agent_tool_names,
@@ -101,6 +104,7 @@ def test_a_row_is_the_agents_view_in_chat_format(fixture_convs: list[Conversatio
     assert row["tools"] == list(agent_tools())
     assert set(row["meta"]) == {
         "task_id",
+        "sim_id",
         "symptom",
         "source",
         "trial",
@@ -108,6 +112,17 @@ def test_a_row_is_the_agents_view_in_chat_format(fixture_convs: list[Conversatio
         "agent_turns",
         "dataset",
     }
+
+
+def test_agent_text_loses_the_whitespace_around_it(fixture_convs: list[Conversation]) -> None:
+    # the board's Qwen3.5 replies begin "\n\n", which fused with the reply header (v1.1)
+    conv = fixture_convs[0]
+    msgs = list(conv.sim.messages)
+    i = next(i for i, m in enumerate(msgs) if m.role == "assistant" and m.content)
+    msgs[i] = msgs[i].model_copy(update={"content": f"\n\n{msgs[i].content}\n\n"})
+    sim = conv.sim.model_copy(update={"messages": msgs})
+    row = to_row(replace(conv, sim=sim), "smoke")
+    assert row["messages"][1] == {"role": "assistant", "content": "Hi! How can I help you today?"}
 
 
 def test_system_prompt_is_taus_stock_prompt() -> None:
@@ -125,3 +140,18 @@ def test_the_card_adds_up(fixture_build: Built) -> None:
     rows = (fixture_build.out_dir / "train.jsonl").read_text().splitlines()
     assert len(rows) == st["n_kept"]
     assert all(json.loads(r)["meta"]["reward"] == 1.0 for r in rows)
+
+
+def test_a_sign_off_without_every_verdict_says_so(tmp_path: Path) -> None:
+    rows = [{"meta": {"sim_id": f"k{i}"}} for i in range(3)]
+    (tmp_path / "train.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
+    (tmp_path / "drops.jsonl").write_text(json.dumps({"rule": "F1", "sim_id": "d0"}) + "\n")
+    sample = review.draw(tmp_path, n=2)
+    review.append(tmp_path, {"sim_id": sample["kept"][0], "verdict": "good"})
+    with pytest.raises(ValueError, match="no verdict yet"):
+        review.append(tmp_path, {"kind": "sign-off"})
+    with pytest.raises(ValueError, match="needs a note"):
+        review.append(tmp_path, {"kind": "sign-off"}, unread_ok=True)
+    rec = review.append(tmp_path, {"kind": "sign-off", "note": "on the summary"}, unread_ok=True)
+    assert rec["unread"] == 2  # one kept and one dropped row had no verdict
+    assert review.status(tmp_path)["signed_off"] == rec

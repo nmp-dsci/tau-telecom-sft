@@ -1,0 +1,30 @@
+{
+ "row_sim_id": "fixture-row",
+ "task_id": "fixture task",
+ "n_tokens": 30,
+ "n_trained": 10,
+ "segments": [
+  {
+   "text": "<|im_start|>system\nYou are an agent.<|im_end|>\n<|im_start|>assistant\n",
+   "trained": false
+  },
+  {
+   "text": "Hi! How can I help you today?<|im_end|>\n",
+   "trained": true
+  },
+  {
+   "text": "<|im_start|>user\nMy data is off.<|im_end|>\n<|im_start|>assistant\n",
+   "trained": false
+  },
+  {
+   "text": "Let me check your line.<|im_end|>\n",
+   "trained": true
+  }
+ ],
+ "check": {
+  "ok": true,
+  "assistant_turns": 2,
+  "trained_turns": 2,
+  "problems": []
+ }
+}

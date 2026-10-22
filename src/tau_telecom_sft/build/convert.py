@@ -33,11 +33,10 @@ def _environment() -> Any:
 
 @functools.cache
 def system_prompt() -> str:
+    policy = _environment().get_policy()  # first, so tau2 is quietened before it is imported
     from tau2.agent.llm_agent import AGENT_INSTRUCTION, SYSTEM_PROMPT
 
-    prompt: str = SYSTEM_PROMPT.format(
-        agent_instruction=AGENT_INSTRUCTION, domain_policy=_environment().get_policy()
-    )
+    prompt: str = SYSTEM_PROMPT.format(agent_instruction=AGENT_INSTRUCTION, domain_policy=policy)
     return prompt
 
 
@@ -62,7 +61,7 @@ def _sha256(text: str) -> str:
 
 
 def prompt_fingerprint() -> dict[str, str]:
-    """The bytes the student trains on, and must be served with (M2's prompt-bytes test)."""
+    """The bytes the student trains on, and must be served with (the prompt-bytes tests, M2, M3)."""
     return {
         "system_prompt_sha256": _sha256(system_prompt()),
         "tools_sha256": _sha256(json.dumps(agent_tools(), sort_keys=True)),
@@ -71,7 +70,10 @@ def prompt_fingerprint() -> dict[str, str]:
 
 
 def _assistant(m: Any) -> dict[str, Any]:
-    row: dict[str, Any] = {"role": "assistant", "content": m.content or ""}
+    # the text without the whitespace around it (v1.1): the board's Qwen3.5 replies begin "\n\n",
+    # and after the reply header that is one token, "\n\n\n", which trains the header's newline
+    # as the reply's (M4's first measured step); served, the header's "\n" is a token of its own
+    row: dict[str, Any] = {"role": "assistant", "content": (m.content or "").strip()}
     if m.tool_calls:
         row["tool_calls"] = [
             {
@@ -105,6 +107,7 @@ def to_row(conv: Conversation, dataset: str) -> dict[str, Any]:
         "tools": list(agent_tools()),
         "meta": {
             "task_id": conv.task_id,
+            "sim_id": conv.sim.id,
             "symptom": parse_task_id(conv.task_id).symptom,
             "source": conv.source,
             "trial": conv.trial,

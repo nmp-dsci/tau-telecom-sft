@@ -1,0 +1,394 @@
+{"rule": "F1", "reason": "reward None", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_on[PERSONA:Hard]", "source": "S1 board/glm-5", "trial": 2, "sim_id": "963089ae-50ca-4f01-adcc-e64c6f23c495", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_on[PERSONA:Hard]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "5b1de5de-1ed3-44a4-a67d-309c05e8d1cf", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Hard]", "source": "S1 board/glm-5", "trial": 2, "sim_id": "d43180fb-f03d-4b13-8eb6-e20d7655f1f4", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Hard]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "f954d9d4-c2f5-4e02-ad84-97ecec479724", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_storage_permission|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Easy]", "source": "S1 board/glm-5", "trial": 2, "sim_id": "a24dee7e-7c1a-43ff-96f2-6f6afb8e2068", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_storage_permission|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Easy]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "f5fb4ed8-0fbe-4c67-a78d-e1dd49b6e1e4", "agent_turns": 0}
+{"rule": "F1", "reason": "reward 0.0", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_storage_permission|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_on[PERSONA:Easy]", "source": "S1 board/glm-5", "trial": 2, "sim_id": "84506752-4ffd-4b55-a47f-f0487d095cd3", "agent_turns": 15}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_storage_permission|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_on[PERSONA:Easy]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "f559c938-6933-4819-93f6-e3e615629a09", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_storage_permission|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Easy]", "source": "S1 board/glm-5", "trial": 2, "sim_id": "b9a5aa1a-ee13-41c6-a0cb-8d3762e681a9", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_storage_permission|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Easy]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "38d6bbd9-b64f-4c05-97b7-5bdf8bb1feed", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_app_sms_permission|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:None]", "source": "S1 board/glm-5", "trial": 2, "sim_id": "4e4c294a-bc17-49e5-8314-63b005f95de4", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_app_sms_permission|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:None]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "a7c22685-422a-40df-9f6a-eef94f9d414a", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_app_storage_permission|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Hard]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "d8e3b297-9929-482e-b60b-94b46fd01de3", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_app_storage_permission|unseat_sim_card[PERSONA:Hard]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "33e000ba-0f2e-43d5-9246-a1363b1368ed", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_on[PERSONA:Easy]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "15ac1a73-7f90-4517-b141-de0c98a9fe5b", "agent_turns": 0}
+{"rule": "F1", "reason": "reward 0.0", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|user_abroad_roaming_enabled_off[PERSONA:None]", "source": "S1 board/glm-5", "trial": 1, "sim_id": "73fbc537-bbe3-4cde-a197-217bf7329193", "agent_turns": 17}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|user_abroad_roaming_enabled_off[PERSONA:None]", "source": "S1 board/glm-5", "trial": 2, "sim_id": "23426d59-b904-4781-bbbc-812ee05cf76e", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|user_abroad_roaming_enabled_off[PERSONA:None]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "74c594da-9e8e-4a2b-ab31-4f38daaf9123", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|break_apn_mms_setting|data_mode_off|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Easy]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "d19cd712-2c2b-437b-89d9-a8482772f724", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|break_apn_mms_setting|data_usage_exceeded[PERSONA:Hard]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "ea0d39c4-2b95-411b-9d43-f34f92986e0b", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|break_app_both_permissions|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_on[PERSONA:Hard]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "6b8bad91-4f36-43a7-a9e7-68b8bb612b55", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|break_app_storage_permission|data_mode_off|user_abroad_roaming_enabled_off[PERSONA:Easy]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "d68e1bb4-136a-4681-a9a1-73bfa6f727a6", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|bad_wifi_calling|break_app_both_permissions|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:None]", "source": "S1 board/glm-5", "trial": 2, "sim_id": "f638628f-1095-44f5-a6c3-945efdc9d2ad", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|bad_wifi_calling|break_app_both_permissions|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:None]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "73e83e5d-537f-426c-87d1-71596429971a", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|break_app_both_permissions[PERSONA:Hard]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "1a68a6be-2ba5-4b65-b0ee-699fb9b010c1", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]airplane_mode_on|break_app_both_permissions|data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:None]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "031f0470-8a81-4adf-b3f5-30536cf1f178", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]bad_network_preference|bad_wifi_calling|break_app_sms_permission|data_mode_off|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Hard]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "c081c8b6-e5da-494c-a396-be3000e025e3", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]bad_network_preference|break_app_both_permissions[PERSONA:Easy]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "1e9a435d-76f1-4a78-b2f0-4605fb9fb006", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]bad_network_preference|break_app_sms_permission|data_mode_off|data_usage_exceeded|user_abroad_roaming_enabled_off[PERSONA:None]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "33aec8ee-83a6-43a7-a506-2146e8d5abe2", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]bad_network_preference|break_app_sms_permission|user_abroad_roaming_disabled_on[PERSONA:Hard]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "616ac610-78ef-4b79-bfd5-cc5c16176617", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:None]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "d72335ca-e8b2-44c6-9794-5dbed42544f0", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]bad_wifi_calling|break_apn_mms_setting|data_mode_off|data_usage_exceeded|unseat_sim_card[PERSONA:None]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "d3f5560f-e68c-4380-bfbd-f9cbe189f135", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]bad_wifi_calling|break_apn_mms_setting|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Easy]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "c1e06a1b-c205-47b7-9679-a26598dd6a3a", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[mms_issue]break_app_storage_permission|data_usage_exceeded[PERSONA:Easy]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "943cf721-d2a4-411b-8675-c3a025799b53", "agent_turns": 0}
+{"rule": "F1", "reason": "reward 0.0", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 21}
+{"rule": "F1", "reason": "reward 0.0", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 5}
+{"rule": "F1", "reason": "reward None", "task_id": "[service_issue]airplane_mode_on|break_apn_settings|contract_end_suspension|unseat_sim_card[PERSONA:Easy]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "ee905f43-df9b-4794-b54a-59967ee9c74f", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[service_issue]airplane_mode_on|break_apn_settings|lock_sim_card_pin|overdue_bill_suspension|unseat_sim_card[PERSONA:None]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "c0dae642-6ce4-4f2d-b4e6-328a735e4b73", "agent_turns": 0}
+{"rule": "F1", "reason": "reward 0.0", "task_id": "[service_issue]airplane_mode_on|break_apn_settings|overdue_bill_suspension[PERSONA:None]", "source": "S1 board/glm-5", "trial": 0, "sim_id": "fadcf745-1354-4b3f-a424-448b941f19ba", "agent_turns": 8}
+{"rule": "F1", "reason": "reward None", "task_id": "[service_issue]airplane_mode_on|break_apn_settings|overdue_bill_suspension[PERSONA:None]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "28f4a2b6-aff0-4fe3-a1de-8e1e0d3e87bb", "agent_turns": 0}
+{"rule": "F1", "reason": "reward None", "task_id": "[service_issue]airplane_mode_on|break_apn_settings|overdue_bill_suspension|unseat_sim_card[PERSONA:None]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "6e2dea7d-a506-4dd7-92bb-01e02d04bd0a", "agent_turns": 0}
+{"rule": "F1", "reason": "reward 0.0", "task_id": "[service_issue]break_apn_settings|contract_end_suspension|lock_sim_card_pin[PERSONA:Hard]", "source": "S1 board/glm-5", "trial": 2, "sim_id": "5c8b72ba-90e6-4068-86c1-405268c964f1", "agent_turns": 5}
+{"rule": "F1", "reason": "reward 0.0", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 10}
+{"rule": "F1", "reason": "reward 0.0", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 5}
+{"rule": "F1", "reason": "reward 0.0", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_storage_permission|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_on[PERSONA:Easy]", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": "07a7e853-7b3b-4e77-90f8-b3a88b3b1851", "agent_turns": 21}
+{"rule": "F1", "reason": "reward 0.0", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_storage_permission|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_off[PERSONA:Easy]", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": "88e647c0-804b-41b5-a4cb-7aee3d45b285", "agent_turns": 12}
+{"rule": "F1", "reason": "reward 0.0", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|break_app_both_permissions|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_on[PERSONA:Hard]", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": "5bec2735-5581-40e2-ad60-b744677fff9a", "agent_turns": 25}
+{"rule": "F1", "reason": "reward 0.0", "task_id": "[mms_issue]airplane_mode_on|bad_wifi_calling|break_app_both_permissions|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:None]", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": "b428d6f8-3c35-4d4a-af67-f8b9e0ed9cce", "agent_turns": 23}
+{"rule": "F1", "reason": "reward 0.0", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 8}
+{"rule": "F1", "reason": "reward 0.0", "task_id": "[service_issue]airplane_mode_on|break_apn_settings|overdue_bill_suspension[PERSONA:None]", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": "74c8e023-41ea-4dc1-b09b-6eb3d2c482c2", "agent_turns": 10}
+{"rule": "F1", "reason": "reward 0.0", "task_id": "[service_issue]airplane_mode_on|break_apn_settings|overdue_bill_suspension[PERSONA:None]", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": "b8072034-3750-4b51-937b-5df4626b7aee", "agent_turns": 17}
+{"rule": "F1", "reason": "reward 0.0", "task_id": "[service_issue]airplane_mode_on|break_apn_settings|overdue_bill_suspension|unseat_sim_card[PERSONA:None]", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": "4dc22eb1-6d8e-41b9-bc78-7de270ac7343", "agent_turns": 16}
+{"rule": "F1", "reason": "reward 0.0", "task_id": "[service_issue]break_apn_settings|contract_end_suspension|lock_sim_card_pin[PERSONA:Hard]", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": "7188e510-8c6a-491f-8117-2afa7cd9a52d", "agent_turns": 6}
+{"rule": "F1", "reason": "reward 0.0", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 24}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 23}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 18}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 15}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 18}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 22}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 15}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 16}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 23}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 22}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 19}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 14}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 16}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 16}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 16}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 18}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 9}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 8}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 7}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 9}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 16}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 9}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 15}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 18}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 14}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 16}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 15}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 14}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 16}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 8}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 16}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 14}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 19}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 15}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 8}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 8}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 9}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 17}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 17}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 16}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 17}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 14}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 8}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 9}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 21}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 26}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 14}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 19}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 9}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 8}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 9}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 8}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 8}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 8}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 6}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 7}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 6}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 6}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 6}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 6}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 6}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 5}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 6}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 6}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 8}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 7}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 7}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 7}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 8}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 7}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 6}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 0, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 1, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 2, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S1 board/glm-5", "trial": 3, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 31}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 25}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 28}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 30}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 28}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 26}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 32}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 26}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 30}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 25}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 26}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 28}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 30}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 27}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 28}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 23}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 26}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 26}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 29}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 23}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 22}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 25}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 26}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 20}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 22}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 19}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 26}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 20}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 27}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 26}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 28}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 27}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 14}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 15}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 15}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 14}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 9}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 22}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 18}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 19}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 17}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 19}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 19}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 14}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 17}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 19}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 18}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 16}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 22}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 15}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 14}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 17}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 17}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 15}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 16}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 15}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 15}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 15}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 15}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 21}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 16}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 17}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 17}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 18}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 17}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 18}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 19}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 18}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 16}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 17}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 19}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 21}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 16}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 9}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 9}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 18}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 15}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 18}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 15}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 9}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 16}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 15}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 22}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 15}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 9}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 14}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 14}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 20}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 12}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 7}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 8}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 6}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 6}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 7}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 7}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 9}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 7}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 16}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 9}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 8}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 8}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 10}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 15}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 16}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 16}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 14}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 8}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 8}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 8}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": null, "agent_turns": 14}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": null, "agent_turns": 13}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": null, "agent_turns": 11}
+{"rule": "F2", "reason": "a test task", "task_id": "WITHHELD", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": null, "agent_turns": 16}
+{"rule": "F3", "reason": "transferred to a human when the task does not expect it", "task_id": "[mms_issue]bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:None]", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": "ea74e05e-7221-4169-be73-5b75897728d8", "agent_turns": 24}
+{"rule": "F4", "reason": "called check_network_mode_preference", "task_id": "[mobile_data_issue]bad_network_preference|bad_vpn|user_abroad_roaming_disabled_on[PERSONA:None]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "9f717f07-0e80-4743-b18b-c2dc49f0bb2e", "agent_turns": 10}
+{"rule": "F4", "reason": "called check_apn_settings", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_disabled_on[PERSONA:Hard]", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": "99e3016d-42b1-424d-9c0b-fdf76d62da9d", "agent_turns": 29}
+{"rule": "F4", "reason": "called can_send_mms", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|bad_wifi_calling|break_apn_mms_setting|break_app_both_permissions|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:Hard]", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": "f1fdd8fa-48fd-4aa2-ae74-eb9deb112247", "agent_turns": 25}
+{"rule": "F4", "reason": "called grant_app_permission", "task_id": "[mms_issue]airplane_mode_on|bad_network_preference|break_apn_mms_setting|break_app_both_permissions|data_mode_off|data_usage_exceeded|user_abroad_roaming_enabled_off[PERSONA:None]", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": "a9f51d49-02b2-48ce-9ca6-35979af1278d", "agent_turns": 28}
+{"rule": "F4", "reason": "called grant_app_permission", "task_id": "[mms_issue]airplane_mode_on|bad_wifi_calling|break_app_both_permissions|data_mode_off|data_usage_exceeded|unseat_sim_card|user_abroad_roaming_enabled_off[PERSONA:None]", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": "9b575550-c691-4ecf-8045-1a287bca8093", "agent_turns": 26}
+{"rule": "F4", "reason": "called check_sim_status", "task_id": "[mobile_data_issue]airplane_mode_on|bad_network_preference|bad_vpn|data_saver_mode_on|data_usage_exceeded|user_abroad_roaming_enabled_off[PERSONA:None]", "source": "S2 board/qwen3.5-397b", "trial": 1, "sim_id": "80645919-d8a2-4b8b-87ad-4ca4165b642e", "agent_turns": 21}
+{"rule": "F4", "reason": "called run_speed_test", "task_id": "[mobile_data_issue]airplane_mode_on|bad_network_preference|bad_vpn|data_saver_mode_on|user_abroad_roaming_disabled_on[PERSONA:Easy]", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": "baf929d5-1ec1-4891-9f00-09f3f67f9fd5", "agent_turns": 15}
+{"rule": "F5", "reason": "1 agent tool error(s)", "task_id": "[mobile_data_issue]airplane_mode_on|bad_network_preference|data_mode_off|data_saver_mode_on[PERSONA:Hard]", "source": "S1 board/glm-5", "trial": 0, "sim_id": "c5544ca4-a7a2-488d-8b2e-627ab273a676", "agent_turns": 13}
+{"rule": "F5", "reason": "1 agent tool error(s)", "task_id": "[mobile_data_issue]airplane_mode_on|bad_network_preference|data_mode_off|data_saver_mode_on[PERSONA:Hard]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "14a12448-2589-4bb0-bf7d-ba6333ccb643", "agent_turns": 13}
+{"rule": "F5", "reason": "1 agent tool error(s)", "task_id": "[service_issue]airplane_mode_on|break_apn_settings|lock_sim_card_pin|unseat_sim_card[PERSONA:None]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "7bd60b9f-4e20-4095-91f8-f3d0936331fe", "agent_turns": 13}
+{"rule": "F5", "reason": "1 agent tool error(s)", "task_id": "[service_issue]airplane_mode_on|break_apn_settings|unseat_sim_card[PERSONA:None]", "source": "S1 board/glm-5", "trial": 1, "sim_id": "f24ad324-e826-42fe-9f5e-0ff81b8a4dff", "agent_turns": 18}
+{"rule": "F6", "reason": "10 agent turns, over 1.5 x the task median 6.5", "task_id": "[service_issue]break_apn_settings|contract_end_suspension|lock_sim_card_pin|unseat_sim_card[PERSONA:Hard]", "source": "S1 board/glm-5", "trial": 2, "sim_id": "b0310a30-ecf2-44d6-ad1c-b625bc35b9b8", "agent_turns": 10}
+{"rule": "F6", "reason": "25 agent turns, over 1.5 x the task median 15.5", "task_id": "[mobile_data_issue]airplane_mode_on|bad_network_preference|bad_vpn|data_mode_off|data_saver_mode_on|data_usage_exceeded|user_abroad_roaming_disabled_off[PERSONA:Hard]", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": "5f1076a7-926e-4508-9ac2-e2ee0bb1ca05", "agent_turns": 25}
+{"rule": "F6", "reason": "18 agent turns, over 1.5 x the task median 11", "task_id": "[mobile_data_issue]data_usage_exceeded|user_abroad_roaming_enabled_off[PERSONA:Easy]", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": "c7f6ea84-1c43-4ef2-b723-544e1ce8623c", "agent_turns": 18}
+{"rule": "F6", "reason": "10 agent turns, over 1.5 x the task median 6.5", "task_id": "[service_issue]break_apn_settings|contract_end_suspension|lock_sim_card_pin|unseat_sim_card[PERSONA:Hard]", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": "36e0397c-db45-4583-9c2e-ec2ea31b022b", "agent_turns": 10}
+{"rule": "F6", "reason": "12 agent turns, over 1.5 x the task median 7", "task_id": "[service_issue]contract_end_suspension|lock_sim_card_pin[PERSONA:Hard]", "source": "S2 board/qwen3.5-397b", "trial": 2, "sim_id": "7f0f5a70-f2dd-4e2d-ac83-a7e55fce80ea", "agent_turns": 12}
+{"rule": "F6", "reason": "12 agent turns, over 1.5 x the task median 7", "task_id": "[service_issue]contract_end_suspension|lock_sim_card_pin[PERSONA:Hard]", "source": "S2 board/qwen3.5-397b", "trial": 3, "sim_id": "dac43fe9-9426-41e9-bc83-de7041a19bb1", "agent_turns": 12}
+{"rule": "F9", "reason": "copy 4 of one tool path", "task_id": "[mms_issue]bad_network_preference|data_mode_off|user_abroad_roaming_disabled_on[PERSONA:None]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "097cfc40-0609-4a53-9dcb-77d6640e11dd", "agent_turns": 12}
+{"rule": "F9", "reason": "copy 4 of one tool path", "task_id": "[mobile_data_issue]airplane_mode_on|bad_network_preference|bad_vpn|data_saver_mode_on|data_usage_exceeded|user_abroad_roaming_enabled_off[PERSONA:None]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "372efe78-7931-4241-97ae-e51d69d4e5de", "agent_turns": 13}
+{"rule": "F9", "reason": "copy 4 of one tool path", "task_id": "[mobile_data_issue]airplane_mode_on|bad_network_preference|data_mode_off|data_saver_mode_on|data_usage_exceeded|user_abroad_roaming_disabled_on[PERSONA:None]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "43740e56-ca56-4d48-b3fc-ce067243ae4e", "agent_turns": 12}
+{"rule": "F9", "reason": "copy 4 of one tool path", "task_id": "[mobile_data_issue]bad_network_preference|data_saver_mode_on|data_usage_exceeded[PERSONA:Hard]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "2fc48110-f390-4785-816d-8d097536bed1", "agent_turns": 11}
+{"rule": "F9", "reason": "copy 4 of one tool path", "task_id": "[service_issue]airplane_mode_on|unseat_sim_card[PERSONA:None]", "source": "S1 board/glm-5", "trial": 3, "sim_id": "3bfb47c4-2580-49f9-9d3a-826dfa13df5b", "agent_turns": 7}
+{"rule": "F9", "reason": "copy 5 of one tool path", "task_id": "[mobile_data_issue]airplane_mode_on|bad_network_preference|data_mode_off|data_saver_mode_on|data_usage_exceeded|user_abroad_roaming_disabled_on[PERSONA:None]", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": "685063de-963d-491e-a0dd-50ef142c0136", "agent_turns": 16}
+{"rule": "F9", "reason": "copy 4 of one tool path", "task_id": "[service_issue]airplane_mode_on|break_apn_settings|unseat_sim_card[PERSONA:None]", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": "cc3a7e25-6513-44ac-bd86-8bb9c903923f", "agent_turns": 14}
+{"rule": "F9", "reason": "copy 5 of one tool path", "task_id": "[service_issue]airplane_mode_on|unseat_sim_card[PERSONA:None]", "source": "S2 board/qwen3.5-397b", "trial": 0, "sim_id": "0565e388-dc3c-4af8-aeac-3342706816fe", "agent_turns": 9}

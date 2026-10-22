@@ -558,9 +558,9 @@ ul.lede li{margin-bottom:4px}
 <header class="hero">
   <div class="wrap">
     <button class="theme-toggle" type="button" id="themeBtn">theme</button>
-    <div class="kicker">s64 · build plan · tau-telecom-sft · 16 Oct 2026 · nothing built yet</div>
+    <div class="kicker">s64 · build plan · tau-telecom-sft · 16 Oct 2026 · updated 17 Oct: M0, M1, M2 and the viewer built (see s01)</div>
     <h1>tau-telecom-sft: shadow the TMLS talk and teach an open model tau2 telecom</h1>
-    <p class="sub">This is the plan for a repo you'll create. It repeats Kai Wei Tan's TMLS talk on the same domain, telecom, using your own tau2-loop split of the same 114 tasks, so the student and your Claude agent face the same 40 test tasks. It covers where the training conversations come from, how they're filtered and formatted, how the student is trained, served and scored, and how you track progress. It was first written for airline and was pointed at telecom on 16 Oct. Nothing in it has been built, downloaded, trained or run.</p>
+    <p class="sub">This is the plan for a repo you'll create. It repeats Kai Wei Tan's TMLS talk on the same domain, telecom, using your own tau2-loop split of the same 114 tasks, so the student and your Claude agent face the same 40 test tasks. It covers where the training conversations come from, how they're filtered and formatted, how the student is trained, served and scored, and how you track progress. It was first written for airline and was pointed at telecom on 16 Oct. M0, M1, M2 and the viewer were built on 17 Oct on the Mac: dataset v1 (518 conversations), a smoke fine-tune of Qwen3-0.6B, and both 0.6B models scored in tau2-loop. <a href="s01_m1-m2-viewer-walkthrough.html">s01</a> walks through it. Nothing has run on EC2 and nothing has been paid for.</p>
     <div class="mets">
       <div class="met"><div class="met-n">74 / 40</div><div class="met-l">tau2-loop's telecom split v3: 74 training and 40 test tasks, the split your Claude v2 agent was scored on</div></div>
       <div class="met"><div class="met-n">822 → 669</div><div class="met-l">the talk's teacher conversations on the training tasks, and the clean ones kept</div></div>
@@ -569,7 +569,7 @@ ul.lede li{margin-bottom:4px}
       <div class="met"><div class="met-n">0 → 75%</div><div class="met-l">the talk's pass^3 on telecom, from the untrained base to after SFT (77.5% after RL)</div></div>
     </div>
     <nav class="nav">
-      <a href="#s-goal">1 · Goal</a><a href="#s-flow">2 · Pipeline</a><a href="#s-split">3 · Tasks</a><a href="#s-sources">4 · Sources</a><a href="#s-filters">5 · Filters</a><a href="#s-format">6 · Format</a><a href="#s-train">7 · Training</a><a href="#s-score">8 · Serve and score</a><a href="#s-repo">9 · Repo</a><a href="#s-ms">10 · Milestones</a><a href="#s-risks">11 · Risks</a><a href="#s-decide">12 · Decide</a>
+      <a href="#s-goal">1 · Goal</a><a href="#s-flow">2 · Pipeline</a><a href="#s-split">3 · Tasks</a><a href="#s-sources">4 · Sources</a><a href="#s-filters">5 · Filters</a><a href="#s-format">6 · Format</a><a href="#s-train">7 · Training</a><a href="#s-score">8 · Serve and score</a><a href="#s-repo">9 · Repo</a><a href="#s-viewer">10 · Viewer</a><a href="#s-ms">11 · Milestones</a><a href="#s-risks">12 · Risks</a><a href="#s-decide">13 · Decide</a>
     </nav>
     <div class="tldr">
       <h3>The plan in six points</h3>
@@ -716,7 +716,7 @@ ul.lede li{margin-bottom:4px}
 <section id="s-flow">
   <div class="kicker">2 · The pipeline</div>
   <h2>Six steps, from conversations to a score on held-out tasks</h2>
-  <p class="lede">Data work runs on your Mac. Training and serving run in one container on a rented GPU. Scoring runs in tau2-loop on the Mac, which reaches the GPU through a port forward. Every step writes a record that progress tracking reads (§10).</p>
+  <p class="lede">Data work runs on your Mac. Training and serving run in one container on a rented GPU. Scoring runs in tau2-loop on the Mac, which reaches the GPU through a port forward. Every step writes a record that progress tracking reads (§11), and the viewer shows it (§10).</p>
   <div class="fig flow">
     <svg viewBox="0 0 960 316" role="img" aria-labelledby="fl-t fl-d">
       <title id="fl-t">tau-telecom-sft pipeline</title>
@@ -1422,7 +1422,7 @@ Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
     <div><dt>Student, step 1</dt><dd><code>Qwen/Qwen3-4B-Instruct-2507</code> (Apache-2.0), a non-thinking model. It's cheap on one L4 and proves the pipeline end to end.</dd></div>
     <div><dt>Student, step 2</dt><dd><code>Qwen/Qwen3-30B-A3B</code> (Apr 2025, Apache-2.0): 30B in total with 3B active per token. It's the talk's model, released before tau2, and the true shadow.</dd></div>
     <div><dt>Method</dt><dd>LoRA r 16, alpha 32, on all linear layers (on the 30B, the attention layers and experts). Learning rate 1e-4 with cosine decay, 3 epochs, bf16. All of these are starting points.</dd></div>
-    <div><dt>Loss</dt><dd>Assistant turns only. TRL patches Qwen3's template to mark them, and M3 checks the mask.</dd></div>
+    <div><dt>Loss</dt><dd>Assistant turns only. TRL patches Qwen3's template to mark them, and M2 checks the mask on the Mac.</dd></div>
     <div><dt>Length</dt><dd>24,576 tokens, with no packing. Gradient checkpointing and Liger kernels on.</dd></div>
     <div><dt>Checkpoint</dt><dd>3 epochs, fixed before training, and the final checkpoint is the model. With all 74 tasks trained on, none are left to pick one. Each epoch is still saved, for the record.</dd></div>
     <div style="grid-column:1/-1"><dt>Where</dt><dd>
@@ -1449,7 +1449,7 @@ Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
       <ul>
         <li><b>Supported models:</b> W&amp;B's serverless training, now in CoreWeave's docs, lists three models for both RL and SFT: Gemma 4 26B-A4B, Llama 3.1 8B and Nemotron 3.5 Lightning 30B-A3B. Qwen3 30B isn't listed, so the talk's exact setup isn't available.</li>
         <li><b>Avoid Nemotron 3.5 Lightning here:</b> its model card lists tau2 telecom trajectories in its training data, so its telecom score says little about fine-tuning.</li>
-        <li><b>Your Mac</b> (M1 Pro, 32 GB) runs <code>make train-smoke</code> only: 5 steps on Qwen3-0.6B at 2K tokens, printing which tokens carry loss.</li>
+        <li><b>Your Mac</b> (M1 Pro, 32 GB) runs M2's proof of concept. <code>make train-smoke</code> runs a few steps of the same TRL code on Qwen3-0.6B at 12K tokens and prints which tokens carry loss. The Mac then serves that adapter and plays 3 training tasks through tau2-loop. A 2K limit wouldn't work, because the system prompt and tools take about 7.6K tokens.</li>
       </ul>
     </div>
   </div>
@@ -1525,7 +1525,7 @@ Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
         <tr><td><code>gradient_accumulation_steps</code></td><td>Rows added up before one update. Batch × this = the effective batch.</td><td class="d">1</td><td class="p">16</td><td>About 475 rows ÷ 16 is about 30 updates an epoch. Try 8 for twice as many updates if the loss curve is too coarse.</td></tr>
         <tr><td><code>gradient_checkpointing</code></td><td>Recomputes activations instead of storing them: less memory, roughly 20 to 30% slower</td><td class="d">True</td><td class="p">True</td><td>Only off if memory is plentiful</td></tr>
         <tr><td><code>bf16</code></td><td>Trains in bfloat16</td><td class="d">True</td><td class="p">True</td><td>Never on an L4 or A100</td></tr>
-        <tr><td><code>use_liger_kernel</code></td><td>Fused kernels, including a loss that never builds the full 24K × 151,936 logits table</td><td class="d">False</td><td class="p">True</td><td>TRL's own loss is now computed in chunks too. M3 compares memory with and without it.</td></tr>
+        <tr><td><code>use_liger_kernel</code></td><td>Fused kernels, including a loss that never builds the full 24K × 151,936 logits table</td><td class="d">False</td><td class="p">True</td><td>TRL's own loss is now computed in chunks too. Liger needs CUDA, so the Mac smoke runs without it, and M4's first steps compare memory with and without it.</td></tr>
         <tr><td><code>model_init_kwargs</code></td><td>How the base model loads: dtype, attention kernel, 4-bit (QLoRA)</td><td class="d">none</td><td class="p">bf16</td><td>4-bit loading for the 30B only if 80 GB isn't enough. It's a different model to serve, so note it.</td></tr>
         <tr class="grp"><td colspan="5">The adapter (PEFT <code>LoraConfig</code>)</td></tr>
         <tr><td><code>r</code></td><td>The adapter's rank: how much it can change</td><td class="d">8</td><td class="p">16</td><td>32 if the 4B underfits. The adapter is small either way.</td></tr>
@@ -1596,7 +1596,7 @@ Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
       <thead><tr><th>Option</th><th>How</th><th>160 test conversations (estimate)</th><th>Same model as trained?</th><th>Verdict</th></tr></thead>
       <tbody>
         <tr><td><b>A · vLLM on the training GPU</b></td><td>The same instance as training. vLLM's own image serves the base model plus the adapter in bf16, bound to localhost.</td><td>About 3 to 4 hours with 3 conversations at a time, so about $4 to $5 on the L4.<span class="sm">tau2-loop's telecom conversations take a median 289 s, because the customer makes its own phone tool calls.</span></td><td>Yes</td><td><span class="verdict go">recommended</span></td></tr>
-        <tr><td><b>B · mlx_lm.server on your Mac</b></td><td>Merge the adapter, convert to MLX at 4 bits, serve locally</td><td>Probably 10 hours or more for the 4B, one conversation at a time. Not practical for the 30B.</td><td>No: 4-bit is a different model</td><td><span class="verdict alt">smoke tests only</span></td></tr>
+        <tr><td><b>B · mlx_lm.server on your Mac</b></td><td>Merge the adapter, convert to MLX at 4 bits, serve locally</td><td>Probably 10 hours or more for the 4B, one conversation at a time. Not practical for the 30B.</td><td>No: 4-bit is a different model</td><td><span class="verdict alt">smoke tests only</span><span class="sm">M2's proof of concept uses it for the 0.6B, in bf16.</span></td></tr>
         <tr><td><b>C · SageMaker real-time endpoint</b></td><td>The enterprise pattern, behind IAM</td><td>Similar to A once it's up</td><td>Yes</td><td><span class="verdict no">later</span><span class="sm">It needs a GPU endpoint quota.</span></td></tr>
       </tbody>
     </table>
@@ -1642,7 +1642,7 @@ Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
     </div>
   </div>
   <div class="codeblock">
-    <div class="codehead"><span class="path">serve/serve.sh</span><span class="why">A sketch of M2 and M5 on the L4: one process serves the base model (R0) and each adapter by name</span></div>
+    <div class="codehead"><span class="path">serve/serve.sh</span><span class="why">A sketch of M3 and M5 on the L4: one process serves the base model (R0) and each adapter by name</span></div>
     <div class="codemount" id="m-serve"></div>
   </div>
 
@@ -1652,7 +1652,7 @@ Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
     <table class="res">
       <thead><tr><th>Row</th><th>Model</th><th>pass^1</th><th>pass^3</th><th>vs base (p)</th><th>Cost / conv</th></tr></thead>
       <tbody>
-        <tr><td class="n">R0</td><td><b>Qwen3-4B, untrained</b><span class="sm">M2: the control for whatever the model already knew</span></td><td class="tbd">M2</td><td class="tbd">M2</td><td class="tbd">n/a</td><td class="tbd">M2</td></tr>
+        <tr><td class="n">R0</td><td><b>Qwen3-4B, untrained</b><span class="sm">M3: the control for whatever the model already knew</span></td><td class="tbd">M3</td><td class="tbd">M3</td><td class="tbd">n/a</td><td class="tbd">M3</td></tr>
         <tr><td class="n">R1</td><td><b>Qwen3-4B + SFT on v1</b><span class="sm">board conversations</span></td><td class="tbd">M5</td><td class="tbd">M5</td><td class="tbd">M5</td><td class="tbd">M5</td></tr>
                 <tr><td class="n">R2</td><td><b>Qwen3-30B-A3B, untrained</b><span class="sm">the talk's base; the talk reports 0% pass^3</span></td><td class="tbd">M6</td><td class="tbd">M6</td><td class="tbd">n/a</td><td class="tbd">M6</td></tr>
         <tr><td class="n">R3</td><td><b>Qwen3-30B-A3B + SFT on v1</b><span class="sm">the shadow, on board data; the talk reports 75% pass^3</span></td><td class="tbd">M6</td><td class="tbd">M6</td><td class="tbd">M6</td><td class="tbd">M6</td></tr>
@@ -1712,11 +1712,76 @@ Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
   </div>
 </section>
 
-<!-- 10 MILESTONES -->
+<!-- 10 VIEWER -->
+<section id="s-viewer">
+  <div class="kicker">10 · The viewer</div>
+  <h2>A viewer for the training data and every fine-tuning run, from one row to the score it led to</h2>
+  <p class="lede">The other portfolio viewers follow a prompt being optimised: tau2-loop's unit is an agent version, its optimiser's rounds and the gate between champion and challenger, and nothing in it is trained. Here the unit is a chain: <b>dataset version → training run → adapter → scored model</b>. The viewer makes every link inspectable. You can open any training row exactly as the model reads it, with the trained tokens marked. You can see each job's config, loss curve and data hash. And you can trace every number in the README back to the runs and rows behind it. It is built like finance-rag-sft's viewer, the portfolio's other fine-tuning project: React and FastAPI, the house UI, and tau2-loop's URL grammar.</p>
+  <div class="fig flow">
+    <svg viewBox="0 0 960 200" role="img" aria-labelledby="vw-t vw-d">
+      <title id="vw-t">What the viewer links</title>
+      <desc id="vw-d">A dataset version feeds a training run, which makes an adapter, which tau2-loop scores; every scored number links back along the chain.</desc>
+      <defs><marker id="ahv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="sa" d="M0 0 L10 5 L0 10 z"/></marker></defs>
+      <g class="sn key"><title>/data: a dataset version, its card, kept and dropped rows, and the sample you signed off</title><rect x="12" y="20" width="210" height="104" rx="12"/><text class="sk" x="28" y="46">/data · M1</text><text class="stt" x="28" y="74">Dataset vN</text><text class="sd" x="28" y="98">card · rows · drops</text><text class="sd" x="28" y="116">your sign-off</text></g>
+      <g class="sn"><title>/train: one training job, its config, loss curve, cost and loss-mask check</title><rect x="258" y="20" width="210" height="104" rx="12"/><text class="sk" x="274" y="46">/train · M2, M4, M6</text><text class="stt" x="274" y="74">Training run</text><text class="sd" x="274" y="98">config · loss · cost</text><text class="sd" x="274" y="116">mask check</text></g>
+      <g class="sn"><title>The adapter: its sha256, the S3 path, the image tag and data hash it was trained with</title><rect x="504" y="20" width="210" height="104" rx="12"/><text class="sk" x="520" y="46">in each run</text><text class="stt" x="520" y="74">Adapter</text><text class="sd" x="520" y="98">sha256 · S3 path</text><text class="sd" x="520" y="116">image tag</text></g>
+      <g class="sn key"><title>/eval: a scored model, pass^k, the 40 × 4 task grid, the sign test against its base, every conversation</title><rect x="750" y="20" width="198" height="104" rx="12"/><text class="sk" x="766" y="46">/eval · M2, M3, M5, M6</text><text class="stt" x="766" y="74">Scored model</text><text class="sd" x="766" y="98">pass^k · 40 × 4</text><text class="sd" x="766" y="116">vs its base</text></g>
+      <path class="se" d="M222 72 H252" marker-end="url(#ahv)"><title>trained on, by sha256</title></path>
+      <path class="se" d="M468 72 H498" marker-end="url(#ahv)"><title>writes</title></path>
+      <path class="se" d="M714 72 H744" marker-end="url(#ahv)"><title>served and played by tau2-loop</title></path>
+      <path class="se" d="M849 124 V170 H117 V130" marker-end="url(#ahv)"><title>every score links back to the run, the dataset and its rows</title></path>
+      <text class="sd" x="300" y="164">every number on a page links back to the run, the dataset and the rows behind it</text>
+    </svg>
+  </div>
+
+  <div class="tw">
+    <table id="viewer-pages">
+      <thead><tr><th>Page</th><th>What it shows</th><th>The question it answers</th><th>Filled by</th></tr></thead>
+      <tbody>
+        <tr><td class="n"><code>/</code></td><td><b>Overview.</b> The results table, R0 to R5, with counts. Each row shows its chain: dataset, training run, adapter, scored run. The milestone status sits beside it.</td><td>Where are we, and does the student beat its base?</td><td>M0 on</td></tr>
+        <tr><td class="n"><code>/data</code><br><code>/data/:v</code></td><td><b>Dataset versions.</b> The F1 → F10 funnel with every drop counted, kept rows by source and symptom, how many of the 74 tasks are covered, and the length histogram against F10's limit. <code>?vs=v1</code> compares two versions. The coverage lens (<code>?view=coverage</code>) puts the 19 root issues against kept rows, marks the ones the test tasks need, and flags thin ones. M7's trigger reads exactly this.</td><td>What did a version keep, why did the rest go, and is any fault the test needs barely taught?</td><td>M1, M7</td></tr>
+        <tr><td class="n"><code>/data/:v/rows</code><br><code>…/rows/:id</code></td><td><b>The rows.</b> Browse kept and dropped conversations, filtered by rule, task, symptom or source, and open one in three lenses:<br><code>?lens=chat</code>: turn by turn, as the agent saw it;<br><code>?lens=tokens</code>: the exact text TRL trains on, with the trained tokens highlighted. That's §6's worked example, live, from the student's chat template and the trainer's own loss mask;<br><code>?lens=raw</code>: the original tau2 conversation, with the customer's phone calls the agent view removed shown greyed.<br>A dropped row highlights the turn that broke its rule, such as the invented tool call for F4 or the written-out call for F7.</td><td>What exactly does the model learn from this conversation, and why was that one left out?</td><td>M1; the tokens lens at M2</td></tr>
+        <tr><td class="n"><code>/data/:v/review</code></td><td><b>The sample you sign off.</b> M1's 10 kept and 10 dropped rows, drawn with a fixed seed. Each one gets good, bad or a note. The sign-off is M1's "done when", and it's saved to <code>data/sft/vN/review.jsonl</code>, append-only and committed (D10).</td><td>Has a person read what the model will learn?</td><td>M1</td></tr>
+        <tr><td class="n"><code>/train</code><br><code>/train/:run</code></td><td><b>Every training job.</b> The list is one sortable table of every experiment: its settings (learning rate, epochs, LoRA rank, max length), the dataset version, the final loss, and the pass^3 its adapter went on to score. A job's page shows its config, the dataset version and hash, image tag, instance, duration and cost. Loss per step with epoch marks, the learning rate, gradient norm, tokens per second and peak memory. The checkpoints kept, and the loss-mask check. <code>?vs=</code> overlays another run's loss and diffs the two configs.</td><td>Did training behave, and what changed between two runs?</td><td>M2 (the Mac smoke run), M4, M6</td></tr>
+        <tr><td class="n"><code>/eval</code><br><code>/eval/:run</code><br><code>…/:task/:trial</code></td><td><b>Every scored model.</b> pass^1 to pass^4 with counts. The 40 × 4 grid of test tasks and trials. The sign test against its untrained base: <code>?vs=</code> defaults to the base and splits tasks into fixed, broken and unchanged. Failures by root issue and cost per conversation. Any conversation opens in the same trace view as tau2-loop's.</td><td>Which tasks did training fix or break, and why?</td><td>M2 (smoke), M3, M5, M6; R5 at M8</td></tr>
+        <tr><td class="n"><code>/method</code></td><td><b>How it was trained</b>, as finance-rag-sft's <code>/method</code>: the recipe, the real loss curve, and §6's "one row, a target at every token" explainer on a real row.</td><td>How would you explain this fine-tune to someone else?</td><td>outline at M2; finished at M8</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="ck">Where its numbers come from</div>
+      <h3>Committed files are the record; MLflow is a link</h3>
+      <ul>
+        <li><b>Datasets:</b> <code>data/sft/vN/</code> holds <code>card.md</code>, <code>stats.json</code>, <code>drops.jsonl</code> and <code>review.jsonl</code>, all committed. <code>train.jsonl</code> is git-ignored: the viewer reads the Mac's copy, and <code>make data-pull V=v1</code> fetches it from S3 by its sha256. The raw lens reads <code>raw/</code>.</li>
+        <li><b>Runs:</b> <code>runs/&lt;id&gt;/</code> holds <code>run.json</code> (config, data hash, image tag, instance, cost, adapter sha256), <code>metrics.jsonl</code> (one line per step) and <code>mask.json</code>. A scored run also keeps a copy of its tau2-loop run folder: <code>run.json</code>, <code>results.jsonl</code> and <code>tau2_results.json</code>. That copy is read from tau2-loop and never written back to it.</li>
+        <li><b>From the cloud:</b> a job writes its run folder to S3, and <code>make sync-runs</code> copies it into <code>runs/</code> and logs it to MLflow.</li>
+        <li><b>MLflow:</b> every run links to its MLflow run. No number on a page is read from MLflow.</li>
+        <li><b>One rule from tau2-loop:</b> never draw a number that isn't in a committed file, and never hard-code a run name.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="ck">How it's built</div>
+      <h3>finance-rag-sft's stack, tau2-loop's addresses</h3>
+      <ul>
+        <li><b>Stack:</b> React 18, Vite, TypeScript and react-router in <code>frontend/</code>. FastAPI in <code>serving/app.py</code> serves the API and the built pages. Plain <code>fetch</code>, and inline-SVG charts with no chart library.</li>
+        <li><b>Look:</b> the house UI. <code>main.tsx</code> imports <code>.lavish/house.css</code> and <code>project.css</code>. <code>scripts/design_lint.mjs</code> fails on any hex, named colour or <code>--hue:</code> in <code>frontend/src</code>. It needs a hue first (D8).</li>
+        <li><b>Addresses:</b> tau2-loop's grammar. The path names the thing, the query is the lens (<code>lens</code>, <code>view</code>, <code>vs</code>, <code>rule</code>, <code>task</code>, <code>q</code>), and a list opens its detail inside itself. Telecom's <code>[ ] |</code> task ids stay escaped.</li>
+        <li><b>Where:</b> on the Mac, bound to <code>127.0.0.1</code>: the API on :8085 and the dev UI on :5177, next in line after finance-rag-sft's 8084 and 5176.</li>
+        <li><b>Ready for the portfolio site:</b> it follows the contract in nmp-central-ai's draft portfolio-app plan (s06). Vite's <code>base</code> comes from <code>SHOWCASE_BASE</code>, the router uses <code>basename</code>, every GET route reads only files, and a <code>showcase.yaml</code> lists the routes. That costs little now. Whether it joins the site, and with what, is D9.</li>
+        <li><b>Tests:</b> vitest runs the route table, as tau2-loop's does. API tests run against the fixture build. <code>make lint</code> runs the typecheck, the design lint and vitest.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="insight">The trace view is the one piece the two viewers share: a scored conversation looks the same here as in tau2-loop. Everything else is new, because tau2-loop never asks the two questions this viewer exists for: what went into the weights, and how training behaved.</p>
+</section>
+
+<!-- 11 MILESTONES -->
 <section id="s-ms">
-  <div class="kicker">10 · Milestones and tracking</div>
-  <h2>Prove serving and scoring on the 4B first, then spend on the 30B shadow</h2>
-  <p class="lede">The order puts the riskiest link first. M2 scores the untrained 4B end to end through the serving path before any training, so a format or prompt mismatch shows up cheaply. The 30B step only starts once the 4B has a clean before and after. Each row has a check you can verify and a place where its evidence lives.</p>
+  <div class="kicker">11 · Milestones and tracking</div>
+  <h2>Prove the whole pipeline on the Mac, then the 4B on EC2, then spend on the 30B shadow</h2>
+  <p class="lede">The order puts the riskiest link first, where it's cheapest to find. M2 runs the whole pipeline on your Mac with a 0.6B model: the loss mask, a trained adapter, serving with tool calls, and a scored run in tau2-loop. A format or prompt mismatch shows up there for free. M3 then scores the untrained 4B on EC2 through vLLM before any paid training. The 30B step only starts once the 4B has a clean before and after. Each row has a check you can verify and a place where its evidence lives.</p>
   <div class="tw">
     <table class="ms2" id="ms-table">
       <thead><tr><th>ID</th><th>Work</th><th>Runs on</th><th>Done when</th><th>Evidence in</th></tr></thead>
@@ -1734,15 +1799,22 @@ Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
             <li>Strip the customer's phone calls, run F1 to F10 and convert.</li>
             <li>Measure token lengths with the student's tokenizer and set the F10 limit.</li>
             <li>Load S1, S2 and one tau2-loop telecom run with the same loader, and test that they match (<a href="#formats">§4</a>).</li>
-            <li>Read 10 kept and 10 dropped conversations.</li>
-          </ul></td><td>Mac</td><td>The card's counts add up, the leak test passes, and you've signed off on the sample you read.</td><td><code>data/sft/v1/card.md</code> · MLflow data</td></tr>
-        <tr><td class="n">M2</td><td><b>Serve the untrained 4B and record the before row.</b>
+            <li>Start the viewer's data side (<a href="#s-viewer">§10</a>): <code>/data</code>, the rows in the chat and raw lenses, and <code>/data/v1/review</code>.</li>
+            <li>Read 10 kept and 10 dropped conversations in the viewer, and sign off there.</li>
+          </ul></td><td>Mac</td><td>The card's counts add up, the leak test passes, and you've signed off on the sample in the viewer.</td><td><code>data/sft/v1/card.md</code> · <code>review.jsonl</code> · MLflow data</td></tr>
+        <tr><td class="n">M2</td><td><b>Prove the pipeline on the Mac, end to end.</b> A proof of concept with Qwen3-0.6B, before anything runs on EC2. The scores aren't results.
+          <ul>
+            <li><b>Train:</b> <code>make train-smoke</code> runs the same TRL code the EC2 job will (<code>train/sft.py</code>, LoRA, assistant-only loss) for a few steps on v1's rows. It uses 12K tokens, because the system prompt and tools alone take about 7.6K, so 2K would hold no agent turn. It prints the loss mask for one row.</li>
+            <li><b>Serve:</b> merge the adapter, convert it to MLX in bf16 and serve it with <code>mlx_lm.server</code> on <code>localhost:8000</code>, with tool calls parsed. This is option B in <a href="#s-score">§8</a>, used only to prove the plumbing. If its tool parsing falls short, llama.cpp's server with <code>--jinja</code> is the fallback.</li>
+            <li><b>Score:</b> make the three tau2-loop changes, then play 3 training tasks × 1 trial against the untrained 0.6B and against the tuned one, with the usual Haiku 5.5 customer. Only training tasks: no test task is played until a real model is.</li>
+            <li><b>See it:</b> the viewer's <code>/train</code> and <code>/eval</code> pages and the rows' tokens lens, fed by the smoke run, so the proof of concept ends on a screen and not just in a log.</li>
+          </ul></td><td>Mac · tau2-loop</td><td>The tokens with loss are exactly the agent's turns. A served tool call comes back as <code>tool_calls</code>, the prompt-bytes test passes, and tau2-loop records both runs. The viewer shows the whole chain: the smoke dataset, the training run, the adapter and both scored runs.</td><td>tests assert the mask and the prompt bytes · MLflow train and eval (kind=smoke) · tau2-loop run IDs</td></tr>
+        <tr><td class="n">M3</td><td><b>Serve the untrained 4B on EC2 and record the before row.</b>
           <ul>
             <li>Start vLLM on the L4, using vLLM's own image.</li>
-            <li>Make the three tau2-loop changes.</li>
+            <li>Point M2's tau2-loop student version at it through the port forward. The three tau2-loop changes are already made.</li>
             <li>Play the 40 test tasks, 4 trials each.</li>
-          </ul></td><td>EC2 L4 · tau2-loop</td><td>R0 is filled in. Tool calls come back as <code>tool_calls</code> and the prompt-bytes test passes.</td><td>MLflow eval · tau2-loop run IDs</td></tr>
-        <tr><td class="n">M3</td><td><b>Smoke-train on the Mac.</b> Run 5 steps on Qwen3-0.6B at 2K tokens and print the loss mask for one example.</td><td>Mac</td><td>The tokens with loss are exactly the agent's turns, nothing from the customer or the tools.</td><td>a test asserts the mask</td></tr>
+          </ul></td><td>EC2 L4 · tau2-loop</td><td>R0 is filled in. Tool calls come back as <code>tool_calls</code> from vLLM too, and the prompt-bytes test passes on the served bytes.</td><td>MLflow eval · tau2-loop run IDs</td></tr>
         <tr><td class="n">M4</td><td><b>SFT the 4B on v1.</b>
           <ul>
             <li>Use <code>configs/sft_a.yaml</code> on all 74 training tasks, for a fixed 3 epochs.</li>
@@ -1765,7 +1837,7 @@ Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
           <ul>
             <li>A model card, and cost per conversation against Haiku and Sonnet.</li>
             <li>R5: replay your Claude v2 on the 40 test tasks with 4 trials, for a pass^3 head-to-head.</li>
-            <li>A Lavish results page set against the talk, and the adapters on the HF Hub, kept private.</li>
+            <li>The viewer's <code>/method</code> page finished. A Lavish results page set against the talk, and the adapters on the HF Hub, kept private.</li>
           </ul></td><td>Mac</td><td>Published, with every number traced to a run ID.</td><td>README · <code>.lavish/</code></td></tr>
       </tbody>
     </table>
@@ -1777,6 +1849,7 @@ Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
     <div class="card"><div class="ck">The status</div><h3>README status table</h3><p>One row per milestone: status, date, evidence. Below it sits the results table from §8, filled in as rows land.</p></div>
     <div class="card"><div class="ck">The ledger</div><h3>Three MLflow experiments</h3><p><b>data:</b> one run per dataset build, with drop counts and the card. <b>train:</b> one run per job, with loss curves, config, image tag and data hash. <b>eval:</b> one run per scored model, with pass^k, p and cost.</p></div>
     <div class="card"><div class="ck">From the cloud</div><h3>Object storage, then sync from the Mac</h3><p>A job in AWS or GCP can't reach MLflow at <code>localhost:5000</code>. It writes <code>metrics.jsonl</code> to the bucket, and <code>make sync-mlflow</code> logs it from the Mac. There's no local store in between.</p></div>
+    <div class="card"><div class="ck">The viewer</div><h3>Where you read all of it</h3><p>The four above are records. The viewer (<a href="#s-viewer">§10</a>) puts them on one screen: every dataset version, training job and scored model, linked to each other and to their MLflow runs.</p></div>
   </div>
   <div class="copyrow">
     <button type="button" class="btn-ghost" id="copyMs">Copy milestones as markdown</button>
@@ -1784,9 +1857,9 @@ Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
   </div>
 </section>
 
-<!-- 11 RISKS -->
+<!-- 12 RISKS -->
 <section id="s-risks">
-  <div class="kicker">11 · Risks</div>
+  <div class="kicker">12 · Risks</div>
   <h2>Your numbers won't match the talk's exactly; the job is to know why</h2>
   <div class="tw">
     <table class="risks rk">
@@ -1797,20 +1870,21 @@ Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
         <tr><td><b>The test reuses training root issues</b>, so the result could be read as more than it is</td><td>Say what it shows: known faults in new combinations. If you want a harder claim, a later split could hold out whole root issues.</td></tr>
         <tr><td><b>Generated-pool leakage</b> if D6 adds pool tasks</td><td>F8 drops any pool task with a test task's exact set of root issues, under any persona, and the leak test checks it.</td></tr>
         <tr><td><b>Long conversations:</b> a median of 15K tokens and a maximum of 26K in tau2-loop's runs</td><td>A 24K limit, Liger's fused loss and checkpointing; F10 counts what's cut. The 30B on A100s has more room.</td></tr>
-        <tr><td><b>Train and serve differ</b> in prompt bytes, the clock note, the tool-call format or sampling</td><td>M2 runs the untrained 4B through the exact serving path before any training. A test compares the trained system prompt with the served one.</td></tr>
+        <tr><td><b>Train and serve differ</b> in prompt bytes, the clock note, the tool-call format or sampling</td><td>M2 runs a 0.6B through the whole path on the Mac, and M3 runs the untrained 4B through the exact serving path on EC2, both before any paid training. A test compares the trained system prompt with the served one.</td></tr>
         <tr><td><b>Terms on the board files:</b> their customer turns are GPT-5.2 output</td><td>They are context only, with no loss on them. If S3 is ever run, it uses an open customer. Claude's output is never used.</td></tr>
         <tr><td><b>The 30B is harder to run</b>: about 61 GB of weights, MoE LoRA, and a rented machine outside AWS</td><td>It comes last, after the 4B has proved everything. Checkpoint every epoch to the bucket, keep the same image, and stop the machine the moment a run ends.</td></tr>
         <tr><td><b>Noise:</b> a single trial flipped 5 of 25 tasks between two runs of one airline agent</td><td>Use 4 trials, paired tests by task, and counts beside percentages.</td></tr>
+        <tr><td><b>The viewer republishes rows</b> from board files with no stated licence and GPT-5.2 customer turns</td><td>The viewer stays on <code>127.0.0.1</code>. It is built to join the portfolio site, but whether it does, and with what, is D9.</td></tr>
         <tr><td><b>Costs grow</b></td><td>Measure one conversation or step before any batch, set budget alarms in AWS and GCP, and stop instances after each run.</td></tr>
       </tbody>
     </table>
   </div>
 </section>
 
-<!-- 12 DECIDE -->
+<!-- 13 DECIDE -->
 <section id="s-decide">
-  <div class="kicker">12 · Decide</div>
-  <h2>Seven choices before you create the repo: two settled, five open</h2>
+  <div class="kicker">13 · Decide</div>
+  <h2>Ten choices: two settled, eight open</h2>
   <p class="lede">The plan above uses the recommended option in each case. Changing one updates this page. Choosing here creates, downloads and runs nothing.</p>
   <form class="qcard" id="plan-form" data-lavish-question="s64-tau-telecom-sft-plan">
     <div class="dsec">
@@ -1862,6 +1936,31 @@ Yes, please.<span class="sp">&lt;|im_end|&gt;</span>
         <label><input type="radio" name="D7" value="vLLM on the GPU it trained on, port forward from the Mac" checked><span>vLLM on the GPU it trained on, reached from the Mac through a port forward <span class="rec-l">recommended</span></span></label>
         <label><input type="radio" name="D7" value="mlx_lm.server on the Mac"><span>mlx_lm.server on your Mac at 4 bits: free, but 10+ hours a run and not the model you trained</span></label>
         <label><input type="radio" name="D7" value="SageMaker real-time endpoint"><span>A SageMaker real-time endpoint: the most enterprise-like, but it needs an endpoint GPU quota</span></label>
+      </div>
+    </div>
+    <div class="dsec">
+      <h3>D8 · What colour is the viewer? <span class="rec-l">needs a platform change</span></h3>
+      <p class="dq">The house UI gives each project one hue, kept 30° from every other. With finance-rag-sft at 15, no hue is left; the widest gap is 200 to 255. I checked both candidates with the platform's contrast audit: each passes AA in light and dark.</p>
+      <div class="opts">
+        <label><input type="radio" name="D8" value="lower the separation to 25 degrees in nmp-central-ai and take hue 228" checked><span>Lower the platform's separation to 25° and take hue <b>228</b>, the middle of the widest gap: 28° from dabstep-loop's 200 and 27° from convfinqa's 255. That leaves 105 for the next project. <span class="rec-l">recommended</span></span></label>
+        <label><input type="radio" name="D8" value="lower the separation to 25 degrees and take hue 105"><span>The same change, but take hue <b>105</b>, between data-qa's amber 80 and vidore's lime 130, 25° from each</span></label>
+        <label><input type="radio" name="D8" value="share tau2-loop's hue 345 as its sibling"><span>Share tau2-loop's rose, 345, since the student is scored there. That needs an exception to the platform's rule, and the two apps would look alike.</span></label>
+      </div>
+    </div>
+    <div class="dsec">
+      <h3>D9 · Who can open the viewer?</h3>
+      <p class="dq">Its rows are the board's conversations, which carry no stated licence, and their customer turns are GPT-5.2 output. Training on them privately is one thing; republishing them is another.</p>
+      <div class="opts">
+        <label><input type="radio" name="D9" value="local only, built to the portfolio-site contract so it can join later" checked><span>On your Mac only, on <code>127.0.0.1</code>, but built to the portfolio site's contract so it can join later <span class="rec-l">recommended</span></span></label>
+        <label><input type="radio" name="D9" value="join the portfolio site without rows: cards, runs and scores only"><span>Join the portfolio site without the rows: the cards, training runs and scores are public, and the rows pages are switched off in <code>showcase.yaml</code></span></label>
+        <label><input type="radio" name="D9" value="join the portfolio site with everything"><span>Join the portfolio site with everything, rows included. Only once the board files' licence is clear.</span></label>
+      </div>
+    </div>
+    <div class="dsec">
+      <h3>D10 · Where do your sign-offs and notes live?</h3>
+      <div class="opts">
+        <label><input type="radio" name="D10" value="committed review.jsonl per dataset version" checked><span>In <code>data/sft/vN/review.jsonl</code>, append-only and committed beside the card. The viewer has one write route, and it works only on the Mac. <span class="rec-l">recommended</span></span></label>
+        <label><input type="radio" name="D10" value="a database on the central Postgres, like tau2-loop's reviews"><span>In a <code>tausft</code> database on the central Postgres, as tau2-loop keeps its reviews. That adds roles, a migration and a <code>make db-init</code>.</span></label>
       </div>
     </div>
     <div class="dsec">
@@ -2029,7 +2128,8 @@ tau-telecom-sft/                     # its own repo, registered in nmp-central-a
 ├── data/
 │   ├── splits/telecom.json          # copy of tau2-loop's split v3 (74/40) + sha256 (M0)
 │   ├── sources.json                 # every raw source: URL, sha256, bytes, date (M1, M7)
-│   └── sft/v1/card.md               # committed; train.jsonl is git-ignored, in S3
+│   └── sft/v1/                      # card.md, stats.json, drops.jsonl, review.jsonl committed;
+│                                    #   train.jsonl is git-ignored, in S3
 ├── raw/                             # git-ignored, immutable: board files, teacher runs
 ├── src/tau_telecom_sft/
 │   ├── sources/board.py             # fetch S1/S2, keep the 74 training tasks only
@@ -2039,11 +2139,15 @@ tau-telecom-sft/                     # its own repo, registered in nmp-central-a
 │   ├── build/convert.py             # agent's view -> chat + tools JSONL, stock SYSTEM_PROMPT
 │   ├── build/card.py                # the dataset card, logged to tau-telecom-sft/data
 │   ├── train/sft.py                 # TRL SFTTrainer + PEFT LoRA, assistant-only loss
+│   ├── serve/mlx.py                 # M2 on the Mac: merge, convert to MLX bf16, mlx_lm.server
 │   ├── serve/vllm.py                # base + adapter, tool parser on, port 8000
 │   ├── score/loop.py                # calls tau2-loop's make eval, records the run id
-│   └── track.py                     # MLflow tags, bucket metrics sink, sync from the Mac
+│   ├── track.py                     # MLflow tags, bucket metrics sink, sync from the Mac
+│   └── serving/app.py               # the viewer's API: GET routes read files only; serves frontend/dist
+├── frontend/                        # the viewer (§10): React + Vite + TS, house UI, design lint, vitest
+├── docs/api.md                      # the viewer's API contract
 ├── configs/                         # sft_smoke.yaml, sft_a.yaml, sft_b.yaml, sft_shadow.yaml
-├── runs/<ts>_<kind>_<name>/         # immutable: config, metrics, adapter path, eval run ids
+├── runs/<ts>_<kind>_<name>/         # immutable: run.json, metrics.jsonl, mask.json; eval/ copies the tau2-loop run
 ├── Dockerfile                       # CUDA PyTorch base + uv sync --frozen; built amd64 in CI
 ├── infra/terraform/                 # AWS: ECR, S3, IAM, budget alarm; GCP: bucket, budget alarm
 ├── Makefile                         # the targets below
@@ -2060,16 +2164,22 @@ teacher-one                # ONE GLM-5.1 conversation, cost printed, nothing els
 teacher N=12               # the batch on the 74 training tasks, only after teacher-one        M7?
 
 # --- train ---
-train-smoke                # Mac: Qwen3-0.6B, 5 steps, 2k tokens, prints the loss mask          M3
+train-smoke                # Mac: Qwen3-0.6B, a few steps at 12k tokens, prints the loss mask   M2
 image                      # CI builds amd64, pushes to ECR (and GHCR, which RunPod can pull)    M4
 train CONFIG=sft_a         # on the L4: docker run --gpus all <image> --config configs/...      M4
 train CONFIG=sft_shadow    # on the 80 GB A100, the same image                                  M6
 
 # --- serve and score ---
-serve ADAPTER=<path>       # vLLM's own image on the GPU: base (+ adapter), tool parser on      M2
-tunnel                     # SSM (EC2) or SSH (RunPod) port forward: Mac localhost:8000 -> GPU M2
-score SPLIT=test|train TRIALS=4 AGENT=<student version>  # make -C ../tau2-loop eval ...         M2, M5, M6
-sync-mlflow                # bucket metrics and scored runs -> central MLflow, from the Mac    every run
+serve-mac ADAPTER=<path>   # Mac: merge, MLX in bf16, mlx_lm.server on :8000, tool calls parsed M2
+serve ADAPTER=<path>       # vLLM's own image on the GPU: base (+ adapter), tool parser on      M3
+tunnel                     # SSM (EC2) or SSH (RunPod) port forward: Mac localhost:8000 -> GPU M3
+score SPLIT=test|train TRIALS=4 AGENT=<student version>  # make -C ../tau2-loop eval ...     M2, M3, M5, M6
+sync-runs                  # bucket run folders -> runs/, then logged to central MLflow, from the Mac  every run
+
+# --- viewer (Mac, 127.0.0.1) ---
+dev                        # API on :8085 with reload; UI: cd frontend && npm run dev -> :5177   M1
+viewer                     # build the UI and serve it with the API on :8085                   M1
+data-pull V=v1             # train.jsonl from S3 by its sha256, for the rows pages              M1
 
 # --- housekeeping ---
 stop                       # stop the instance; run after every session
@@ -2086,7 +2196,7 @@ test  lint                 # offline only: ruff, mypy strict, pytest
     document.documentElement.setAttribute('data-theme',n);try{localStorage.setItem('theme',n)}catch(e){}lab();
     window.dispatchEvent(new CustomEvent('lavish-theme',{detail:n}));
   });
-  var KEYS=['D1','D2','D3','D4','D5','D6','D7','next'];
+  var KEYS=['D1','D2','D3','D4','D5','D6','D7','D8','D9','D10','next'];
   var form=document.getElementById('plan-form'),ack=document.getElementById('ackPlan');
   form.addEventListener('submit',function(ev){
     ev.preventDefault();
@@ -2095,7 +2205,7 @@ test  lint                 # offline only: ruff, mypy strict, pytest
     var note=(fd.get('note')||'').trim();
     if(!d.next){ack.textContent='Pick a next step first.';return}
     var msg='s64 tau-telecom-sft plan decisions: D1 split = '+d.D1+'; D2 teacher data = '+d.D2+'; D3 student = '+d.D3+
-      '; D4 training runs on = '+d.D4+'; D5 scoring = '+d.D5+'; D6 training tasks = '+d.D6+'; D7 serving = '+d.D7+'; next = '+d.next+'.'+
+      '; D4 training runs on = '+d.D4+'; D5 scoring = '+d.D5+'; D6 training tasks = '+d.D6+'; D7 serving = '+d.D7+'; D8 viewer hue = '+d.D8+'; D9 viewer access = '+d.D9+'; D10 sign-offs = '+d.D10+'; next = '+d.next+'.'+
       (note?' Note: '+note:'')+
       ' Update the plan on this page to reflect these decisions and remove the options that are now settled. Plan only: do not create the repo, download, train or run anything.';
     if(!window.lavish){ack.textContent='Not opened through Lavish: use Copy all answers below.';return}
